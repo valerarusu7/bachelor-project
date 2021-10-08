@@ -7,9 +7,9 @@ function Layout({ children }) {
     <div className="light">
       <div className="bg-gray-100 dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
         <Sidebar />
-        <div className="p-1 h-screen w-full transition duration-500">
+        <div className="pl-2 pt-1 pr-2 h-screen w-full transition duration-500">
           <Header />
-          <div className="overflow-auto h-screen mt-4 pb-24 relative scrollbar-hide transition duration-500">
+          <div className="overflow-auto h-screen mt-2 pb-24 relative scrollbar-hide transition duration-500">
             <motion.div
               variants={{
                 hidden: { opacity: 0, x: 200, y: 0 },
