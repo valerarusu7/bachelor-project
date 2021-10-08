@@ -1,14 +1,18 @@
 import Header from "./Header";
+import Separator from "../common/Separator";
 import Sidebar from "./Sidebar";
 import { motion } from "framer-motion";
 
-function Layout({ children }) {
+function Layout({ children, header }) {
   return (
     <div className="light">
-      <div className="bg-gray-100 dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
+      <div className="bg-gray-200 dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
         <Sidebar />
-        <div className="pl-2 pt-1 pr-2 h-screen w-full transition duration-500">
-          <Header />
+        <div className="pl-2 pr-2 h-screen w-full transition duration-500">
+          <Header header={header} />
+          <div className="hidden sm:block" aria-hidden="true">
+            <div className="border-t border-gray-300" />
+          </div>
           <div className="overflow-auto h-screen mt-2 pb-24 relative scrollbar-hide transition duration-500">
             <motion.div
               variants={{

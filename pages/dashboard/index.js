@@ -68,7 +68,7 @@ function Dashboard({ candidates }) {
   }
 
   return (
-    <Layout>
+    <Layout header="Dashboard">
       <div className="grid 2xl:grid-cols-5 xl:grid-cols-2 lg:grid-cols-1">
         <Stat
           value={12}

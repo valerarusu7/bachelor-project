@@ -5,8 +5,8 @@ import { candidates } from "../../../candidates";
 
 function CandidateDetails({ candidate }) {
   return (
-    <Layout>
-      <div className="grid grid-cols-6 mt-8 grid-rows-2">
+    <Layout header="Candidate Details">
+      <div className="grid grid-cols-6 mt-10 grid-rows-2 ">
         <div className="col-span-4 flex flex-col row-span-2">
           <CandidateInfo candidate={candidate} />
         </div>

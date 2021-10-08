@@ -4,7 +4,7 @@ import { positions } from "../../positions";
 
 function Positions({ positions }) {
   return (
-    <Layout>
+    <Layout header="Positions">
       <PositionList positions={positions} />
     </Layout>
   );

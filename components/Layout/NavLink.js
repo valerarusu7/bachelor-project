@@ -3,8 +3,7 @@ import { useRouter } from "next/dist/client/router";
 
 function NavLink({ name, href, Icon }) {
   const router = useRouter();
-  const activeClassName =
-    "active text-blue-500 bg-gradient-to-r from-white to-blue-100 border-r-4 border-blue-500 ";
+  const activeClassName = "active text-blue-500 bg-gray-900";
 
   return (
     <Link href={href}>
