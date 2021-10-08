@@ -14,8 +14,8 @@ import NavLink from "./NavLink";
 function Sidebar() {
   return (
     <div className="p-1 h-screen transition duration-500">
-      <nav className="bg-white w-72 shadow-lg rounded-lg relative h-full flex flex-col items-center dark:bg-gray-700 justify-between">
-        <div className="w-full ">
+      <nav className="bg-white w-72 shadow-lg rounded-lg relative h-full flex flex-col items-center justify-between text-gray-500">
+        <div className="w-full">
           <div className="flex justify-center items-center h-16">
             <img
               src="https://www.heyfunding.dk/images/logoer/stibo-accelerator.png"
