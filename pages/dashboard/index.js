@@ -1,119 +1,128 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Candidates from "../../components/Dashboard/Candidates";
 import Layout from "../../components/Layout/Layout";
-import Stat from "../../components/Dashboard/Stat";
-import { candidates } from "../../candidates";
+import candidates from "../../candidates.json";
+import Filter from "../../components/Dashboard/Filter";
+import { filterByScore, filterCandidates } from "../../helpers/filters";
+import { FilterIcon } from "@heroicons/react/solid";
 
-function Dashboard({ candidates }) {
+function Dashboard({ candidates, positions, regions }) {
   const [filteredCandidates, setFilteredCandidates] = useState(candidates);
-  const [activeCandidates, setActiveCandidates] = useState(false);
-  const [activeCompleted, setActiveCompleted] = useState(false);
-  const [activePending, setActivePending] = useState(false);
-  const [activeScore, setActiveScore] = useState(false);
-  const [activeFavorites, setActiveFavorites] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [filter, setFilter] = useState({
+    position: positions[0],
+    filterAll: true,
+    filterCompleted: false,
+    filterPending: false,
+    filterFavorite: false,
+    score: [0, 100],
+    disableScore: true,
+    region: regions[0],
+  });
 
-  useEffect(() => {
-    setActiveCandidates(true);
-  }, []);
+  function applyFilter() {
+    setIsOpen(false);
+    setFilteredCandidates(filterByScore(filterCandidates(candidates, filter), filter));
+  }
+
+  function resetFilters() {
+    setFilter({
+      position: positions[0],
+      filterAll: true,
+      filterCompleted: false,
+      filterPending: false,
+      filterFavorite: false,
+      score: [0, 100],
+      disableScore: true,
+      region: regions[0],
+    });
+  }
 
   function resetStates() {
-    setActiveCandidates(false);
-    setActiveCompleted(false);
-    setActivePending(false);
-    setActiveScore(false);
-    setActiveFavorites(false);
+    setFilter((prevState) => {
+      return { ...prevState, filterAll: false, filterCompleted: false, filterPending: false, filterFavorite: false };
+    });
   }
 
   function resetCandidates() {
     resetStates();
-    setActiveCandidates(true);
-    setFilteredCandidates(candidates);
+    setFilter((prevState) => {
+      return { ...prevState, filterAll: true };
+    });
   }
 
   function filterCompleted() {
-    let filteredCompleted = candidates.filter(
-      (candidate) => candidate.completed === true
-    );
     resetStates();
-    setActiveCompleted(true);
-    setFilteredCandidates(filteredCompleted);
+    setFilter((prevState) => {
+      return { ...prevState, filterCompleted: true };
+    });
   }
 
   function filterPending() {
-    let filteredPending = candidates.filter(
-      (candidate) => candidate.completed === false
-    );
     resetStates();
-    setActivePending(true);
-    setFilteredCandidates(filteredPending);
-  }
-
-  function filterPerfectMatches() {
-    let filteredPerfectMatch = candidates.filter(
-      (candidate) => candidate.score > 90
-    );
-    resetStates();
-    setActiveScore(true);
-    setFilteredCandidates(filteredPerfectMatch);
+    setFilter((prevState) => {
+      return { ...prevState, filterPending: true };
+    });
   }
 
   function filterFavorites() {
-    let filteredFavorites = candidates.filter(
-      (candidate) => candidate.favorite === true
-    );
     resetStates();
-    setActiveFavorites(true);
-    setFilteredCandidates(filteredFavorites);
+    setFilter((prevState) => {
+      return { ...prevState, filterFavorite: true };
+    });
   }
 
   return (
     <Layout header="Dashboard">
-      <div className="grid 2xl:grid-cols-5 xl:grid-cols-2 lg:grid-cols-1">
-        <Stat
-          value={12}
-          name="Total Condidates"
-          onClick={() => resetCandidates()}
-          type="candidates"
-          active={activeCandidates}
-        />
-        <Stat
-          value={9}
-          name="completed"
-          onClick={() => filterCompleted()}
-          type="completed"
-          active={activeCompleted}
-        />
-        <Stat
-          value={3}
-          name="pending"
-          onClick={() => filterPending()}
-          type="pending"
-          active={activePending}
-        />
-        <Stat
-          value={4}
-          name="perfect matches"
-          onClick={() => filterPerfectMatches()}
-          type="perfectScore"
-          active={activeScore}
-        />
-        <Stat
-          value={3}
-          name="favorites"
-          onClick={() => filterFavorites()}
-          type="favorites"
-          active={activeFavorites}
-        />
+      <div
+        onClick={() => setIsOpen(true)}
+        className="flex items-center justify-center p-1 hover:bg-gray-400 h-8 w-8 hover:rounded-lg hover:shadow-lg cursor-pointer"
+      >
+        <FilterIcon className="h-6 w-6 text-gray-700" />
       </div>
-      <Candidates
-        candidates={filteredCandidates}
-        activeCandidates={activeCandidates}
-        activePending={activePending}
-        activeCompleted={activeCompleted}
-        activeScore={activeScore}
-        activeFavorites={activeFavorites}
+      <Filter
+        positions={positions}
+        regions={regions}
+        activeCandidates={filter.filterAll}
+        activePending={filter.filterPending}
+        activeCompleted={filter.filterCompleted}
+        activeFavorites={filter.filterFavorite}
+        setActiveCandidates={() => resetCandidates()}
+        setActiveCompleted={() => filterCompleted()}
+        setActivePending={() => filterPending()}
+        setActiveFavorites={() => filterFavorites()}
+        filter={filter}
+        selectedPosition={filter.position}
+        setSelectedPosition={(e) =>
+          setFilter((prevState) => {
+            return { ...prevState, position: e };
+          })
+        }
+        selectedRegion={filter.region}
+        setSelectedRegion={(e) =>
+          setFilter((prevState) => {
+            return { ...prevState, region: e };
+          })
+        }
+        score={filter.score}
+        disableScore={filter.disableScore}
+        setDisableScore={() =>
+          setFilter((prevState) => {
+            return { ...prevState, disableScore: !filter.disableScore };
+          })
+        }
+        setScore={(e) =>
+          setFilter((prevState) => {
+            return { ...prevState, score: e.target.value };
+          })
+        }
+        isOpen={isOpen}
+        onClose={() => applyFilter()}
+        applyFilter={() => applyFilter()}
+        resetFilters={() => resetFilters()}
       />
+      <Candidates candidates={filteredCandidates} />
     </Layout>
   );
 }
@@ -127,6 +136,22 @@ export const getServerSideProps = async () => {
   return {
     props: {
       candidates: candidates,
+      positions: [
+        { name: "All positions" },
+        { name: "Software Engineer" },
+        { name: "Project Manager" },
+        { name: "Marketing Manager" },
+        { name: "Solution Architect" },
+        { name: "Solution Consultant" },
+        { name: "Professional Services Project Manager" },
+      ],
+      regions: [
+        { name: "All regions" },
+        { name: "Denmark", code: "DK" },
+        { name: "United States", code: "US" },
+        { name: "United Kingdom", code: "GB" },
+        { name: "Europe", code: "EU" },
+      ],
     },
   };
 };

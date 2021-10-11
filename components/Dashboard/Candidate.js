@@ -26,10 +26,10 @@ function Candidate({ candidate, activeCandidates, activePending, activeCompleted
                     ? "border-red-400 bg-red-200 text-red-500"
                     : activeFavorites == true
                     ? "border-purple-400 bg-purple-200 text-purple-500"
-                    : "border-gray-500 bg-gray-200 text-gray-500"
-                } w-8 h-8 border-2 rounded-full p-1 flex items-center justify-center`}
+                    : "border-blue-400 bg-blue-200 text-blue-500"
+                } w-8 h-8 border-2 rounded-full p-2 flex items-center justify-center`}
               >
-                <p className="font-semibold">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
+                <p className="font-semibold text-sm">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
               </div>
             </div>
             <span>{`${candidate.firstName} ${candidate.lastName}`}</span>
@@ -43,6 +43,14 @@ function Candidate({ candidate, activeCandidates, activePending, activeCompleted
         <td className="py-3 px-6 text-left">
           <div className="flex items-center">
             <span className="font-medium hover:underline">{candidate.position}</span>
+          </div>
+        </td>
+        <td className="py-3 px-6 text-left">
+          <div className="flex items-center">
+            <span>
+              <img className="h-4 w-4 mr-1" src={`https://www.countryflags.io/${candidate.countryCode.toLowerCase()}/shiny/64.png`} />
+            </span>
+            <span className="font-medium">{candidate.region}</span>
           </div>
         </td>
         <td className="py-3 px-6 text-center">
@@ -65,7 +73,7 @@ function Candidate({ candidate, activeCandidates, activePending, activeCompleted
           <div className="flex item-center justify-center">
             <span
               className={`${
-                candidate.score === null
+                candidate.score == 0
                   ? "text-gray-500"
                   : candidate.score <= 35
                   ? "text-red-600"
@@ -78,7 +86,7 @@ function Candidate({ candidate, activeCandidates, activePending, activeCompleted
                   : null
               } font-bold`}
             >
-              {candidate.score !== null ? <p>{`${candidate.score}%`}</p> : <BanIcon className="h-6 w-6" />}
+              {candidate.score != 0 ? <p>{`${candidate.score}%`}</p> : <BanIcon className="h-6 w-6" />}
             </span>
           </div>
         </td>

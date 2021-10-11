@@ -1,7 +1,7 @@
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
 import CandidateTimeline from "../../../components/CandidateDetails/Timeline/CandidateTimeline";
 import Layout from "../../../components/Layout/Layout";
-import { candidates } from "../../../candidates";
+import candidates from "../../../candidates.json";
 
 function CandidateDetails({ candidate }) {
   return (
