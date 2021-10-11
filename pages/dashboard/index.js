@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Candidates from "../../components/Dashboard/Candidates";
 import Layout from "../../components/Layout/Layout";
@@ -19,6 +19,7 @@ function Dashboard({ candidates, positions, regions }) {
     score: [0, 100],
     disableScore: true,
     region: regions[0],
+    search: "",
   });
 
   function applyFilter() {
@@ -36,6 +37,7 @@ function Dashboard({ candidates, positions, regions }) {
       score: [0, 100],
       disableScore: true,
       region: regions[0],
+      search: "",
     });
   }
 
@@ -73,13 +75,30 @@ function Dashboard({ candidates, positions, regions }) {
     });
   }
 
+  function searchCandidatesList(value) {
+    setFilter((prevState) => {
+      return { ...prevState, search: value };
+    });
+  }
+
   return (
     <Layout header="Dashboard">
-      <div
-        onClick={() => setIsOpen(true)}
-        className="flex items-center justify-center p-1 hover:bg-gray-400 h-8 w-8 hover:rounded-lg hover:shadow-lg cursor-pointer"
-      >
-        <FilterIcon className="h-6 w-6 text-gray-700" />
+      <div className="flex items-center justify-between">
+        <div
+          onClick={() => setIsOpen(true)}
+          className="flex items-center justify-center p-1 hover:bg-gray-400 h-8 w-8 hover:rounded-lg hover:shadow-lg cursor-pointer mr-2"
+        >
+          <FilterIcon className="h-6 w-6 text-gray-700" />
+        </div>
+        <div className="pr-1 pt-1">
+          <input
+            value={filter.search}
+            onChange={(e) => searchCandidatesList(e.target.value)}
+            type="text"
+            placeholder="Search..."
+            className="focus:ring-blue-500 focus:border-blue-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300"
+          />
+        </div>
       </div>
       <Filter
         positions={positions}
@@ -135,7 +154,7 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      candidates: candidates,
+      candidates: candidates.slice(0, 100),
       positions: [
         { name: "All positions" },
         { name: "Software Engineer" },

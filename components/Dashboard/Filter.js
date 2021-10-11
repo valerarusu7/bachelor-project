@@ -2,7 +2,7 @@ import SelectionFilter from "./SelectionFilter";
 import Slider from "@mui/material/Slider";
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon } from "@heroicons/react/outline";
+import { GlobeIcon, BriefcaseIcon, ClipboardCheckIcon, MenuAlt1Icon } from "@heroicons/react/outline";
 import Separator from "../common/Separator";
 
 function Filter({
@@ -60,26 +60,35 @@ function Filter({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div className="inline-block align-bottom bg-gray-100 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div className="p-4">
                 <div>
-                  <label htmlFor="filter-candidates" className="block text-md font-medium text-gray-700">
-                    Filter by Positions
-                  </label>
+                  <div className="flex mb-2">
+                    <BriefcaseIcon className="h-6 w-6 text-gray-600 mr-1" />
+                    <label htmlFor="filter-candidates" className="block text-md font-medium text-gray-700">
+                      Filter by Positions
+                    </label>
+                  </div>
                   <SelectionFilter data={positions} selected={selectedPosition} setSelected={setSelectedPosition} />
                 </div>
                 <div className="mt-4">
-                  <label htmlFor="filter-candidates" className="block text-md font-medium text-gray-700">
-                    Filter by Regions
-                  </label>
+                  <div className="flex mb-2">
+                    <GlobeIcon className="h-6 w-6 text-gray-600 mr-1" />
+                    <label htmlFor="filter-candidates" className="block text-md font-medium text-gray-700">
+                      Filter by Regions
+                    </label>
+                  </div>
                   <SelectionFilter data={regions} selected={selectedRegion} setSelected={setSelectedRegion} />
                 </div>
 
                 <div className="mt-4">
-                  <label htmlFor="filter-candidates" className="block text-md font-medium text-gray-700">
-                    Filter by Status
-                  </label>
-                  <div className="flex justify-between mt-2">
+                  <div className="flex mb-2">
+                    <ClipboardCheckIcon className="h-6 w-6 text-gray-600 mr-1" />
+                    <label htmlFor="filter-candidates" className="block text-md font-medium text-gray-700">
+                      Filter by Status
+                    </label>
+                  </div>
+                  <div className="flex justify-between mt-3 pl-1">
                     <div className="flex items-center">
                       <input
                         name="filter"
@@ -132,16 +141,19 @@ function Filter({
                 </div>
                 <div className="mt-4 ">
                   <div className="flex justify-between items-center">
-                    <label
-                      htmlFor="filter-candidates"
-                      className={`block text-md font-medium ${disableScore ? "text-gray-400" : "text-gray-700"}`}
-                    >
-                      Filter by Score
-                    </label>
+                    <div className="flex mb-2 ">
+                      <MenuAlt1Icon className={`h-6 w-6 ${disableScore ? "text-gray-400" : "text-gray-600"}  mr-1`} />
+                      <label
+                        htmlFor="filter-candidates"
+                        className={`block text-md font-medium ${disableScore ? "text-gray-400" : "text-gray-700"}`}
+                      >
+                        Filter by Score
+                      </label>
+                    </div>
 
-                    <input type="checkbox" checked={!disableScore} onChange={setDisableScore} />
+                    <input type="checkbox" checked={!disableScore} onChange={setDisableScore} className="rounded-md" />
                   </div>
-                  <div className="pl-2 pr-2 mt-2">
+                  <div className="pl-3 pr-2 mt-2">
                     <Slider
                       getAriaLabel={() => "Score range"}
                       value={score}
