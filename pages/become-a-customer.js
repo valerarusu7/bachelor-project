@@ -1,9 +1,16 @@
+import { useDispatch, useSelector } from "react-redux";
+
 import FormInput from "../components/Landing Page/FormInput";
+import { register as registerCompanyUser } from "../store/actions/auth";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 function BecomeACustomer() {
+  const { isAuthenticated, register_success, loading } = useSelector(
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
+
   const router = useRouter();
   const {
     register,
@@ -11,18 +18,33 @@ function BecomeACustomer() {
     handleSubmit,
   } = useForm();
 
-  const onSubmit = async (data) => {
-    const user = {
-      first_name: data.first_name,
-      last_name: data.last_name,
-      email: data.email,
-      password: data.password,
-    };
-    const company = { name: data.company_name, website: data.company_website };
-    const response = { company, user };
-    console.log(response);
+  const onSubmit = async ({
+    first_name,
+    last_name,
+    email,
+    password,
+    re_password,
+  }) => {
+    if (dispatch && dispatch !== null && dispatch !== undefined) {
+      if (password === re_password) {
+        dispatch(
+          registerCompanyUser(
+            first_name,
+            last_name,
+            email,
+            password,
+            re_password
+          )
+        );
+      }
+    }
     router.replace("/auth/login");
   };
+
+  if (typeof window !== "undefined" && isAuthenticated)
+    router.push("/dashboard");
+
+  if (register_success) router.push("/login");
 
   return (
     <form action="#" method="POST" onSubmit={handleSubmit(onSubmit)}>
@@ -114,10 +136,13 @@ function BecomeACustomer() {
           </div>
         </div>
       </div>
-
-      <button type="submit" className="bg-blue-300 w-32 cursor-pointer">
-        Create
-      </button>
+      {loading ? (
+        "Loading..."
+      ) : (
+        <button type="submit" className="bg-blue-300 w-32 cursor-pointer">
+          Create
+        </button>
+      )}
     </form>
   );
 }

@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
+import { filterByScore, filterCandidates } from "../../helpers/filters";
 
 import Candidates from "../../components/Dashboard/Candidates";
+import Filter from "../../components/Dashboard/Filter";
+import { FilterIcon } from "@heroicons/react/solid";
 import Layout from "../../components/Layout/Layout";
 import candidates from "../../candidates.json";
-import Filter from "../../components/Dashboard/Filter";
-import { filterByScore, filterCandidates } from "../../helpers/filters";
-import { FilterIcon } from "@heroicons/react/solid";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 
 function Dashboard({ candidates, positions, regions }) {
+  const { loading, isAuthenticated } = useSelector((state) => state.auth);
+  const router = useRouter();
+
   const [filteredCandidates, setFilteredCandidates] = useState(candidates);
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState({
@@ -22,9 +27,14 @@ function Dashboard({ candidates, positions, regions }) {
     search: "",
   });
 
+  if (typeof window !== "undefined" && !loading && !isAuthenticated)
+    router.push("/auth/login");
+
   function applyFilter() {
     setIsOpen(false);
-    setFilteredCandidates(filterByScore(filterCandidates(candidates, filter), filter));
+    setFilteredCandidates(
+      filterByScore(filterCandidates(candidates, filter), filter)
+    );
   }
 
   function resetFilters() {
@@ -43,7 +53,13 @@ function Dashboard({ candidates, positions, regions }) {
 
   function resetStates() {
     setFilter((prevState) => {
-      return { ...prevState, filterAll: false, filterCompleted: false, filterPending: false, filterFavorite: false };
+      return {
+        ...prevState,
+        filterAll: false,
+        filterCompleted: false,
+        filterPending: false,
+        filterFavorite: false,
+      };
     });
   }
 

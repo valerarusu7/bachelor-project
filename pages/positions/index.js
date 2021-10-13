@@ -1,6 +1,6 @@
-import Layout from "../../components/Layout/Layout";
-import PositionList from "../../components/Positions/PositionList";
-import { positions } from "../../positions";
+import Layout from "../../../components/Layout/Layout";
+import PositionList from "../../../components/Positions/PositionList";
+import { positions } from "../../../positions";
 
 function Positions({ positions }) {
   return (
