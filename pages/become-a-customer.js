@@ -1,148 +1,157 @@
 import { useDispatch, useSelector } from "react-redux";
 
 import FormInput from "../components/Landing Page/FormInput";
-import { register as registerCompanyUser } from "../store/actions/auth";
+import { register as registerCompanyUser } from "../store/reducers/authSlice";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { registerSchema } from "../helpers/formSchemas";
+import PasswordCheckItem from "../components/Landing Page/PasswordtCheckItem";
+import { BsCheckCircleFill } from "react-icons/bs";
 
 function BecomeACustomer() {
-  const { isAuthenticated, register_success, loading } = useSelector(
-    (state) => state.auth
-  );
-  const dispatch = useDispatch();
+  const formOptions = { resolver: yupResolver(registerSchema) };
 
-  const router = useRouter();
   const {
     register,
     formState: { errors },
+    watch,
     handleSubmit,
-  } = useForm();
+  } = useForm(formOptions);
+  const router = useRouter();
 
-  const onSubmit = async ({
-    first_name,
-    last_name,
-    email,
-    password,
-    re_password,
-  }) => {
+  const { isAuthenticated, register_success, loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const password = watch("password", "");
+  const re_password = watch("re_password", "");
+
+  const onSubmit = async ({ company_name, company_website, first_name, last_name, email, password, re_password }) => {
     if (dispatch && dispatch !== null && dispatch !== undefined) {
-      if (password === re_password) {
-        dispatch(
-          registerCompanyUser(
-            first_name,
-            last_name,
-            email,
-            password,
-            re_password
-          )
-        );
+      if (registerSchema.isValid({ company_name, company_website, first_name, last_name, email, password, re_password })) {
+        dispatch(registerCompanyUser(company_name, company_website, first_name, last_name, email, password, re_password, true));
+        router.replace("/auth/login");
       }
     }
-    router.replace("/auth/login");
   };
 
-  if (typeof window !== "undefined" && isAuthenticated)
-    router.push("/dashboard");
+  if (typeof window !== "undefined" && isAuthenticated) router.push("/dashboard");
 
   if (register_success) router.push("/login");
 
   return (
     <form action="#" method="POST" onSubmit={handleSubmit(onSubmit)}>
-      <p>Become a customer</p>
-      <div>
-        <p>Company Details</p>
+      <div className="flex flex-col flex-grow xl:w-1/3 md:w-1/2 sm:w-2/3 p-4 rounded-lg shadow-xl">
+        <div className="flex justify-center items-center">
+          <p className="font-semibold text-gray-700 text-xl">Register</p>
+        </div>
+        <div className="w-full h-0.5 bg-gray-200 mt-2 mb-2" />
         <div>
-          <div>
-            Company Name
+          {/* <p>Company Details</p> */}
+          <div className="grid xl:grid-cols-2 sm:grid-cols-1 xl:gap-4">
             <FormInput
               type="text"
               id="company_name"
               placeholder="Company name"
               errors={errors}
-              {...register("company_name", {
-                required: "Please enter the company name",
-              })}
+              label="Company name"
+              {...register("company_name")}
             />
-          </div>
-          <div>
-            Company Website
             <FormInput
               type="text"
               id="company_website"
               placeholder="Website"
               errors={errors}
-              {...register("company_website", {
-                required: "Please enter the company website",
-              })}
+              label="Website"
+              {...register("company_website")}
             />
           </div>
         </div>
-      </div>
+        <div className="w-full h-0.5 bg-gray-200 mt-2 mb-2" />
 
-      <div>
-        <p>Account Details</p>
         <div>
+          {/* <p>Account Details</p> */}
           <div>
-            First Name
-            <FormInput
-              type="text"
-              id="first_name"
-              placeholder="First name"
-              errors={errors}
-              {...register("first_name", {
-                required: "Please enter the first name",
-              })}
-            />
-          </div>
-          <div>
-            Last Name
-            <FormInput
-              type="text"
-              id="last_name"
-              placeholder="Last name"
-              errors={errors}
-              {...register("last_name", {
-                required: "Please enter the last name",
-              })}
-            />
-          </div>
-          <div>
-            Email
-            <FormInput
-              type="text"
-              id="email"
-              placeholder="Email"
-              errors={errors}
-              {...register("email", {
-                required: "Please enter the email",
-              })}
-            />
-          </div>
-          <div>
-            Password
-            <FormInput type="text" placeholder="Enter Password" />
-          </div>
-          <div>
-            Confirm Password
-            <FormInput
-              type="text"
-              id="password"
-              placeholder="Confirm password"
-              errors={errors}
-              {...register("password", {
-                required: "Please enter the password",
-              })}
-            />
+            <div className="grid xl:grid-cols-2 sm:grid-cols-1 xl:gap-4">
+              <FormInput
+                type="text"
+                id="first_name"
+                placeholder="First name"
+                errors={errors}
+                label="First name"
+                {...register("first_name")}
+              />
+              <FormInput type="text" id="last_name" placeholder="Last name" errors={errors} label="Last name" {...register("last_name")} />
+            </div>
+            <div>
+              <FormInput type="text" id="email" placeholder="Email" errors={errors} label="Email" {...register("email")} />
+              <div className="grid xl:grid-cols-2 sm:grid-cols-1 xl:gap-4">
+                <FormInput
+                  type="password"
+                  id="password"
+                  placeholder="Enter Password"
+                  label="Password"
+                  onChange={(e) => console.log(e)}
+                  {...register("password")}
+                />
+                <FormInput
+                  type="password"
+                  id="re_password"
+                  placeholder="Confirm password"
+                  label="Confirm password"
+                  {...register("re_password")}
+                />
+              </div>
+              <div>
+                {/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-+_!@#$%^&*., ?])(?=.{8,})/.test(password) && password === re_password ? (
+                  <div className="flex items-center text-green-500 font-semibold">
+                    <BsCheckCircleFill className="h-4 w-4 mr-1" />
+                    <p>Password requirements met</p>
+                  </div>
+                ) : (
+                  <div>
+                    <PasswordCheckItem
+                      requirement="The password must contain at least 8 characters"
+                      check={password.length > 7}
+                      password={password}
+                    />
+                    <PasswordCheckItem
+                      requirement="The password must contain at least 1 lowercase character"
+                      check={/^(?=.*[a-z])/.test(password)}
+                      password={password}
+                    />
+                    <PasswordCheckItem
+                      requirement="The password must contain at least 1 uppercase character"
+                      check={/^(?=.*[A-Z])/.test(password)}
+                      password={password}
+                    />
+                    <PasswordCheckItem
+                      requirement="The password must contain at least 1 number"
+                      check={/^(?=.*\d)/.test(password)}
+                      password={password}
+                    />
+                    <PasswordCheckItem
+                      requirement="The password must contain at least 1 special character"
+                      check={/(?=.*[-+_!@#$%^&*., ?])/.test(password)}
+                      password={password}
+                    />
+                    <PasswordCheckItem requirement="The passwords should be equal" check={password === re_password} password={password} />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
+        <div className="flex justify-center items-center p-4">
+          {loading ? (
+            "Loading..."
+          ) : (
+            <button type="submit" className="bg-blue-300 w-32 cursor-pointer rounded-lg shadow-md p-1 font-semibold">
+              Register
+            </button>
+          )}
+        </div>
       </div>
-      {loading ? (
-        "Loading..."
-      ) : (
-        <button type="submit" className="bg-blue-300 w-32 cursor-pointer">
-          Create
-        </button>
-      )}
     </form>
   );
 }

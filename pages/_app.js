@@ -1,16 +1,9 @@
 import "tailwindcss/tailwind.css";
 
-import { Provider } from "react-redux";
-import { useStore } from "../store/store";
+import { wrapper } from "../store/store";
 
-function MyApp({ Component, pageProps }) {
-  const store = useStore(pageProps.initialReduxState);
-
-  return (
-    <Provider store={store}>
-      <Component {...pageProps} />
-    </Provider>
-  );
+function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
 }
 
-export default MyApp;
+export default wrapper.withRedux(App);
