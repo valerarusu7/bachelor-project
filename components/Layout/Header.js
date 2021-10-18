@@ -14,7 +14,7 @@ function Header({ header }) {
           <div className="flex items-center">
             <img
               src="https://www.cityam.com/wp-content/uploads/2021/01/Manchester-United-v-Manchester-City---Premier-League-1290892183-960x640.jpg"
-              className="mx-auto object-cover rounded-full h-8 w-8 cursor-pointer hover:opacity-90 mr-1"
+                className="mx-auto object-cover rounded-full h-8 w-8 cursor-pointer hover:opacity-90 mr-1"
             />
           </div>
         </div>

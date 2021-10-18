@@ -8,5 +8,5 @@ module.exports = {
   variants: {
     extend: { margin: ["last", "first"] },
   },
-  plugins: [require("tailwind-scrollbar-hide"), require("@tailwindcss/forms")],
+  plugins: [require("tailwind-scrollbar-hide"), require("@tailwindcss/forms"), require("@tailwindcss/line-clamp")],
 };
