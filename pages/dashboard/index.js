@@ -7,7 +7,7 @@ import Layout from "../../components/Layout/Layout";
 import candidates from "../../candidates.json";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Dashboard({ candidates, positions, regions }) {
   const { loading, isAuthenticated } = useSelector((state) => state.auth);
@@ -27,14 +27,11 @@ function Dashboard({ candidates, positions, regions }) {
     search: "",
   });
 
-  if (typeof window !== "undefined" && !loading && !isAuthenticated)
-    router.push("/auth/login");
+  // if (typeof window !== "undefined" && !loading && !isAuthenticated) router.push("/auth/login");
 
   function applyFilter() {
     setIsOpen(false);
-    setFilteredCandidates(
-      filterByScore(filterCandidates(candidates, filter), filter)
-    );
+    setFilteredCandidates(filterByScore(filterCandidates(candidates, filter), filter));
   }
 
   function resetFilters() {
@@ -170,7 +167,7 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      candidates: candidates.slice(0, 100),
+      candidates: candidates.slice(0, 20),
       positions: [
         { name: "All positions" },
         { name: "Software Engineer" },
