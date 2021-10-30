@@ -6,10 +6,10 @@ function Create() {
       name: "Software Engineering",
       description:
         "This a Software Engineering job description and it is not long. It will be great to get an experienced person on board which will have good interview results.",
-      jobId: "JR242",
+      jobId: "JR243",
     };
 
-    const res = await fetch("/api/template", {
+    const res = await fetch("/api/templates", {
       method: "POST",
       headers: {
         Accept: "application/json",

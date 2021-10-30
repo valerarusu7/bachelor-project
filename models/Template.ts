@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import MUUID from "uuid-mongodb";
 
-const TemplateSchema = new mongoose.Schema({
+const Schema = mongoose.Schema;
+
+const TemplateSchema = new Schema({
   _id: {
-    type: "object",
-    value: { type: "Buffer" },
-    default: () => MUUID.v4(),
+    type: mongoose.Types.ObjectId,
+    auto: true,
   },
   name: {
     type: String,
@@ -19,9 +19,10 @@ const TemplateSchema = new mongoose.Schema({
   created: Date,
   jobId: {
     type: String,
+    unique: true,
     required: true,
   },
 });
 
-module.exports =
-  mongoose.models.Template || mongoose.model("Template", TemplateSchema);
+export default mongoose.models.Template ||
+  mongoose.model("Template", TemplateSchema);
