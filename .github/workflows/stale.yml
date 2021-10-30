@@ -1,0 +1,19 @@
+# This workflow warns and then closes issues and PRs that have had no activity for a specified amount of time.
+name: Mark stale pull requests
+
+on:
+  schedule:
+  - cron: "0 8 * * Tue-Fri"
+  # Runs every wednesday 10am Danish time
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v4
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-pr-message: 'This PR is stale because it has been open 3 days with no activity. Remove stale label or comment or this will be closed in 1 day.'
+          close-pr-message: 'This issue was closed because it has been stalled for 1 day with no activity.'
+          days-before-stale: 3
+          days-before-close: 1
