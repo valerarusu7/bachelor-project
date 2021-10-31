@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import dbConnect from "../../../utils/dbConnect";
+import connectDB from "../../../middleware/mongodb";
 import Template from "../../../models/Template";
+import JobPosition from "../../../models/JobPosition";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const id: string = req.query.id as string;
 
   if (req.method === "GET") {
     try {
-      await dbConnect();
-      const template = await Template.findById(id);
+      const template = await Template.findById(id).lean();
       if (template == null) {
         return res.status(404).json({
           success: false,
@@ -16,9 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
       }
 
-      return res.status(200).json({
-        template,
-      });
+      return res.status(200).json(template);
     } catch (error) {
       return res.status(404).json({ success: false, error: error });
     }
@@ -26,10 +24,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "PUT") {
     try {
-      await dbConnect();
-      await Template.findByIdAndUpdate(id, req.body, {
-        new: true,
-      });
+      const template = req.body;
+      JobPosition.countDocuments(
+        { _id: template.jobId },
+        async function (err, count) {
+          if (count == 1) {
+            await Template.findByIdAndUpdate(id, template, {
+              new: true,
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "Template should be linked with existing job id.",
+            });
+          }
+        }
+      );
 
       return res.status(200).json({
         success: true,
@@ -42,7 +52,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "DELETE") {
     try {
-      await dbConnect();
       await Template.findByIdAndDelete(id);
       return res.status(200).json({ success: true });
     } catch (error) {
@@ -50,3 +59,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 };
+
+export default connectDB(handler);

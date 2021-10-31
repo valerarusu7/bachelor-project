@@ -19,8 +19,9 @@ const TemplateSchema = new Schema({
   created: Date,
   jobId: {
     type: String,
-    unique: true,
     required: true,
+    unique: true,
+    ref: "JobPosition",
   },
 });
 
