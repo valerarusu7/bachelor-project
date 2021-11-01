@@ -1,59 +1,67 @@
-export function filterCandidates(candidates, filter) {
-  if (filter.region.name !== "All regions" && filter.position.name !== "All positions") {
-    if (filter.filterAll) {
-      return candidates.filter((candidate) => candidate.region == filter.region.name && candidate.position == filter.position.name);
-    } else if (filter.filterCompleted) {
+export function filterCandidates(
+  candidates,
+  position,
+  region,
+  filterAll,
+  filterCompleted,
+  filterPending,
+  filterFavorite,
+  score,
+  disableScore
+) {
+  if (region.name !== "All regions" && position.name !== "All positions") {
+    if (filterAll) {
+      return candidates.filter((candidate) => candidate.region == region.name && candidate.position == position.name);
+    } else if (filterCompleted) {
       return candidates.filter(
-        (candidate) => candidate.completed == true && candidate.region == filter.region.name && candidate.position == filter.position.name
+        (candidate) => candidate.completed == true && candidate.region == region.name && candidate.position == position.name
       );
-    } else if (filter.filterPending) {
+    } else if (filterPending) {
       return candidates.filter(
-        (candidate) => candidate.completed == false && candidate.region == filter.region.name && candidate.position == filter.position.name
+        (candidate) => candidate.completed == false && candidate.region == region.name && candidate.position == position.name
       );
-    } else if (filter.filterFavorite) {
+    } else if (filterFavorite) {
       return candidates.filter(
-        (candidate) => candidate.favorite == true && candidate.region == filter.region.name && candidate.position == filter.position.name
+        (candidate) => candidate.favorite == true && candidate.region == region.name && candidate.position == position.name
       );
     }
-  } else if (filter.position.name !== "All positions") {
-    if (filter.filterAll) {
-      return candidates.filter((candidate) => candidate.position == filter.position.name);
-    } else if (filter.filterCompleted) {
-      return candidates.filter((candidate) => candidate.completed == true && candidate.position == filter.position.name);
-    } else if (filter.filterPending) {
-      return candidates.filter((candidate) => candidate.completed == false && candidate.position == filter.position.name);
-    } else if (filter.filterFavorite) {
-      return candidates.filter((candidate) => candidate.favorite == true && candidate.position == filter.position.name);
+  } else if (position.name !== "All positions") {
+    if (filterAll) {
+      return candidates.filter((candidate) => candidate.position == position.name);
+    } else if (filterCompleted) {
+      return candidates.filter((candidate) => candidate.completed == true && candidate.position == position.name);
+    } else if (filterPending) {
+      return candidates.filter((candidate) => candidate.completed == false && candidate.position == position.name);
+    } else if (filterFavorite) {
+      return candidates.filter((candidate) => candidate.favorite == true && candidate.position == position.name);
     }
-  } else if (filter.region.name !== "All regions") {
-    if (filter.filterAll) {
-      return candidates.filter((candidate) => candidate.region == filter.region.name);
-    } else if (filter.filterCompleted) {
-      return candidates.filter((candidate) => candidate.completed == true && candidate.region == filter.region.name);
-    } else if (filter.filterPending) {
-      return candidates.filter((candidate) => candidate.completed == false && candidate.region == filter.region.name);
-    } else if (filter.filterFavorite) {
-      return candidates.filter((candidate) => candidate.favorite == true && candidate.region == filter.region.name);
+  } else if (region.name !== "All regions") {
+    if (filterAll) {
+      return candidates.filter((candidate) => candidate.region == region.name);
+    } else if (filterCompleted) {
+      return candidates.filter((candidate) => candidate.completed == true && candidate.region == region.name);
+    } else if (filterPending) {
+      return candidates.filter((candidate) => candidate.completed == false && candidate.region == region.name);
+    } else if (filterFavorite) {
+      return candidates.filter((candidate) => candidate.favorite == true && candidate.region == region.name);
     }
   } else {
-    if (filter.filterAll) {
-      if (!filter.disableScore) {
-        return candidates.filter((candidate) => candidate.score > filter.score[0] && candidate.score <= filter.score[1]);
+    if (filterAll) {
+      if (!disableScore) {
+        return candidates.filter((candidate) => candidate.score > score[0] && candidate.score <= score[1]);
       } else {
         return candidates;
       }
-    } else if (filter.filterCompleted) {
+    } else if (filterCompleted) {
       return candidates.filter((candidate) => candidate.completed == true);
-    } else if (filter.filterPending) {
+    } else if (filterPending) {
       return candidates.filter((candidate) => candidate.completed == false);
-    } else if (filter.filterFavorite) {
+    } else if (filterFavorite) {
       return candidates.filter((candidate) => candidate.favorite == true);
     }
   }
 }
 
-export function filterByScore(candidates, filter) {
-  return !filter.disableScore
-    ? candidates.filter((candidate) => candidate.score > filter.score[0] && candidate.score <= filter.score[1])
-    : candidates;
+export function filterByScore(candidates, disableScore, score) {
+  return !disableScore ? candidates.filter((candidate) => candidate.score > score[0] && candidate.score <= score[1]) : candidates;
 }
