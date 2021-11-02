@@ -1,10 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
 
 import FormInput from "../components/Landing Page/FormInput";
-import { register as registerCompanyUser } from "../store/reducers/authSlice";
+// import { register as registerCompanyUser } from "../store/reducers/authSlice";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { yupResolver } from '@hookform/resolvers/yup/dist/yup.umd'
 import { registerSchema } from "../helpers/formSchemas";
 import PasswordCheckItem from "../components/Landing Page/PasswordtCheckItem";
 import { BsCheckCircleFill } from "react-icons/bs";
@@ -20,24 +19,24 @@ function BecomeACustomer() {
   } = useForm(formOptions);
   const router = useRouter();
 
-  const { isAuthenticated, register_success, loading } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+  // const { isAuthenticated, register_success, loading } = useSelector((state) => state.auth);
+  // const dispatch = useDispatch();
 
   const password = watch("password", "");
   const re_password = watch("re_password", "");
 
   const onSubmit = async ({ company_name, company_website, first_name, last_name, email, password, re_password }) => {
-    if (dispatch && dispatch !== null && dispatch !== undefined) {
-      if (registerSchema.isValid({ company_name, company_website, first_name, last_name, email, password, re_password })) {
-        dispatch(registerCompanyUser(company_name, company_website, first_name, last_name, email, password, re_password, true));
-        router.replace("/auth/login");
-      }
-    }
+    // if (dispatch && dispatch !== null && dispatch !== undefined) {
+    //   if (registerSchema.isValid({ company_name, company_website, first_name, last_name, email, password, re_password })) {
+    //     dispatch(registerCompanyUser(company_name, company_website, first_name, last_name, email, password, re_password, true));
+    //     router.replace("/auth/login");
+    //   }
+    // }
   };
 
-  if (typeof window !== "undefined" && isAuthenticated) router.push("/dashboard");
+  // if (typeof window !== "undefined" && isAuthenticated) router.push("/dashboard");
 
-  if (register_success) router.push("/login");
+  // if (register_success) router.push("/login");
 
   return (
     <form action="#" method="POST" onSubmit={handleSubmit(onSubmit)}>
@@ -143,7 +142,7 @@ function BecomeACustomer() {
           </div>
         </div>
         <div className="flex justify-center items-center p-4">
-          {loading ? (
+          {false ? (
             "Loading..."
           ) : (
             <button type="submit" className="bg-blue-300 w-32 cursor-pointer rounded-lg shadow-md p-1 font-semibold">

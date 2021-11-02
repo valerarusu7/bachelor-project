@@ -17,6 +17,8 @@
     "@reduxjs/toolkit": "^1.6.2",
     "@tailwindcss/forms": "^0.3.3",
     "@tailwindcss/line-clamp": "^0.2.2",
+    "@types/node": "^16.11.6",
+    "@types/react": "^17.0.33",
     "bcrypt": "^5.0.1",
     "chart.js": "^3.5.1",
     "cookie": "^0.4.1",
