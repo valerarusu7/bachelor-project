@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../middleware/mongodb";
 import Template from "../../../models/Template";
 import JobPosition from "../../../models/JobPosition";
+import Task from "../../../models/Task";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
@@ -24,7 +25,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         { _id: body.jobId },
         async function (err, count) {
           if (count == 1) {
-            const template = await Template.create(req.body);
+            const template = await Template.create(body);
+
+            const tasks = body["tasks"].map((task) => ({
+              ...task,
+              templateId: template._id,
+            }));
+
+            await Task.insertMany(tasks);
+
             return res
               .status(201)
               .json({ success: true, templateId: template._id.toString() });

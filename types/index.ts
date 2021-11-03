@@ -1,3 +1,7 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import { Document, Types } from "mongoose";
+import { string } from "yup";
+
 export type IHeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
 
 // Pages
@@ -29,6 +33,7 @@ export interface IPosition {
   type: string;
   posted: string;
 }
+
 export interface IPositions {
   name: string;
 }
@@ -108,15 +113,33 @@ export interface IUserFormValues {
 }
 
 export interface ITemplate {
-  id: number;
+  _id?: string;
   name: string;
   description: string;
-  created: string;
-  multiple: boolean;
-  mail: boolean;
-  single: boolean;
-  code: boolean;
-  tasks: number;
+  companyId: string;
+  jobId: string;
+  tasks: Array<ITask>;
+  createdAt?: string;
+  multiple?: boolean;
+  mail?: boolean;
+  single?: boolean;
+  code?: boolean;
+  tasksLength?: number;
+}
+
+export interface ITask {
+  _id?: string;
+  question: string;
+  taskType: string;
+  order: number;
+  choices?: IChoice[];
+  templateId?: string;
+}
+
+export interface IChoice {
+  _id?: string;
+  value: string;
+  isCorrect: boolean;
 }
 
 export interface ITemplatesProps {
@@ -133,4 +156,47 @@ export interface ITimelineItem {
   candidate?: ICandidates;
   time?: string;
   show?: boolean;
+}
+
+export type AsyncRequestHandler = (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => Promise<any>;
+
+export interface ICompany extends Document {
+  name: string;
+  website?: string;
+}
+
+export interface IJobPosition extends Document {
+  name: string;
+  openings: number;
+  targetHireDate: Date;
+  status: string;
+  requestCompletedDate: Date;
+  profile: string;
+  supervisoryOrganization: string;
+  recruitingStartDate: Date;
+}
+
+export interface ITemplateDocument extends Document {
+  name: string;
+  description: string;
+  createdAt?: Date;
+  companyId: Types.ObjectId;
+  jobId: string;
+}
+
+export interface ITaskDocument extends Document {
+  question: string;
+  taskType: string;
+  order: number;
+  correctChoice: string;
+  choices: Array<IChoice>;
+  templateId: Types.ObjectId;
+}
+
+export interface IChoiceDocument extends Document {
+  value: string;
+  isCorrect: boolean;
 }

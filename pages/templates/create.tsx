@@ -1,12 +1,37 @@
 import Layout from "../../components/Layout/Layout";
+import { ITask, ITemplate, IChoice } from "../../types";
 
 function Create() {
   const createTemplate = async () => {
-    let newTemplate = {
+    const choice1: IChoice = {
+      value: "10",
+      isCorrect: false,
+    };
+
+    const choice2: IChoice = {
+      value: "11",
+      isCorrect: false,
+    };
+
+    const choice3: IChoice = {
+      value: "12",
+      isCorrect: true,
+    };
+
+    const task: ITask = {
+      question: "Hey! How are you doing. Do you have a few seconds for me?",
+      taskType: "Multiple",
+      order: 1,
+      choices: [choice1, choice2, choice3],
+    };
+
+    const template: ITemplate = {
       name: "Software Engineering",
       description:
         "This a Software Engineering job description and it is not long. It will be great to get an experienced person on board which will have good interview results.",
-      jobId: "JR243",
+      companyId: "6182887f8a051eb01be80084",
+      jobId: "JR200",
+      tasks: [task],
     };
 
     const res = await fetch("/api/templates", {
@@ -15,7 +40,7 @@ function Create() {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newTemplate),
+      body: JSON.stringify(template),
     });
 
     if (res.ok) {
@@ -26,7 +51,7 @@ function Create() {
   };
 
   return (
-    <Layout header='Create new template'>
+    <Layout header="Create new template">
       <div>
         <p>Create New Template</p>
         <button

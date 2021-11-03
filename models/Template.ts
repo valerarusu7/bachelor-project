@@ -1,29 +1,37 @@
-import mongoose from "mongoose";
+import { Schema, model, models } from "mongoose";
+import { ITemplateDocument } from "../types";
 
-const Schema = mongoose.Schema;
+const TemplateSchema = new Schema<ITemplateDocument>(
+  {
+    _id: {
+      type: Schema.Types.ObjectId,
+      auto: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      maxLength: [256, "Description cannot be more than 256 characters."],
+    },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      unique: true,
+      ref: "Company",
+    },
+    jobId: {
+      type: String,
+      required: true,
+      unique: true,
+      ref: "JobPosition",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const TemplateSchema = new Schema({
-  _id: {
-    type: mongoose.Types.ObjectId,
-    auto: true,
-  },
-  name: {
-    type: String,
-    required: true,
-    maxlength: [64, "Name cannot be more than 64 characters."],
-  },
-  description: {
-    type: String,
-    maxLength: [256, "Description cannot be more than 256 characters."],
-  },
-  created: Date,
-  jobId: {
-    type: String,
-    required: true,
-    unique: true,
-    ref: "JobPosition",
-  },
-});
-
-export default mongoose.models.Template ||
-  mongoose.model("Template", TemplateSchema);
+export default models.Template ||
+  model<ITemplateDocument>("Template", TemplateSchema);
