@@ -7,22 +7,25 @@ export function filterCandidates(
   filterPending,
   filterFavorite,
   score,
-  disableScore
+  disableScore,
 ) {
   if (region.name !== "All regions" && position.name !== "All positions") {
     if (filterAll) {
       return candidates.filter((candidate) => candidate.region == region.name && candidate.position == position.name);
     } else if (filterCompleted) {
       return candidates.filter(
-        (candidate) => candidate.completed == true && candidate.region == region.name && candidate.position == position.name
+        (candidate) =>
+          candidate.completed == true && candidate.region == region.name && candidate.position == position.name,
       );
     } else if (filterPending) {
       return candidates.filter(
-        (candidate) => candidate.completed == false && candidate.region == region.name && candidate.position == position.name
+        (candidate) =>
+          candidate.completed == false && candidate.region == region.name && candidate.position == position.name,
       );
     } else if (filterFavorite) {
       return candidates.filter(
-        (candidate) => candidate.favorite == true && candidate.region == region.name && candidate.position == position.name
+        (candidate) =>
+          candidate.favorite == true && candidate.region == region.name && candidate.position == position.name,
       );
     }
   } else if (position.name !== "All positions") {
@@ -63,5 +66,7 @@ export function filterCandidates(
 }
 
 export function filterByScore(candidates, disableScore, score) {
-  return !disableScore ? candidates.filter((candidate) => candidate.score > score[0] && candidate.score <= score[1]) : candidates;
+  return !disableScore
+    ? candidates.filter((candidate) => candidate.score > score[0] && candidate.score <= score[1])
+    : candidates;
 }

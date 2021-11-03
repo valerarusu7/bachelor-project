@@ -1,10 +1,10 @@
 import { BellIcon } from "@heroicons/react/outline";
 
 export interface HeaderProps {
-  header:  string
+  header: string;
 }
 
-function Header({ header } : HeaderProps) {
+function Header({ header }: HeaderProps) {
   return (
     <header className=" dark:bg-gray-700 h-16 relative z-40 w-full items-center flex justify-end p-1 transition duration-500">
       <div className="flex items-center justify-between w-full">
@@ -18,7 +18,7 @@ function Header({ header } : HeaderProps) {
           <div className="flex items-center">
             <img
               src="https://www.cityam.com/wp-content/uploads/2021/01/Manchester-United-v-Manchester-City---Premier-League-1290892183-960x640.jpg"
-                className="mx-auto object-cover rounded-full h-8 w-8 cursor-pointer hover:opacity-90 mr-1"
+              className="mx-auto object-cover rounded-full h-8 w-8 cursor-pointer hover:opacity-90 mr-1"
             />
           </div>
         </div>

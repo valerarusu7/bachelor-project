@@ -2,14 +2,13 @@ import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { IHeroIcon } from "../../types";
 
-
-export interface NavLinkProps{
-  name: string,
-  href: string,
-  Icon: IHeroIcon
+export interface NavLinkProps {
+  name: string;
+  href: string;
+  Icon: IHeroIcon;
 }
 
-function NavLink({ name, href, Icon } : NavLinkProps) {
+function NavLink({ name, href, Icon }: NavLinkProps) {
   const router = useRouter();
   const activeClassName = "active text-blue-500 bg-gray-900";
 

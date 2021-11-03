@@ -8,7 +8,7 @@ function Task({ task }: ITaskObject) {
   function returnTask() {
     switch (task.taskType) {
       case "email":
-        return <EmailTask task={task} />;
+        return <EmailTask />;
       case "multiple":
         return <MultipleTask />;
       case "single":

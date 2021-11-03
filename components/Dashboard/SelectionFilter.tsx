@@ -26,7 +26,11 @@ function SelectionFilter({ data, selected, setSelected }: any) {
                 >
                   {({ selected, active }) => (
                     <>
-                      <span className={`${selected ? "font-medium text-blue-600" : "font-normal"} block truncate flex items-center`}>
+                      <span
+                        className={`${
+                          selected ? "font-medium text-blue-600" : "font-normal"
+                        } block truncate flex items-center`}
+                      >
                         {/* {item.code ? (
                           <img className="h-4 w-4 mr-1" src={`https://www.countryflags.io/${item?.code?.toLowerCase()}/shiny/64.png`} />
                         ) : null} */}

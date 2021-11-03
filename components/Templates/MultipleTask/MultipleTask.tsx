@@ -5,17 +5,22 @@ import { addChoice, selectTemplate, setTasks } from "../../../store/reducers/tem
 import EmailChoice from "../Choice";
 
 function MultipleTask() {
-  const dispatch = useAppDispatch()
-  const {templateChoices, templateTask, templateTasks} = useAppSelector(selectTemplate)
-  const [question, setQuestion] = useState('')
+  const dispatch = useAppDispatch();
+  const { templateChoices, templateTask, templateTasks } = useAppSelector(selectTemplate);
+  const [question, setQuestion] = useState("");
 
   function saveTask() {
-      dispatch(setTasks([...templateTasks, {
-      ...templateTask,
-      question: question,
-      choices: templateChoices,
-      order: templateTasks.length + 1
-    }]));
+    dispatch(
+      setTasks([
+        ...templateTasks,
+        {
+          ...templateTask,
+          question: question,
+          choices: templateChoices,
+          order: templateTasks.length + 1,
+        },
+      ]),
+    );
   }
 
   return (
@@ -27,10 +32,7 @@ function MultipleTask() {
       </div>
       <div className="w-full mt-8 p-2">
         <div>
-          <label
-            htmlFor="company-website"
-            className="block text-md font-medium text-gray-700"
-          >
+          <label htmlFor="company-website" className="block text-md font-medium text-gray-700">
             Question
           </label>
           <div className="mt-1 flex rounded-md shadow-sm">
@@ -46,10 +48,7 @@ function MultipleTask() {
 
         <div className="mt-6 flex items-center">
           <div className="w-1/3">
-            <label
-              htmlFor="company-website"
-              className="block text-md font-medium text-gray-700"
-            >
+            <label htmlFor="company-website" className="block text-md font-medium text-gray-700">
               Choices
             </label>
           </div>
@@ -57,21 +56,25 @@ function MultipleTask() {
 
         <div className="mt-4">
           {templateChoices.map((choice, idx) => (
-            <EmailChoice
-              key={idx}
-            id={idx + 1 }
-          />
+            <EmailChoice key={idx} id={idx + 1} />
           ))}
-          {templateChoices.length <= 4 ? ( <div className="mt-2">
-            <button className="rounded-lg text-white bg-gradient-to-tr from-purple-500 to-purple-400 pl-4 pr-4 pt-2 pb-2 font-semibold hover:opacity-80" onClick={() => dispatch(addChoice())}>
-              Add choice
-            </button>
-          </div>
-) : null} 
+          {templateChoices.length <= 4 ? (
+            <div className="mt-2">
+              <button
+                className="rounded-lg text-white bg-gradient-to-tr from-purple-500 to-purple-400 pl-4 pr-4 pt-2 pb-2 font-semibold hover:opacity-80"
+                onClick={() => dispatch(addChoice())}
+              >
+                Add choice
+              </button>
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-8 flex items-center justify-end">
-          <button className="bg-green-500 text-white font-semibold pl-4 pr-4 pt-2 pb-2 rounded-lg shadow-lg hover:opacity-80" onClick={() => saveTask()}>
+          <button
+            className="bg-green-500 text-white font-semibold pl-4 pr-4 pt-2 pb-2 rounded-lg shadow-lg hover:opacity-80"
+            onClick={() => saveTask()}
+          >
             Save
           </button>
         </div>

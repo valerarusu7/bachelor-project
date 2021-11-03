@@ -4,7 +4,7 @@ import EmailChoice from "../Choice";
 import { MdEmail } from "react-icons/md";
 import { VscTasklist } from "react-icons/vsc";
 
-function EmailTask({ task }) {
+function EmailTask() {
   return (
     <div className="bg-white mt-10 rounded-lg  p-4 shadow-lg relative">
       <div className="bg-red-200 w-full flex justify-center items-center">
@@ -14,10 +14,7 @@ function EmailTask({ task }) {
       </div>
       <div className="w-full mt-8 p-2">
         <div>
-          <label
-            htmlFor="company-website"
-            className="block text-md font-medium text-gray-700"
-          >
+          <label htmlFor="company-website" className="block text-md font-medium text-gray-700">
             Email content
           </label>
           <div className="mt-1 flex rounded-md shadow-sm">
@@ -31,10 +28,7 @@ function EmailTask({ task }) {
 
         <div className="mt-6 flex items-center">
           <div className="w-1/3">
-            <label
-              htmlFor="company-website"
-              className="block text-md font-medium text-gray-700"
-            >
+            <label htmlFor="company-website" className="block text-md font-medium text-gray-700">
               Email answer
             </label>
           </div>
@@ -59,18 +53,8 @@ function EmailTask({ task }) {
         </div>
 
         <div className="mt-4">
-          <EmailChoice
-            id={1}
-            onChange={(e) => console.log(e.target.value)}
-            prefferedChoice={true}
-            color="red"
-          />
-          <EmailChoice
-            id={2}
-            onChange={(e) => console.log(e.target.value)}
-            prefferedChoice={false}
-            color="red"
-          />
+          <EmailChoice id={1} />
+          <EmailChoice id={2} />
           <div className="mt-2">
             <button className="rounded-lg text-white bg-gradient-to-tr from-red-500 to-red-400 pl-4 pr-4 pt-2 pb-2 font-semibold hover:opacity-80">
               Add choice

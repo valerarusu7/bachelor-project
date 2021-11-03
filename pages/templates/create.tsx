@@ -1,9 +1,5 @@
 import { BiCodeAlt, BiSelectMultiple } from "react-icons/bi";
-import {
-  selectTemplate,
-  setShow,
-  setTask,
-} from "../../store/reducers/template";
+import { selectTemplate, setShow, setTask } from "../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 import { BsQuestion } from "react-icons/bs";
@@ -17,8 +13,7 @@ import { useState } from "react";
 
 function Create() {
   const dispatch = useAppDispatch();
-  const { templateTasks, templateTask, showAddTask } =
-    useAppSelector(selectTemplate);
+  const { templateTasks, templateTask, showAddTask } = useAppSelector(selectTemplate);
   const [tasks, setTasks] = useState(templateTasks);
 
   function addEmailTask() {}
@@ -36,7 +31,7 @@ function Create() {
   }
 
   function addMultipleTask() {
-        dispatch(setShow(false));
+    dispatch(setShow(false));
     // create temporary tasks to fill in the details
     let newTask = {
       taskType: "multiple",
@@ -45,7 +40,6 @@ function Create() {
     };
     setTasks([...tasks, newTask]);
     dispatch(setTask(newTask));
-
   }
 
   return (
@@ -59,9 +53,7 @@ function Create() {
         {showAddTask ? (
           <div className="flex justify-center mt-8">
             <div className="border-2 border-dashed border-gray-500 h-56 rounded-lg p-2 flex flex-col justify-center  w-full">
-              <div className="flex justify-center font-bold text-gray-700 mb-12 text-xl ">
-                Add new task
-              </div>
+              <div className="flex justify-center font-bold text-gray-700 mb-12 text-xl ">Add new task</div>
               <div className="flex justify-evenly items-center ">
                 <TaskType
                   Icon={BsQuestion}
@@ -82,21 +74,27 @@ function Create() {
                   taskName="Email"
                   color="red"
                   disabled={false}
-                  onClick={() => { return null }}
+                  onClick={() => {
+                    return null;
+                  }}
                 />
                 <TaskType
                   Icon={BiCodeAlt}
                   taskName="Coding"
                   color="blue"
                   disabled={true}
-                  onClick={() => { return null }}
+                  onClick={() => {
+                    return null;
+                  }}
                 />
                 <TaskType
                   Icon={VideoCameraIcon}
                   taskName="Video question"
                   color="orange"
                   disabled={true}
-                  onClick={() => { return null }}
+                  onClick={() => {
+                    return null;
+                  }}
                 />
               </div>
             </div>

@@ -2,16 +2,16 @@ import { forwardRef } from "react";
 import { FieldErrors } from "react-hook-form";
 
 export interface SettingsInputProps {
-  label: string,
-  type: string,
-  id: string,
-  placeholder: string,
-  value: string | number | readonly string[] | undefined,
-  errors: FieldErrors,
-  edit: boolean,
+  label: string;
+  type: string;
+  id: string;
+  placeholder: string;
+  value: string | number | readonly string[] | undefined;
+  errors: FieldErrors;
+  edit: boolean;
 }
 
-const SettingsInput = ({ label, type, id, placeholder, value, errors, edit } : SettingsInputProps, ref : any) => {
+const SettingsInput = ({ label, type, id, placeholder, value, errors, edit }: SettingsInputProps, ref: any) => {
   return (
     <div className="grid grid-cols-3 gap-6">
       <div className="col-span-3 sm:col-span-2">

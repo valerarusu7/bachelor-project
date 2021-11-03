@@ -16,9 +16,7 @@ function Candidate({ candidate }: ICandidateProps) {
           <div className="flex items-center">
             <div className="mr-2">
               <div className="border-blue-400 bg-blue-200 text-blue-500 w-8 h-8 border-2 rounded-full p-2 flex items-center justify-center">
-                <p className="font-semibold text-sm">
-                  {stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}
-                </p>
+                <p className="font-semibold text-sm">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
               </div>
             </div>
             <span>{`${candidate.firstName} ${candidate.lastName}`}</span>
@@ -56,11 +54,7 @@ function Candidate({ candidate }: ICandidateProps) {
         <td className="py-3 px-6 text-center">
           <div className="flex items-center justify-center ">
             <span>
-              {candidate.time !== null ? (
-                <p>{candidate.time}</p>
-              ) : (
-                <BanIcon className="h-6 w-6 text-gray-500" />
-              )}
+              {candidate.time !== null ? <p>{candidate.time}</p> : <BanIcon className="h-6 w-6 text-gray-500" />}
             </span>
           </div>
         </td>
@@ -81,11 +75,7 @@ function Candidate({ candidate }: ICandidateProps) {
                   : null
               } font-bold`}
             >
-              {candidate.score != 0 ? (
-                <p>{`${candidate.score}%`}</p>
-              ) : (
-                <BanIcon className="h-6 w-6" />
-              )}
+              {candidate.score != 0 ? <p>{`${candidate.score}%`}</p> : <BanIcon className="h-6 w-6" />}
             </span>
           </div>
         </td>

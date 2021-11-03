@@ -7,14 +7,17 @@ export type TemplateState = {
   templateTasks: ITask[];
   templateTask: ITask;
   showAddTask: boolean;
-  templateChoices: IChoice[]
+  templateChoices: IChoice[];
 };
 
 const initialState: TemplateState = {
   templateTasks: [],
   templateTask: { question: "", order: 0, taskType: "" },
   showAddTask: true,
-  templateChoices: [{ value: '', isCorrect: false}, { value: '', isCorrect: false}]
+  templateChoices: [
+    { value: "", isCorrect: false },
+    { value: "", isCorrect: false },
+  ],
 };
 
 export const templateSlice = createSlice({
@@ -31,25 +34,25 @@ export const templateSlice = createSlice({
       state.showAddTask = action.payload;
     },
     setChoices(state, action) {
-      state.templateChoices = action.payload
+      state.templateChoices = action.payload;
     },
     addChoice(state) {
       if (state.templateChoices.length <= 4) {
-          state.templateChoices = [...state.templateChoices, { value: '', isCorrect: false} ]
+        state.templateChoices = [...state.templateChoices, { value: "", isCorrect: false }];
       }
     },
     editChoice(state, action) {
-      let newChoice = action.payload
-      let choices = state.templateChoices
+      let newChoice = action.payload;
+      let choices = state.templateChoices;
       choices.map((choice, idx) => {
         if (idx === action.payload.id) {
-          choices[idx] = newChoice
+          choices[idx] = newChoice;
         }
-      })
+      });
     },
     removeChoice(state, action) {
-      state.templateChoices = state.templateChoices.filter(item => item.id !== action.payload)
-    }
+      state.templateChoices = state.templateChoices.filter((item) => item.id !== action.payload);
+    },
   },
 
   extraReducers: {
@@ -65,5 +68,5 @@ export const templateSlice = createSlice({
 
 export const selectTemplate = (state: RootState) => state.template;
 
-export const { setTasks, setTask, setShow , setChoices, addChoice, editChoice, removeChoice} = templateSlice.actions;
+export const { setTasks, setTask, setShow, setChoices, addChoice, editChoice, removeChoice } = templateSlice.actions;
 export default templateSlice.reducer;

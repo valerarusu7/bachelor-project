@@ -3,11 +3,11 @@ import Sidebar from "./Sidebar";
 import { motion } from "framer-motion";
 
 export interface LayoutProps {
-  children: JSX.Element[] | JSX.Element,
-  header: string 
+  children: JSX.Element[] | JSX.Element;
+  header: string;
 }
 
-function Layout({ children, header } : LayoutProps) {
+function Layout({ children, header }: LayoutProps) {
   return (
     <div className="light">
       <div className="bg-gray-200 dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
@@ -18,7 +18,7 @@ function Layout({ children, header } : LayoutProps) {
             <div className="border-t border-gray-300" />
           </div>
           <div className="overflow-auto h-screen mt-2 p-1 pb-24 relative scrollbar-hide transition duration-500">
-              {children}
+            {children}
           </div>
         </div>
       </div>

@@ -26,11 +26,7 @@ function Sidebar() {
               />
             </div>
           </div>
-          <NavLink
-            name="Dashboard"
-            href="/dashboard"
-            Icon={PresentationChartBarIcon}
-          />
+          <NavLink name="Dashboard" href="/dashboard" Icon={PresentationChartBarIcon} />
           <NavLink name="Templates" href="/templates" Icon={TemplateIcon} />
           <NavLink name="Positions" href="/positions" Icon={BriefcaseIcon} />
           <NavLink name="Reports" href="/reports" Icon={ChartBarIcon} />

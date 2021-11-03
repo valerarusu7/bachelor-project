@@ -1,8 +1,4 @@
-import {
-  selectTemplate,
-  setShow,
-  setTasks,
-} from "../../../store/reducers/template";
+import { selectTemplate, setShow, setTasks } from "../../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { useEffect, useState } from "react";
 
@@ -43,10 +39,7 @@ function QuestionTask() {
       <div className="w-full mt-8 p-2">
         {edit ? (
           <div>
-            <label
-              htmlFor="company-website"
-              className="block text-md font-medium text-gray-700"
-            >
+            <label htmlFor="company-website" className="block text-md font-medium text-gray-700">
               Question
             </label>
             <div className="mt-1 flex rounded-md shadow-sm">
@@ -60,7 +53,9 @@ function QuestionTask() {
             </div>
           </div>
         ) : (
-          <div><p className='font-semibold text-gray-700 text-xl'>{`Question: ${question}`}</p></div>
+          <div>
+            <p className="font-semibold text-gray-700 text-xl">{`Question: ${question}`}</p>
+          </div>
         )}
         {edit ? (
           <div className="mt-8 flex items-center justify-end">

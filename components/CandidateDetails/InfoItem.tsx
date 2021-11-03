@@ -1,6 +1,6 @@
 export interface infoItemProps {
-  label: string,
-  value: string
+  label: string;
+  value: string;
 }
 
 function InfoItem({ label, value }: infoItemProps) {
