@@ -1,8 +1,6 @@
-import { ITask, ITaskObject } from "../../../types";
 import {
   selectTemplate,
   setShow,
-  setTask,
   setTasks,
 } from "../../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
@@ -17,12 +15,11 @@ function QuestionTask() {
   const [edit, setEdit] = useState(false);
 
   useEffect(() => {
-    if (templateTask._id === undefined) {
+    if (templateTask.id === undefined) {
       setEdit(true);
     } else {
       setEdit(false);
     }
-    console.log(edit);
   }, []);
 
   function saveTask() {
@@ -35,8 +32,6 @@ function QuestionTask() {
     setEdit(false);
     dispatch(setShow(true));
   }
-
-  console.log(templateTasks);
 
   return (
     <div className="bg-white mt-10 rounded-lg  p-4 shadow-lg relative">
@@ -65,7 +60,7 @@ function QuestionTask() {
             </div>
           </div>
         ) : (
-          <div>{question}</div>
+          <div><p className='font-semibold text-gray-700 text-xl'>{`Question: ${question}`}</p></div>
         )}
         {edit ? (
           <div className="mt-8 flex items-center justify-end">

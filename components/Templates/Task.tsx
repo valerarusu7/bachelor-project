@@ -1,4 +1,4 @@
-import { ITask, ITaskObject } from "../../types";
+import { ITaskObject } from "../../types";
 
 import EmailTask from "./EmailTask/EmailTask";
 import MultipleTask from "./MultipleTask/MultipleTask";
@@ -10,7 +10,7 @@ function Task({ task }: ITaskObject) {
       case "email":
         return <EmailTask task={task} />;
       case "multiple":
-        return <MultipleTask task={task} />;
+        return <MultipleTask />;
       case "single":
         return <QuestionTask />;
       default:
@@ -18,7 +18,7 @@ function Task({ task }: ITaskObject) {
     }
   }
 
-  return <div>{returnTask()} </div>;
+  return <>{returnTask()}</>;
 }
 
 export default Task;

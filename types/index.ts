@@ -160,7 +160,7 @@ export interface ITaskType {
 }
 
 export interface ITask {
-  _id?: string;
+  id?: string;
   question: string;
   taskType: string;
   order: number;
@@ -170,7 +170,7 @@ export interface ITask {
 
 export interface ITaskObject {
   task: {
-    _id?: string;
+    id?: string;
     question: string;
     taskType: string;
     order: number;
@@ -180,7 +180,7 @@ export interface ITaskObject {
 }
 
 export interface IChoice {
-  _id?: string;
+  id?: string;
   value: string;
   isCorrect: boolean;
 }

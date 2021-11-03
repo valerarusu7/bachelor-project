@@ -25,18 +25,28 @@ function Create() {
 
   function addSingleTask() {
     dispatch(setShow(false));
+    // create temporary tasks to fill in the details
     let newTask = {
       taskType: "single",
       order: templateTasks.length,
       question: "",
     };
-    let newTasks = [...tasks];
-    newTasks.push(newTask);
-    setTasks(newTasks);
+    setTasks([...tasks, newTask]);
     dispatch(setTask(newTask));
   }
 
-  function addMultipleTask() {}
+  function addMultipleTask() {
+        dispatch(setShow(false));
+    // create temporary tasks to fill in the details
+    let newTask = {
+      taskType: "multiple",
+      order: templateTasks.length,
+      question: "",
+    };
+    setTasks([...tasks, newTask]);
+    dispatch(setTask(newTask));
+
+  }
 
   return (
     <Layout header="Create new template">
@@ -65,24 +75,28 @@ function Create() {
                   taskName="Multiple question"
                   color="purple"
                   disabled={false}
+                  onClick={() => addMultipleTask()}
                 />
                 <TaskType
                   Icon={MdEmail}
                   taskName="Email"
                   color="red"
                   disabled={false}
+                  onClick={() => { return null }}
                 />
                 <TaskType
                   Icon={BiCodeAlt}
                   taskName="Coding"
                   color="blue"
                   disabled={true}
+                  onClick={() => { return null }}
                 />
                 <TaskType
                   Icon={VideoCameraIcon}
                   taskName="Video question"
-                  color="yellow"
+                  color="orange"
                   disabled={true}
+                  onClick={() => { return null }}
                 />
               </div>
             </div>
