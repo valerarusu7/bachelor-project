@@ -1,10 +1,11 @@
 import { BiCodeAlt, BiSelectMultiple } from "react-icons/bi";
 
 import { BsQuestion } from "react-icons/bs";
-import Link from 'next/link'
+import { ITemplateObject } from "../../types";
+import Link from "next/link";
 import { MdEmail } from "react-icons/md";
 
-function Template({ template }) {
+function Template({ template }: ITemplateObject) {
   return (
     <Link href={`/templates/${template.id}`}>
       <div className="bg-white pt-4 pb-2 rounded-lg shadow-xl cursor-pointer ">

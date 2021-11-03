@@ -1,3 +1,5 @@
+import { MouseEventHandler } from "react";
+
 export type IHeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
 
 // Pages
@@ -119,6 +121,20 @@ export interface ITemplate {
   tasks: number;
 }
 
+export interface ITemplateObject {
+  template: {
+    id: number;
+    name: string;
+    description: string;
+    created: string;
+    multiple: boolean;
+    mail: boolean;
+    single: boolean;
+    code: boolean;
+    tasks: number;
+  };
+}
+
 export interface ITemplatesProps {
   templates: ITemplate[];
 }
@@ -133,4 +149,38 @@ export interface ITimelineItem {
   candidate?: ICandidates;
   time?: string;
   show?: boolean;
+}
+
+export interface ITaskType {
+  Icon: IHeroIcon;
+  taskName: string;
+  color: string;
+  disabled: boolean;
+  onClick: MouseEventHandler<HTMLDivElement>;
+}
+
+export interface ITask {
+  _id?: string;
+  question: string;
+  taskType: string;
+  order: number;
+  choices?: IChoice[];
+  templateId?: string;
+}
+
+export interface ITaskObject {
+  task: {
+    _id?: string;
+    question: string;
+    taskType: string;
+    order: number;
+    choices?: IChoice[];
+    templateId?: string;
+  };
+}
+
+export interface IChoice {
+  _id?: string;
+  value: string;
+  isCorrect: boolean;
 }
