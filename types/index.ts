@@ -133,7 +133,6 @@ export interface ITask {
   taskType: string;
   order: number;
   choices?: IChoice[];
-  templateId?: string;
 }
 
 export interface IChoice {

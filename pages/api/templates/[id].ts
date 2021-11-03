@@ -34,8 +34,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         { _id: template.jobId },
         async function (err, count) {
           if (count == 1) {
-            await Template.findByIdAndUpdate(id, template, {
-              new: true,
+            const updatedTemplate = await Template.findByIdAndUpdate(
+              id,
+              template,
+              {
+                new: true,
+              }
+            );
+
+            return res.status(200).json({
+              success: true,
+              updatedTemplate,
             });
           } else {
             return res.status(400).json({
@@ -45,11 +54,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           }
         }
       );
-
-      return res.status(200).json({
-        success: true,
-        templateId: id,
-      });
     } catch (error) {
       return res.status(404).json({ success: false, error: error });
     }
