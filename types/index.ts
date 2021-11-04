@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Document, Types } from "mongoose";
-import { string } from "yup";
+import { MouseEventHandler } from "react";
 
 export type IHeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
 
@@ -13,7 +13,7 @@ export interface IDashboardProps {
 
 // Objects
 export interface ICandidates {
-  id: number;
+  _id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -27,7 +27,7 @@ export interface ICandidates {
 }
 
 export interface IPosition {
-  id: string;
+  _id: string;
   name: string;
   location: string;
   type: string;
@@ -44,7 +44,7 @@ export interface IPositionsProps {
 
 export interface IPositionProps {
   position: {
-    id: string;
+    _id: string;
     name: string;
     location: string;
     type: string;
@@ -58,7 +58,7 @@ export interface IRegions {
 
 export interface ICandidateProps {
   candidate: {
-    id: number;
+    _id: number;
     firstName: string;
     lastName: string;
     email: string;
@@ -141,6 +141,20 @@ export interface IChoice {
   isCorrect: boolean;
 }
 
+export interface ITemplateObject {
+  template: {
+    _id: number;
+    name: string;
+    description: string;
+    created: string;
+    multiple: boolean;
+    mail: boolean;
+    single: boolean;
+    code: boolean;
+    tasks: number;
+  };
+}
+
 export interface ITemplatesProps {
   templates: ITemplate[];
 }
@@ -157,17 +171,51 @@ export interface ITimelineItem {
   show?: boolean;
 }
 
+export interface ITaskType {
+  Icon: IHeroIcon;
+  taskName: string;
+  color: string;
+  disabled: boolean;
+  onClick: MouseEventHandler<HTMLDivElement>;
+}
+
+export interface ITask {
+  _id?: string;
+  question: string;
+  taskType: string;
+  order: number;
+  choices?: IChoice[];
+  templateId?: string;
+}
+
+export interface ITaskObject {
+  task: {
+    _id?: string;
+    question: string;
+    taskType: string;
+    order: number;
+    choices?: IChoice[];
+    templateId?: string;
+  };
+}
+
+export interface IChoice {
+  _id?: string;
+  value: string;
+  isCorrect: boolean;
+}
+
 export type AsyncRequestHandler = (
   req: NextApiRequest,
   res: NextApiResponse
 ) => Promise<any>;
 
-export interface ICompany extends Document {
+export interface ICompanyDocument extends Document {
   name: string;
   website?: string;
 }
 
-export interface IJobPosition extends Document {
+export interface IPositionDocument extends Document {
   name: string;
   openings: number;
   targetHireDate: Date;

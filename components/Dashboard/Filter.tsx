@@ -121,7 +121,11 @@ function Filter({ applyFilter, isOpen, onClose }: FilterProps) {
                       Filter by Regions
                     </label>
                   </div>
-                  <SelectionFilter data={dashboardRegions} selected={dashboardRegion} setSelected={(e: any) => dispatch(setRegion(e))} />
+                  <SelectionFilter
+                    data={dashboardRegions}
+                    selected={dashboardRegion}
+                    setSelected={(e: any) => dispatch(setRegion(e))}
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -185,10 +189,14 @@ function Filter({ applyFilter, isOpen, onClose }: FilterProps) {
                 <div className="mt-4 ">
                   <div className="flex justify-between items-center">
                     <div className="flex mb-2 ">
-                      <MenuAlt1Icon className={`h-6 w-6 ${dashboardDisableScore ? "text-gray-400" : "text-gray-600"}  mr-1`} />
+                      <MenuAlt1Icon
+                        className={`h-6 w-6 ${dashboardDisableScore ? "text-gray-400" : "text-gray-600"}  mr-1`}
+                      />
                       <label
                         htmlFor="filter-candidates"
-                        className={`block text-md font-medium ${dashboardDisableScore ? "text-gray-400" : "text-gray-700"}`}
+                        className={`block text-md font-medium ${
+                          dashboardDisableScore ? "text-gray-400" : "text-gray-700"
+                        }`}
                       >
                         Filter by Score
                       </label>

@@ -33,3 +33,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+#eslint
+.eslintrc.js
+
+#prettier
+.prettierrc.js

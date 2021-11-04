@@ -1,9 +1,8 @@
-
 import FormInput from "../components/Landing Page/FormInput";
 // import { register as registerCompanyUser } from "../store/reducers/authSlice";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { yupResolver } from '@hookform/resolvers/yup/dist/yup.umd'
+import { yupResolver } from "@hookform/resolvers/yup/dist/yup.umd";
 import { registerSchema } from "../helpers/formSchemas";
 import PasswordCheckItem from "../components/Landing Page/PasswordtCheckItem";
 import { BsCheckCircleFill } from "react-icons/bs";
@@ -80,10 +79,24 @@ function BecomeACustomer() {
                 label="First name"
                 {...register("first_name")}
               />
-              <FormInput type="text" id="last_name" placeholder="Last name" errors={errors} label="Last name" {...register("last_name")} />
+              <FormInput
+                type="text"
+                id="last_name"
+                placeholder="Last name"
+                errors={errors}
+                label="Last name"
+                {...register("last_name")}
+              />
             </div>
             <div>
-              <FormInput type="text" id="email" placeholder="Email" errors={errors} label="Email" {...register("email")} />
+              <FormInput
+                type="text"
+                id="email"
+                placeholder="Email"
+                errors={errors}
+                label="Email"
+                {...register("email")}
+              />
               <div className="grid xl:grid-cols-2 sm:grid-cols-1 xl:gap-4">
                 <FormInput
                   type="password"
@@ -102,7 +115,8 @@ function BecomeACustomer() {
                 />
               </div>
               <div>
-                {/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-+_!@#$%^&*., ?])(?=.{8,})/.test(password) && password === re_password ? (
+                {/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-+_!@#$%^&*., ?])(?=.{8,})/.test(password) &&
+                password === re_password ? (
                   <div className="flex items-center text-green-500 font-semibold">
                     <BsCheckCircleFill className="h-4 w-4 mr-1" />
                     <p>Password requirements met</p>
@@ -134,7 +148,11 @@ function BecomeACustomer() {
                       check={/(?=.*[-+_!@#$%^&*., ?])/.test(password)}
                       password={password}
                     />
-                    <PasswordCheckItem requirement="The passwords should be equal" check={password === re_password} password={password} />
+                    <PasswordCheckItem
+                      requirement="The passwords should be equal"
+                      check={password === re_password}
+                      password={password}
+                    />
                   </div>
                 )}
               </div>

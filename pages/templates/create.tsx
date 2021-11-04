@@ -1,65 +1,112 @@
+import { BiCodeAlt, BiSelectMultiple } from "react-icons/bi";
+import {
+  selectTemplate,
+  setShow,
+  setTask,
+} from "../../store/reducers/template";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+
+import { BsQuestion } from "react-icons/bs";
+import { ITask } from "../../types";
 import Layout from "../../components/Layout/Layout";
-import { ITask, ITemplate, IChoice } from "../../types";
+import { MdEmail } from "react-icons/md";
+import Task from "../../components/Templates/Task";
+import TaskType from "../../components/Templates/TaskType";
+import { VideoCameraIcon } from "@heroicons/react/solid";
+import { useState } from "react";
 
 function Create() {
-  const createTemplate = async () => {
-    const choice1: IChoice = {
-      value: "10",
-      isCorrect: false,
+  const dispatch = useAppDispatch();
+  const { templateTasks, templateTask, showAddTask } =
+    useAppSelector(selectTemplate);
+  const [tasks, setTasks] = useState(templateTasks);
+
+  function addEmailTask() {}
+
+  function addSingleTask() {
+    dispatch(setShow(false));
+    // create temporary tasks to fill in the details
+    let newTask = {
+      taskType: "single",
+      order: templateTasks.length,
+      question: "",
     };
+    setTasks([...tasks, newTask]);
+    dispatch(setTask(newTask));
+  }
 
-    const choice2: IChoice = {
-      value: "11",
-      isCorrect: false,
+  function addMultipleTask() {
+    dispatch(setShow(false));
+    // create temporary tasks to fill in the details
+    let newTask: ITask = {
+      taskType: "multiple",
+      order: templateTasks.length,
+      question: "How are you doing",
     };
-
-    const choice3: IChoice = {
-      value: "12",
-      isCorrect: true,
-    };
-
-    const task: ITask = {
-      question: "Hey! How are you doing. Do you have a few seconds for me?",
-      taskType: "Multiple",
-      order: 1,
-      choices: [choice1, choice2, choice3],
-    };
-
-    const template: ITemplate = {
-      name: "Software Engineering",
-      description:
-        "This a Software Engineering job description and it is not long. It will be great to get an experienced person on board which will have good interview results.",
-      companyId: "6182887f8a051eb01be80084",
-      jobId: "JR200",
-      tasks: [task],
-    };
-
-    const res = await fetch("/api/templates", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(template),
-    });
-
-    if (res.ok) {
-      console.log("success");
-    } else {
-      console.log("fail");
-    }
-  };
+    setTasks([...tasks, newTask]);
+    dispatch(setTask(newTask));
+  }
 
   return (
     <Layout header="Create new template">
-      <div>
-        <p>Create New Template</p>
-        <button
-          className="bg-blue-500 p-2 text-white rounded-lg font-semibold"
-          onClick={() => createTemplate()}
-        >
-          Create template
-        </button>
+      <div className="m-2">
+        <div>
+          {tasks.map((task: ITask, idx: number) => (
+            <Task task={task} key={idx} />
+          ))}
+        </div>
+        {showAddTask ? (
+          <div className="flex justify-center mt-8">
+            <div className="border-2 border-dashed border-gray-500 h-56 rounded-lg p-2 flex flex-col justify-center  w-full">
+              <div className="flex justify-center font-bold text-gray-700 mb-12 text-xl ">
+                Add new task
+              </div>
+              <div className="flex justify-evenly items-center ">
+                <TaskType
+                  Icon={BsQuestion}
+                  taskName="Question"
+                  color="green"
+                  disabled={false}
+                  onClick={() => addSingleTask()}
+                />
+                <TaskType
+                  Icon={BiSelectMultiple}
+                  taskName="Multiple question"
+                  color="purple"
+                  disabled={false}
+                  onClick={() => addMultipleTask()}
+                />
+                <TaskType
+                  Icon={MdEmail}
+                  taskName="Email"
+                  color="red"
+                  disabled={false}
+                  onClick={() => {
+                    return null;
+                  }}
+                />
+                <TaskType
+                  Icon={BiCodeAlt}
+                  taskName="Coding"
+                  color="blue"
+                  disabled={true}
+                  onClick={() => {
+                    return null;
+                  }}
+                />
+                <TaskType
+                  Icon={VideoCameraIcon}
+                  taskName="Video question"
+                  color="orange"
+                  disabled={true}
+                  onClick={() => {
+                    return null;
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </Layout>
   );
