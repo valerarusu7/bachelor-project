@@ -1,7 +1,7 @@
 import { Schema, model, models } from "mongoose";
-import { ITaskDocument, IChoice } from "../types";
+import { ITaskDocument, IChoiceDocument } from "../types";
 
-const ChoiceSchema = new Schema<IChoice>({
+const ChoiceSchema = new Schema<IChoiceDocument>({
   _id: {
     type: Schema.Types.ObjectId,
     auto: true,

@@ -21,8 +21,10 @@ function Settings({ settings }: ISettingsProps) {
 export default Settings;
 
 export const getServerSideProps = async () => {
-  // const res = await fetch("/api/templates");
-  // const data = await res.json();
+  const res = await fetch(
+    "http://localhost:3000/api/company/6182887f8a051eb01be80084"
+  );
+  const data = await res.json();
   const userData: IUser = {
     user: {
       firstName: "Valeriu",
@@ -31,7 +33,7 @@ export const getServerSideProps = async () => {
       birthday: "1999-11-24",
     },
   };
-  const companyData: ICompanySettingsProps = { company: { name: "Stibo", website: "stibo.com" } };
+  const companyData: ICompanySettingsProps = { company: data };
 
   return {
     props: {

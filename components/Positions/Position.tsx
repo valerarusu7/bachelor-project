@@ -3,12 +3,12 @@ import { IPositionProps } from "../../types";
 
 function Position({ position }: IPositionProps) {
   return (
-    <Link href={`positions/${position.id}`}>
+    <Link href={`positions/${position._id}`}>
       <tr className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer hover:overflow-hidden">
         <td className="py-3 px-6 text-left whitespace-nowrap">
           <div className="flex items-center">
             <div className="mr-2">
-              <p className="font-semibold text-gray-500">{position.id}</p>
+              <p className="font-semibold text-gray-500">{position._id}</p>
             </div>
           </div>
         </td>
@@ -26,7 +26,9 @@ function Position({ position }: IPositionProps) {
           </div>
         </td>
         <td className="py-3 px-6 text-center">
-          <div className="flex items-center justify-center">{position.posted}</div>
+          <div className="flex items-center justify-center">
+            {position.recruitingStartDate}
+          </div>
         </td>
       </tr>
     </Link>

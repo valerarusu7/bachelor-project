@@ -51,7 +51,7 @@ export const templateSlice = createSlice({
       });
     },
     removeChoice(state, action) {
-      state.templateChoices = state.templateChoices.filter((item) => item.id !== action.payload);
+      state.templateChoices = state.templateChoices.filter((item) => item._id !== action.payload);
     },
   },
 

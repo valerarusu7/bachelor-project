@@ -1,7 +1,7 @@
 import { Schema, Types, model, models } from "mongoose";
-import { ICompany } from "../types";
+import { ICompanyDocument } from "../types";
 
-const CompanySchema = new Schema<ICompany>({
+const CompanySchema = new Schema<ICompanyDocument>({
   _id: {
     type: Schema.Types.ObjectId,
     auto: true,
@@ -17,4 +17,5 @@ const CompanySchema = new Schema<ICompany>({
   },
 });
 
-export default models.Company || model<ICompany>("Company", CompanySchema);
+export default models.Company ||
+  model<ICompanyDocument>("Company", CompanySchema);

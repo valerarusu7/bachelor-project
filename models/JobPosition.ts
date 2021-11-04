@@ -1,17 +1,18 @@
 import { Schema, model, models } from "mongoose";
-import { IJobPosition } from "../types";
+import { IPositionDocument } from "../types";
 
-const JobPositionSchema = new Schema<IJobPosition>({
+const JobPositionSchema = new Schema<IPositionDocument>({
   _id: String,
   name: String,
   openings: Number,
   targetHireDate: Date,
   status: String,
   requestCompletedDate: Date,
+  location: String,
   profile: String,
   supervisoryOrganization: String,
   recruitingStartDate: Date,
 });
 
 export default models.JobPosition ||
-  model<IJobPosition>("JobPosition", JobPositionSchema);
+  model<IPositionDocument>("JobPosition", JobPositionSchema);

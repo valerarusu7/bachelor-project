@@ -8,9 +8,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
       const templates = await Template.find().lean();
-      const result = templates.map((template) =>
-        Object.assign(template, { _id: template._id.toString() })
-      );
+
+      const modifiedTemplates = templates.map(async (template) => {
+        const tasks = await Task.find({
+          templateId: templates[0]._id,
+        });
+        const taskTypes = tasks.map((task) => task.taskType);
+        if (taskTypes.length != 0) {
+          template["multiple"] = taskTypes.includes("multiple");
+          template["mail"] = taskTypes.includes("mail");
+          template["single"] = taskTypes.includes("single");
+          template["code"] = taskTypes.includes("code");
+          template["tasks"] = taskTypes.length;
+        }
+        return template;
+      });
+
+      const result = await Promise.all(modifiedTemplates);
 
       return res.status(200).json(result);
     } catch (error) {

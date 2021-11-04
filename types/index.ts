@@ -13,7 +13,7 @@ export interface IDashboardProps {
 
 // Objects
 export interface ICandidates {
-  _id: number;
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -31,7 +31,7 @@ export interface IPosition {
   name: string;
   location: string;
   type: string;
-  posted: string;
+  recruitingStartDate: string;
 }
 
 export interface IPositions {
@@ -48,7 +48,7 @@ export interface IPositionProps {
     name: string;
     location: string;
     type: string;
-    posted: string;
+    recruitingStartDate: string;
   };
 }
 export interface IRegions {
@@ -146,7 +146,7 @@ export interface ITemplateObject {
     _id: number;
     name: string;
     description: string;
-    created: string;
+    createdAt: string;
     multiple: boolean;
     mail: boolean;
     single: boolean;
@@ -221,6 +221,7 @@ export interface IPositionDocument extends Document {
   targetHireDate: Date;
   status: string;
   requestCompletedDate: Date;
+  location: string;
   profile: string;
   supervisoryOrganization: string;
   recruitingStartDate: Date;
