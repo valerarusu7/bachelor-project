@@ -12,6 +12,11 @@ const JobPositionSchema = new Schema<IPositionDocument>({
   profile: String,
   supervisoryOrganization: String,
   recruitingStartDate: Date,
+  companyId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "Company",
+  },
 });
 
 export default models.JobPosition ||

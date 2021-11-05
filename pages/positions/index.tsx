@@ -1,6 +1,7 @@
 import Layout from "../../components/Layout/Layout";
 import PositionList from "../../components/Positions/PositionList";
 import { IPosition, IPositionsProps } from "../../types";
+import { baseUrl } from "../../config";
 
 function Positions({ positions }: IPositionsProps) {
   return (
@@ -13,7 +14,7 @@ function Positions({ positions }: IPositionsProps) {
 export default Positions;
 
 export const getServerSideProps = async () => {
-  const res = await fetch("http://localhost:3000/api/positions");
+  const res = await fetch(`${baseUrl}/api/positions`);
   const data = await res.json();
   const positionData: IPosition[] = data;
   return {

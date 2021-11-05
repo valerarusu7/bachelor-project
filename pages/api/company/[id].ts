@@ -2,6 +2,20 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../middleware/mongodb";
 import Company from "../../../models/Company";
 
+/**
+ * @swagger
+ * /api/company/{id}:
+ *   get:
+ *     description: Returns the company information
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: UUID string of the company to get information
+ */
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const id: string = req.query.id as string;
 

@@ -1,4 +1,5 @@
 import { ITemplate, ITemplatesProps } from "../../types";
+import { baseUrl } from "../../config";
 
 import Layout from "../../components/Layout/Layout";
 import Link from "next/link";
@@ -26,7 +27,7 @@ function Templates({ templates }: ITemplatesProps) {
 export default Templates;
 
 export const getServerSideProps = async () => {
-  const res = await fetch("http://localhost:3000/api/templates");
+  const res = await fetch(`${baseUrl}/api/templates`);
   const data = await res.json();
   const templatesData: ITemplate[] = data;
   return {

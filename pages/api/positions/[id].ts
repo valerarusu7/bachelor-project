@@ -2,6 +2,20 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../middleware/mongodb";
 import JobPosition from "../../../models/JobPosition";
 
+/**
+ * @swagger
+ * /api/positions/{id}:
+ *   get:
+ *     description: Returns the position information details
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: UUID string of the position to get information
+ */
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const id: string = req.query.id as string;
 

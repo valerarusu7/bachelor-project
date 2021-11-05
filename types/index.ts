@@ -225,6 +225,7 @@ export interface IPositionDocument extends Document {
   profile: string;
   supervisoryOrganization: string;
   recruitingStartDate: Date;
+  companyId: Types.ObjectId;
 }
 
 export interface ITemplateDocument extends Document {

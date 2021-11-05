@@ -5,6 +5,7 @@ import NotificationsSettings from "../components/Settings/NotificationsSettings"
 import PasswordSettings from "../components/Settings/PasswordSettings";
 import UserSettings from "../components/Settings/UserSettings";
 import { ICompanySettingsProps, ISettingsProps, IUser } from "../types";
+import { baseUrl } from "../config";
 
 function Settings({ settings }: ISettingsProps) {
   return (
@@ -21,9 +22,7 @@ function Settings({ settings }: ISettingsProps) {
 export default Settings;
 
 export const getServerSideProps = async () => {
-  const res = await fetch(
-    "http://localhost:3000/api/company/6182887f8a051eb01be80084"
-  );
+  const res = await fetch(`${baseUrl}/api/company/6182887f8a051eb01be80084`);
   const data = await res.json();
   const userData: IUser = {
     user: {
