@@ -8,9 +8,7 @@ function Candidate({ candidate }: ICandidateProps) {
   return (
     <Link href={`dashboard/candidate/${candidate._id}`}>
       <tr
-        className={`${
-          candidate._id % 2 ? "bg-white" : "bg-gray-50"
-        } border-b border-gray-200 hover:bg-gray-100 cursor-pointer hover:overflow-hidden`}
+        className={`border-b border-gray-200 hover:bg-gray-100 cursor-pointer hover:overflow-hidden`}
       >
         <td className="py-3 px-6 text-left whitespace-nowrap">
           <div className="flex items-center">
