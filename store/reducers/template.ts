@@ -6,14 +6,14 @@ import { createSlice } from "@reduxjs/toolkit";
 export type TemplateState = {
   templateTasks: ITask[];
   templateTask: ITask;
-  showAddTask: boolean;
+  showModal: boolean;
   templateChoices: IChoice[];
 };
 
 const initialState: TemplateState = {
   templateTasks: [],
   templateTask: { question: "", order: 0, taskType: "" },
-  showAddTask: true,
+  showModal: false,
   templateChoices: [
     { value: "", isCorrect: false },
     { value: "", isCorrect: false },
@@ -31,7 +31,8 @@ export const templateSlice = createSlice({
       state.templateTask = action.payload;
     },
     setShow(state, action) {
-      state.showAddTask = action.payload;
+      state.showModal = action.payload;
+      state.templateChoices = initialState.templateChoices;
     },
     setChoices(state, action) {
       state.templateChoices = action.payload;

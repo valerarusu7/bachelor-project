@@ -6,7 +6,7 @@ import { VscTasklist } from "react-icons/vsc";
 
 function EmailTask() {
   return (
-    <div className="bg-white mt-10 rounded-lg  p-4 shadow-lg relative">
+    <div className="bg-white mt-10 rounded-lg  p-4 shadow-lg relative w-1/2">
       <div className="bg-red-200 w-full flex justify-center items-center">
         <div className="rounded-full bg-gradient-to-tr from-red-500 to-red-400 h-12 w-12 flex justify-center items-center disabled:opacity-50 transition transform duration-400 ease-in-out absolute -top-4 shadow-lg">
           <MdEmail className="text-white h-8 w-8" />

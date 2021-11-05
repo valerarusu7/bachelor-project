@@ -163,22 +163,19 @@ export interface ITask {
   id?: string;
   question: string;
   taskType: string;
-  order: number;
+  order?: number;
   choices?: IChoice[];
   templateId?: string;
 }
 
 export interface ITaskObject {
-  task: {
-    id?: string;
-    question: string;
-    taskType: string;
-    order: number;
-    choices?: IChoice[];
-    templateId?: string;
-  };
+  task: ITask;
 }
 
+export interface ITaskTableObject {
+  task: ITask;
+  idx: number;
+}
 export interface IChoice {
   id?: string;
   value: string;

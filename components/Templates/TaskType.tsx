@@ -2,7 +2,12 @@ import { ITaskType } from "../../types";
 
 function TaskType({ Icon, taskName, color, disabled, onClick }: ITaskType) {
   return (
-    <div className="group flex flex-col justify-center items-center w-1/6 cursor-pointer" onClick={onClick}>
+    <div
+      className={`group flex flex-col justify-center items-center w-1/6 ${
+        disabled ? "cursor-not-allowed" : "cursor-pointer "
+      }`}
+      onClick={onClick}
+    >
       <button
         className={`${
           disabled ? "cursor-not-allowed" : "cursor-pointer group-hover:opacity-70"

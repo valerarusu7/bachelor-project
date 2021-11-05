@@ -27,7 +27,7 @@
     "eslint": "^8.1.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^5.2.1",
     "isomorphic-unfetch": "^3.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.12",
