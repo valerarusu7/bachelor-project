@@ -22,9 +22,7 @@ function Task({ task, idx }: ITaskTableObject) {
       key={task.id}
       value={task}
       as="tr"
-      className={`${
-        idx % 2 ? "bg-white" : "bg-gray-50"
-      } border-b border-gray-200 hover:bg-gray-100 cursor-move hover:overflow-hidden`}
+      className={`${idx % 2 ? "bg-white" : "bg-gray-50"} border-b border-gray-200 hover:bg-gray-100 cursor-move hover:overflow-hidden`}
     >
       <td className="py-3 px-6 text-center whitespace-nowrap">
         <p className="text-xl font-bold">{idx + 1}</p>

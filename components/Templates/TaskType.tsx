@@ -3,9 +3,7 @@ import { ITaskType } from "../../types";
 function TaskType({ Icon, taskName, color, disabled, onClick }: ITaskType) {
   return (
     <div
-      className={`group flex flex-col justify-center items-center w-1/6 ${
-        disabled ? "cursor-not-allowed" : "cursor-pointer "
-      }`}
+      className={`group flex flex-col justify-center items-center w-1/6 ${disabled ? "cursor-not-allowed" : "cursor-pointer "}`}
       onClick={onClick}
     >
       <button

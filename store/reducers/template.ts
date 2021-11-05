@@ -5,14 +5,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export type TemplateState = {
   templateTasks: ITask[];
-  templateTask: ITask;
+  templateTaskType?: string;
   showModal: boolean;
   templateChoices: IChoice[];
 };
 
 const initialState: TemplateState = {
   templateTasks: [],
-  templateTask: { question: "", order: 0, taskType: "" },
   showModal: false,
   templateChoices: [
     { value: "", isCorrect: false },
@@ -27,8 +26,8 @@ export const templateSlice = createSlice({
     setTasks(state, action) {
       state.templateTasks = action.payload;
     },
-    setTask(state, action) {
-      state.templateTask = action.payload;
+    setTaskType(state, action) {
+      state.templateTaskType = action.payload;
     },
     setShow(state, action) {
       state.showModal = action.payload;
@@ -69,5 +68,5 @@ export const templateSlice = createSlice({
 
 export const selectTemplate = (state: RootState) => state.template;
 
-export const { setTasks, setTask, setShow, setChoices, addChoice, editChoice, removeChoice } = templateSlice.actions;
+export const { setTasks, setTaskType, setShow, setChoices, addChoice, editChoice, removeChoice } = templateSlice.actions;
 export default templateSlice.reducer;

@@ -67,9 +67,7 @@ function Template({ template }: ITemplateObject) {
         </div>
 
         <div className="pb-2 pt-4 flex justify-center items-center">
-          <button className="bg-gray-800 pr-2 pl-2 pb-1 pt-1 rounded-lg text-white font-semibold hover:bg-gray-700">
-            In Use
-          </button>
+          <button className="bg-gray-800 pr-2 pl-2 pb-1 pt-1 rounded-lg text-white font-semibold hover:bg-gray-700">In Use</button>
         </div>
       </div>
     </Link>

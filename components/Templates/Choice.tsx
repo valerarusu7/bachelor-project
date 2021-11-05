@@ -39,20 +39,11 @@ function EmailChoice({ id }: IEmailChoice) {
           onChange={(e) => setStateChoice({ ...choice, value: e.target.value })}
         />
         {choice.isCorrect ? (
-          <CustomButton
-            color="green"
-            onClick={() => setStateChoice({ ...choice, isCorrect: false })}
-            customStyles="ml-4"
-          >
+          <CustomButton color="green" onClick={() => setStateChoice({ ...choice, isCorrect: false })} customStyles="ml-4">
             <CheckIcon className="h-6 w-6 text-white" />
           </CustomButton>
         ) : (
-          <CustomButton
-            color="green"
-            onClick={() => setStateChoice({ ...choice, isCorrect: true })}
-            disabled={true}
-            customStyles="ml-4"
-          >
+          <CustomButton color="green" onClick={() => setStateChoice({ ...choice, isCorrect: true })} disabled={true} customStyles="ml-4">
             <CheckIcon className="h-6 w-6 text-white" />
           </CustomButton>
         )}
