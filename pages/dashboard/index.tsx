@@ -9,8 +9,10 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectDashboard, setPosition, setPositions, setRegion, setRegions } from "../../store/reducers/dashboardSlice";
 import { IDashboardProps, ICandidates, IPositions, IRegions } from "../../types";
+import absoluteUrl from "next-absolute-url";
+import { NextPageContext } from "next";
 
-function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
+function DashboardPage({ candidates, positions, regions, apiURL }: IDashboardProps) {
   const {
     dashboardDisableScore,
     dashboardFilterAll,
@@ -46,11 +48,11 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
           dashboardFilterPending,
           dashboardFilterFavorite,
           dashboardScore,
-          dashboardDisableScore
+          dashboardDisableScore,
         ),
         dashboardDisableScore,
-        dashboardScore
-      )
+        dashboardScore,
+      ),
     );
   }
 
@@ -75,13 +77,20 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
       </div>
       <Filter isOpen={isOpen} onClose={() => applyFilter()} applyFilter={() => applyFilter()} />
       <Candidates candidates={filteredCandidates} />
+      <div>
+        <p>{apiURL}</p>
+      </div>
     </Layout>
   );
 }
 
 export default DashboardPage;
 
-export const getServerSideProps = async () => {
+export const getServerSideProps = async ({ req }: NextPageContext) => {
+  const { origin } = absoluteUrl(req);
+  const apiURL = `${origin}`;
+
+  console.log(apiURL);
   // const res = await fetch("/api/templates");
   // const data = await res.json();
   const candidateData: ICandidates[] | undefined = candidates.slice(0, 20);
@@ -107,6 +116,7 @@ export const getServerSideProps = async () => {
       candidates: candidateData,
       positions: positionData,
       regions: regionData,
+      apiURL: apiURL,
     },
   };
 };
