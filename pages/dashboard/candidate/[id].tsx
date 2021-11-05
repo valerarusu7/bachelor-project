@@ -29,7 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   const paths = data.map((candidate) => {
     return {
-      params: { id: candidate.id.toString() },
+      params: { id: candidate._id.toString() },
     };
   });
 

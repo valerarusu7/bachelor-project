@@ -42,7 +42,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   const paths = data.map((template) => {
     return {
-      params: { id: template.id.toString() },
+      params: { id: template._id.toString() },
     };
   });
 

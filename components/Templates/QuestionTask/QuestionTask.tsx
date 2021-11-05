@@ -1,4 +1,8 @@
-import { selectTemplate, setShow, setTasks } from "../../../store/reducers/template";
+import {
+  selectTemplate,
+  setShow,
+  setTasks,
+} from "../../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { useEffect, useState } from "react";
 
@@ -11,7 +15,7 @@ function QuestionTask() {
   const [edit, setEdit] = useState(false);
 
   useEffect(() => {
-    if (templateTask.id === undefined) {
+    if (templateTask._id === undefined) {
       setEdit(true);
     } else {
       setEdit(false);
@@ -39,7 +43,10 @@ function QuestionTask() {
       <div className="w-full mt-8 p-2">
         {edit ? (
           <div>
-            <label htmlFor="company-website" className="block text-md font-medium text-gray-700">
+            <label
+              htmlFor="company-website"
+              className="block text-md font-medium text-gray-700"
+            >
               Question
             </label>
             <div className="mt-1 flex rounded-md shadow-sm">

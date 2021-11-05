@@ -1,6 +1,6 @@
 export const templates = [
   {
-    id: 1,
+    _id: 1,
     name: "Solution Architect",
     description:
       "This a Solution Architect job description and it is not long. It will be great to get an experienced person on board which will have good interview results.",
@@ -12,7 +12,7 @@ export const templates = [
     tasks: 6,
   },
   {
-    id: 2,
+    _id: 2,
     name: "Software Engineering",
     description:
       "This a Software Engineering job description and it is not long. It will be great to get an experienced person on board which will have good interview results.",
@@ -24,7 +24,7 @@ export const templates = [
     tasks: 11,
   },
   {
-    id: 3,
+    _id: 3,
     name: "Backend-Developer",
     description:
       "This a Backend-Developer job description and it is not long. It will be great to get an experienced person on board which will have good interview results.",
@@ -36,7 +36,7 @@ export const templates = [
     tasks: 13,
   },
   {
-    id: 4,
+    _id: 4,
     name: "Frontend-Developer",
     description:
       "This a Frontend-Developer job description and it is not long. It will be great to get an experienced person on board which will have good interview results.",
@@ -48,7 +48,7 @@ export const templates = [
     tasks: 9,
   },
   {
-    id: 5,
+    _id: 5,
     name: "Project Manager",
     description:
       "This a Project Manager job description and it is not long. It will be great to get an experienced person on board which will have good interview results.",

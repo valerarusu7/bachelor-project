@@ -1,6 +1,6 @@
 import Candidate from "./Candidate";
 export interface Candidate {
-  id: number;
+  _id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -36,7 +36,7 @@ function Candidates({ candidates }: Candidates) {
           </thead>
           <tbody className="text-gray-600">
             {candidates.map((candidate) => (
-              <Candidate candidate={candidate} key={candidate.id} />
+              <Candidate candidate={candidate} key={candidate._id} />
             ))}
           </tbody>
         </table>
