@@ -29,14 +29,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "PUT") {
     try {
-      const template = req.body;
+      const templateData = req.body;
       JobPosition.countDocuments(
-        { _id: template.jobId },
+        { _id: templateData.jobId },
         async function (err, count) {
           if (count == 1) {
             const updatedTemplate = await Template.findByIdAndUpdate(
               id,
-              template,
+              templateData,
               {
                 new: true,
               }

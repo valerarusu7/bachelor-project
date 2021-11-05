@@ -72,9 +72,16 @@ export interface ICandidateProps {
   };
 }
 
+export interface ICompany {
+  _id?: string;
+  name: string;
+  website?: string;
+}
+
 export interface ICompanySettingsProps {
   company: {
-    name?: string;
+    _id?: string;
+    name: string;
     website?: string;
   };
 }
