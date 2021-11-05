@@ -13,7 +13,7 @@ export interface IDashboardProps {
 
 // Objects
 export interface ICandidates {
-  _id: number;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -58,7 +58,7 @@ export interface IRegions {
 
 export interface ICandidateProps {
   candidate: {
-    _id: number;
+    _id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -118,13 +118,12 @@ export interface ITemplate {
   description: string;
   companyId: string;
   jobId: string;
-  tasks: Array<ITask>;
   createdAt?: string;
   multiple?: boolean;
   mail?: boolean;
   single?: boolean;
   code?: boolean;
-  tasksLength?: number;
+  tasks?: number;
 }
 
 export interface ITask {
@@ -143,15 +142,15 @@ export interface IChoice {
 
 export interface ITemplateObject {
   template: {
-    _id: number;
+    _id?: string;
     name: string;
     description: string;
-    createdAt: string;
-    multiple: boolean;
-    mail: boolean;
-    single: boolean;
-    code: boolean;
-    tasks: number;
+    createdAt?: string;
+    multiple?: boolean;
+    mail?: boolean;
+    single?: boolean;
+    code?: boolean;
+    tasks?: number;
   };
 }
 

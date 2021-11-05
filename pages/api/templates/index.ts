@@ -3,6 +3,7 @@ import connectDB from "../../../middleware/mongodb";
 import Template from "../../../models/Template";
 import JobPosition from "../../../models/JobPosition";
 import Task from "../../../models/Task";
+import { ITask } from "../../../types";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
@@ -41,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           if (count == 1) {
             const template = await Template.create(body);
 
-            const tasks = body["tasks"].map((task) => ({
+            const tasks = body["tasks"].map((task: ITask) => ({
               ...task,
               templateId: template._id,
             }));
