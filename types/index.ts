@@ -13,7 +13,7 @@ export interface IDashboardProps {
 
 // Objects
 export interface ICandidates {
-  id: number;
+  _id: number;
   firstName: string;
   lastName: string;
   email: string;
