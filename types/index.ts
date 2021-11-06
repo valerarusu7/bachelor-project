@@ -7,7 +7,6 @@ export interface IDashboardProps {
   candidates: ICandidates[];
   positions: IPositions[];
   regions: IRegions[];
-  apiURL: string;
 }
 
 // Objects

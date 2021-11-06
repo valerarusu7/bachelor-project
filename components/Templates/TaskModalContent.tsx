@@ -21,7 +21,7 @@ function TaskModalContent() {
   useEffect(() => {
     switch (templateTaskType) {
       case "single":
-        setColor("green");
+        setColor("sky");
         break;
       case "multiple":
         setColor("purple");
@@ -59,11 +59,11 @@ function TaskModalContent() {
           pre: { opacity: 0 },
           visible: { opacity: 1 },
         }}
-        className="bg-white rounded-lg pl-4 pr-4 pt-4 pb-2  shadow-lg relative w-full"
+        className="bg-white rounded-lg pl-4 pr-4 pt-4 pb-2  shadow-lg relative w-full border-2 border-gray-300"
       >
         <div className="bg-red-200 w-full flex justify-center items-center">
           <div
-            className={`rounded-full bg-gradient-to-tr from-${color}-500 to-${color}-400 h-16 w-16 flex justify-center items-center disabled:opacity-50 transition transform duration-400 ease-in-out absolute -top-8 shadow-lg`}
+            className={`rounded-full bg-gradient-to-tr from-${color}-700 to-${color}-400 h-16 w-16 flex justify-center items-center disabled:opacity-50 transition transform duration-400 ease-in-out absolute -top-8 shadow-lg`}
           >
             {templateTaskType === "email" ? (
               <MdEmail className="text-white h-8 w-8" />

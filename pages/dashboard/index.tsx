@@ -12,7 +12,7 @@ import { IDashboardProps, ICandidates, IPositions, IRegions } from "../../types"
 import absoluteUrl from "next-absolute-url";
 import { NextPageContext } from "next";
 
-function DashboardPage({ candidates, positions, regions, apiURL }: IDashboardProps) {
+function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
   const {
     dashboardDisableScore,
     dashboardFilterAll,
@@ -77,9 +77,6 @@ function DashboardPage({ candidates, positions, regions, apiURL }: IDashboardPro
       </div>
       <Filter isOpen={isOpen} onClose={() => applyFilter()} applyFilter={() => applyFilter()} />
       <Candidates candidates={filteredCandidates} />
-      <div>
-        <p>{apiURL}</p>
-      </div>
     </Layout>
   );
 }
@@ -116,7 +113,6 @@ export const getServerSideProps = async ({ req }: NextPageContext) => {
       candidates: candidateData,
       positions: positionData,
       regions: regionData,
-      apiURL: apiURL,
     },
   };
 };

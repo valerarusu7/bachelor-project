@@ -35,7 +35,7 @@ function Create() {
           <div className="border-2 border-dashed border-gray-500 h-56 rounded-lg p-2 flex flex-col justify-center  w-full">
             <div className="flex justify-center font-bold text-gray-700 mb-12 text-xl ">Add new task</div>
             <div className="flex justify-evenly items-center ">
-              <TaskType Icon={BsQuestion} taskName="Question" color="green" disabled={false} onClick={() => addTask("single")} />
+              <TaskType Icon={BsQuestion} taskName="Question" color="sky" disabled={false} onClick={() => addTask("single")} />
               <TaskType
                 Icon={BiSelectMultiple}
                 taskName="Multiple question"
@@ -47,7 +47,7 @@ function Create() {
               <TaskType
                 Icon={BiCodeAlt}
                 taskName="Coding"
-                color="blue"
+                color="yellow"
                 disabled={true}
                 onClick={() => {
                   return null;
@@ -56,7 +56,7 @@ function Create() {
               <TaskType
                 Icon={VideoCameraIcon}
                 taskName="Video question"
-                color="blue"
+                color="orange"
                 disabled={true}
                 onClick={() => {
                   return;
