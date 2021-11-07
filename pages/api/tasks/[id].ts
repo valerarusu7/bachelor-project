@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../middleware/mongodb";
+import connectDB from "../../../utils/mongodb";
 import Task from "../../../models/Task";
 import { ITask, ITaskDocument } from "../../../types";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+connectDB();
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const id: string = req.query.id as string;
 
   if (req.method === "PUT") {
@@ -23,5 +25,3 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 };
-
-export default connectDB(handler);

@@ -1,11 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../middleware/mongodb";
+import connectDB from "../../../utils/mongodb";
 import Template from "../../../models/Template";
 import JobPosition from "../../../models/JobPosition";
 import Task from "../../../models/Task";
 import { ITask } from "../../../types";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+connectDB();
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
       const templates = await Template.find().lean();
@@ -65,5 +67,3 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 };
-
-export default connectDB(handler);

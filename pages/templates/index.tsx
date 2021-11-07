@@ -4,8 +4,9 @@ import Layout from "../../components/Layout/Layout";
 import Link from "next/link";
 import Template from "../../components/Templates/Template";
 import CustomButton from "../../components/common/CustomButton";
-import absoluteUrl from "next-absolute-url";
-import { NextPageContext } from "next";
+import connectDB from "../../utils/mongodb";
+import TemplateModel from "../../models/Template";
+import Task from "../../models/Task";
 
 function Templates({ templates }: ITemplatesProps) {
   return (
@@ -26,10 +27,34 @@ function Templates({ templates }: ITemplatesProps) {
 
 export default Templates;
 
-export const getServerSideProps = async ({ req }: NextPageContext) => {
-  const { origin } = absoluteUrl(req);
-  const res = await fetch(`${origin}/api/templates`);
-  const templatesData: ITemplate[] = await res.json();
+export const getServerSideProps = async () => {
+  connectDB();
+
+  const templates = await TemplateModel.find({})
+    .select("_id name description companyId jobId createdAt")
+    .lean();
+
+  const modifiedTemplates = templates.map(async (template) => {
+    const tasks = await Task.find({
+      templateId: template._id,
+    });
+
+    const taskTypes = tasks.map((task) => task.taskType);
+    if (taskTypes.length != 0) {
+      template["multiple"] = taskTypes.includes("multiple");
+      template["mail"] = taskTypes.includes("mail");
+      template["single"] = taskTypes.includes("single");
+      template["code"] = taskTypes.includes("code");
+      template["tasks"] = taskTypes.length;
+    }
+
+    template._id = template._id.toString();
+    template.companyId = template.companyId.toString();
+    template.createdAt = template.createdAt.toString();
+    return template;
+  });
+
+  const templatesData = await Promise.all(modifiedTemplates);
   return {
     props: {
       templates: templatesData,

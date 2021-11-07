@@ -6,7 +6,6 @@ import { useState } from "react";
 import { ICompanyFormValues, ICompanySettingsProps } from "../../types";
 
 function CompanySettings({ company }: ICompanySettingsProps) {
-  console.log(company);
   const [edit, setEdit] = useState(false);
   const [companyName, setCompanyName] = useState(company.name);
   const [companyWebsite, setCompanyWebsite] = useState(company.website);
@@ -42,7 +41,9 @@ function CompanySettings({ company }: ICompanySettingsProps) {
         onSubmit={handleSubmit(onSubmit)}
       >
         <div>
-          <label className="block text-sm font-medium text-gray-700">Company logo</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Company logo
+          </label>
           <div className="mt-1 flex items-center">
             <span className="inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100"></span>
             {edit == true ? (
@@ -57,7 +58,10 @@ function CompanySettings({ company }: ICompanySettingsProps) {
         </div>
         <div className="grid grid-cols-3 gap-6">
           <div className="col-span-3 sm:col-span-2">
-            <label htmlFor="company-website" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="company-website"
+              className="block text-sm font-medium text-gray-700"
+            >
               Website
             </label>
             {edit == true ? (
@@ -90,7 +94,9 @@ function CompanySettings({ company }: ICompanySettingsProps) {
           errors={errors}
           edit={edit}
           value={companyName}
-          {...register("company", { required: "Please enter the company name" })}
+          {...register("company", {
+            required: "Please enter the company name",
+          })}
         />
       </FormLayout>
       <Separator />

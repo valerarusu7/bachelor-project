@@ -1,10 +1,11 @@
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
 import CandidateTimeline from "../../../components/CandidateDetails/Timeline/CandidateTimeline";
 import Layout from "../../../components/Layout/Layout";
-import candidates from "../../../candidates.json";
 import { ParsedUrlQuery } from "querystring";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { ICandidateProps } from "../../../types";
+import { ICandidate, ICandidateProps } from "../../../types";
+import connectDB from "../../../utils/mongodb";
+import Candidate from "../../../models/Candidate";
 
 function CandidateDetails({ candidate }: ICandidateProps) {
   return (
@@ -24,10 +25,10 @@ function CandidateDetails({ candidate }: ICandidateProps) {
 export default CandidateDetails;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  //   const res = await fetch("https://jsonplaceholder.typicode.com/users");
-  const data = candidates;
+  connectDB();
+  const candidates: ICandidate[] = await Candidate.find({}).lean();
 
-  const paths = data.map((candidate) => {
+  const paths = candidates.map((candidate) => {
     return {
       params: { id: candidate._id.toString() },
     };
@@ -44,11 +45,20 @@ interface IParams extends ParsedUrlQuery {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
+  connectDB();
   const { id } = context.params as IParams;
-  //   const res = await fetch("https://jsonplaceholder.typicode.com/users/" + id);
-  const data = candidates[parseInt(id) - 1];
+  const candidate: ICandidate = await Candidate.findOne({ _id: id }).lean();
+  candidate._id = candidate._id.toString();
+  if (candidate.startedUtc !== undefined) {
+    candidate.startedUtc = candidate.startedUtc.toString();
+  }
+  if (candidate.completedUtc !== undefined) {
+    candidate.completedUtc = candidate.completedUtc.toString();
+  }
+
+  candidate.companyId = candidate.companyId.toString();
 
   return {
-    props: { candidate: data },
+    props: { candidate: candidate },
   };
 };

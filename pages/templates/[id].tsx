@@ -4,6 +4,8 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { BsQuestion } from "react-icons/bs";
 import { ParsedUrlQuery } from "querystring";
 import { templates } from "../../templates";
+import connectDB from "../../utils/mongodb";
+import Template from "../../models/Template";
 
 function TemplateDetails() {
   return (
@@ -37,10 +39,13 @@ function TemplateDetails() {
 export default TemplateDetails;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  //   const res = await fetch("https://jsonplaceholder.typicode.com/users");
-  const data = templates;
+  connectDB();
 
-  const paths = data.map((template) => {
+  const templates = await Template.find({})
+    .select("_id name description companyId jobId createdAt")
+    .lean();
+
+  const paths = templates.map((template) => {
     return {
       params: { id: template._id.toString() },
     };
@@ -57,10 +62,19 @@ interface IParams extends ParsedUrlQuery {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
+  connectDB();
+
   const { id } = context.params as IParams; // no longer causes error
-  const data = templates[parseInt(id) - 1];
+
+  const template = await Template.findOne({ _id: id })
+    .select("_id name description companyId jobId createdAt")
+    .lean();
+
+  template._id = template._id.toString();
+  template.companyId = template.companyId.toString();
+  template.createdAt = template.createdAt.toString();
 
   return {
-    props: { template: data },
+    props: { template: template },
   };
 };

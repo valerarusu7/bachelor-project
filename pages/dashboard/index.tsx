@@ -14,8 +14,8 @@ import {
   setRegions,
 } from "../../store/reducers/dashboardSlice";
 import { IDashboardProps, ICandidate, IPositions, IRegions } from "../../types";
-import absoluteUrl from "next-absolute-url";
-import { NextPageContext } from "next";
+import connectDB from "../../utils/mongodb";
+import Candidate from "../../models/Candidate";
 
 function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
   const {
@@ -92,10 +92,22 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
 
 export default DashboardPage;
 
-export const getServerSideProps = async ({ req }: NextPageContext) => {
-  const { origin } = absoluteUrl(req);
-  const res = await fetch(`${origin}/api/candidates`);
-  const candidateData: ICandidate[] | undefined = await res.json();
+export const getServerSideProps = async () => {
+  connectDB();
+  const candidates: ICandidate[] = await Candidate.find({}).lean();
+
+  const candidatesData = candidates.map((candidate) => {
+    candidate._id = candidate._id.toString();
+    if (candidate.startedUtc !== undefined) {
+      candidate.startedUtc = candidate.startedUtc.toString();
+    }
+    if (candidate.completedUtc !== undefined) {
+      candidate.completedUtc = candidate.completedUtc.toString();
+    }
+    candidate.companyId = candidate.companyId.toString();
+    return candidate;
+  });
+
   const positionData: IPositions[] | undefined = [
     { name: "All positions" },
     { name: "Software Engineer" },
@@ -115,7 +127,7 @@ export const getServerSideProps = async ({ req }: NextPageContext) => {
 
   return {
     props: {
-      candidates: candidateData,
+      candidates: candidatesData,
       positions: positionData,
       regions: regionData,
     },

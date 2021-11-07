@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../middleware/mongodb";
+import connectDB from "../../../utils/mongodb";
 import Candidate from "../../../models/Candidate";
 import { ICandidate } from "../../../types";
 
@@ -17,7 +17,9 @@ import { ICandidate } from "../../../types";
  *        description: UUID string of the position to get information
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+connectDB();
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
       const candidates = await Candidate.find().lean();
@@ -39,5 +41,3 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 };
-
-export default connectDB(handler);

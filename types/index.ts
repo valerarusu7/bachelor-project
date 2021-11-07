@@ -23,8 +23,8 @@ export interface ICandidate {
   completed: boolean;
   score: number;
   time: string;
-  startedUtc: Date;
-  completedUtc: Date;
+  startedUtc: string;
+  completedUtc: string;
   favorite: boolean;
   companyId: string;
   jobId: string;

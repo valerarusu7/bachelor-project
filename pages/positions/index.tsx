@@ -1,8 +1,9 @@
 import Layout from "../../components/Layout/Layout";
 import PositionList from "../../components/Positions/PositionList";
-import { IPosition, IPositionsProps } from "../../types";
-import absoluteUrl from "next-absolute-url";
-import { NextPageContext } from "next";
+import { IPosition, IPositions, IPositionsProps } from "../../types";
+import JobPosition from "../../models/JobPosition";
+import connectDB from "../../utils/mongodb";
+import positions from "../api/positions";
 
 function Positions({ positions }: IPositionsProps) {
   return (
@@ -14,13 +15,21 @@ function Positions({ positions }: IPositionsProps) {
 
 export default Positions;
 
-export const getServerSideProps = async ({ req }: NextPageContext) => {
-  const { origin } = absoluteUrl(req);
-  const res = await fetch(`${origin}/api/positions`);
-  const positionData: IPosition[] = await res.json();
+export const getServerSideProps = async () => {
+  connectDB();
+  const jobPositions = await JobPosition.find({})
+    .select("_id name location type recruitingStartDate")
+    .lean();
+  const positionsData = jobPositions.map((position) => {
+    position.recruitingStartDate = position.recruitingStartDate.toString();
+    if (position.location === undefined) {
+      position.location = null;
+    }
+    return position;
+  });
   return {
     props: {
-      positions: positionData,
+      positions: positionsData,
     },
   };
 };
