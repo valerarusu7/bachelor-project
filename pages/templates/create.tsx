@@ -1,112 +1,71 @@
 import { BiCodeAlt, BiSelectMultiple } from "react-icons/bi";
-import {
-  selectTemplate,
-  setShow,
-  setTask,
-} from "../../store/reducers/template";
+import { selectTemplate, setShow, setTasks, setTaskType } from "../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 import { BsQuestion } from "react-icons/bs";
-import { ITask } from "../../types";
 import Layout from "../../components/Layout/Layout";
 import { MdEmail } from "react-icons/md";
-import Task from "../../components/Templates/Task";
 import TaskType from "../../components/Templates/TaskType";
 import { VideoCameraIcon } from "@heroicons/react/solid";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+import TaskModal from "../../components/Templates/TaskModal";
+import Tasks from "../../components/Templates/Tasks";
 
 function Create() {
   const dispatch = useAppDispatch();
-  const { templateTasks, templateTask, showAddTask } =
-    useAppSelector(selectTemplate);
-  const [tasks, setTasks] = useState(templateTasks);
+  const { templateTasks, showModal } = useAppSelector(selectTemplate);
+  const [tasks, setStateTasks] = useState(templateTasks);
 
-  function addEmailTask() {}
+  useEffect(() => {
+    dispatch(setTasks(tasks));
+  }, [tasks]);
 
-  function addSingleTask() {
-    dispatch(setShow(false));
-    // create temporary tasks to fill in the details
-    let newTask = {
-      taskType: "single",
-      order: templateTasks.length,
-      question: "",
-    };
-    setTasks([...tasks, newTask]);
-    dispatch(setTask(newTask));
-  }
-
-  function addMultipleTask() {
-    dispatch(setShow(false));
-    // create temporary tasks to fill in the details
-    let newTask: ITask = {
-      taskType: "multiple",
-      order: templateTasks.length,
-      question: "How are you doing",
-    };
-    setTasks([...tasks, newTask]);
-    dispatch(setTask(newTask));
+  function addTask(type: string) {
+    dispatch(setTaskType(type));
+    dispatch(setShow(true));
   }
 
   return (
     <Layout header="Create new template">
       <div className="m-2">
-        <div>
-          {tasks.map((task: ITask, idx: number) => (
-            <Task task={task} key={idx} />
-          ))}
-        </div>
-        {showAddTask ? (
-          <div className="flex justify-center mt-8">
-            <div className="border-2 border-dashed border-gray-500 h-56 rounded-lg p-2 flex flex-col justify-center  w-full">
-              <div className="flex justify-center font-bold text-gray-700 mb-12 text-xl ">
-                Add new task
-              </div>
-              <div className="flex justify-evenly items-center ">
-                <TaskType
-                  Icon={BsQuestion}
-                  taskName="Question"
-                  color="green"
-                  disabled={false}
-                  onClick={() => addSingleTask()}
-                />
-                <TaskType
-                  Icon={BiSelectMultiple}
-                  taskName="Multiple question"
-                  color="purple"
-                  disabled={false}
-                  onClick={() => addMultipleTask()}
-                />
-                <TaskType
-                  Icon={MdEmail}
-                  taskName="Email"
-                  color="red"
-                  disabled={false}
-                  onClick={() => {
-                    return null;
-                  }}
-                />
-                <TaskType
-                  Icon={BiCodeAlt}
-                  taskName="Coding"
-                  color="blue"
-                  disabled={true}
-                  onClick={() => {
-                    return null;
-                  }}
-                />
-                <TaskType
-                  Icon={VideoCameraIcon}
-                  taskName="Video question"
-                  color="orange"
-                  disabled={true}
-                  onClick={() => {
-                    return null;
-                  }}
-                />
-              </div>
+        <Tasks setStateTasks={setStateTasks} />
+
+        <div className="flex justify-center mt-8">
+          <div className="border-2 border-dashed border-gray-500 h-56 rounded-lg p-2 flex flex-col justify-center  w-full">
+            <div className="flex justify-center font-bold text-gray-700 mb-12 text-xl ">Add new task</div>
+            <div className="flex justify-evenly items-center ">
+              <TaskType Icon={BsQuestion} taskName="Question" color="sky" disabled={false} onClick={() => addTask("single")} />
+              <TaskType
+                Icon={BiSelectMultiple}
+                taskName="Multiple question"
+                color="purple"
+                disabled={false}
+                onClick={() => addTask("multiple")}
+              />
+              <TaskType Icon={MdEmail} taskName="Email" color="red" disabled={false} onClick={() => addTask("email")} />
+              <TaskType
+                Icon={BiCodeAlt}
+                taskName="Coding"
+                color="yellow"
+                disabled={true}
+                onClick={() => {
+                  return null;
+                }}
+              />
+              <TaskType
+                Icon={VideoCameraIcon}
+                taskName="Video question"
+                color="orange"
+                disabled={true}
+                onClick={() => {
+                  return;
+                }}
+              />
             </div>
           </div>
-        ) : null}
+        </div>
+        <TaskModal isOpen={showModal} closeModal={() => dispatch(setShow(false))} />
       </div>
     </Layout>
   );

@@ -139,6 +139,7 @@ export interface ITask {
   taskType: string;
   order: number;
   choices?: IChoice[];
+  templateId?: string;
 }
 
 export interface IChoice {
@@ -185,26 +186,14 @@ export interface ITaskType {
   onClick: MouseEventHandler<HTMLDivElement>;
 }
 
-export interface ITask {
-  _id?: string;
-  question: string;
-  taskType: string;
-  order: number;
-  choices?: IChoice[];
-  templateId?: string;
-}
-
 export interface ITaskObject {
-  task: {
-    _id?: string;
-    question: string;
-    taskType: string;
-    order: number;
-    choices?: IChoice[];
-    templateId?: string;
-  };
+  task: ITask;
 }
 
+export interface ITaskTableObject {
+  task: ITask;
+  idx: number;
+}
 export interface IChoice {
   _id?: string;
   value: string;

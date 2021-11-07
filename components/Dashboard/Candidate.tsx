@@ -13,10 +13,8 @@ function Candidate({ candidate }: ICandidateProps) {
         <td className="py-3 px-6 text-left whitespace-nowrap">
           <div className="flex items-center">
             <div className="mr-2">
-              <div className="border-blue-400 bg-blue-200 text-blue-500 w-8 h-8 border-2 rounded-full p-2 flex items-center justify-center">
-                <p className="font-semibold text-sm">
-                  {stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}
-                </p>
+              <div className="bg-gradient-to-tr from-gray-700 to-gray-400 text-white w-8 h-8 rounded-full p-2 flex items-center justify-center">
+                <p className="font-semibold text-sm">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
               </div>
             </div>
             <span>{`${candidate.firstName} ${candidate.lastName}`}</span>
@@ -40,26 +38,20 @@ function Candidate({ candidate }: ICandidateProps) {
             <span className="font-medium">{candidate.region}</span>
           </div>
         </td>
-        <td className="py-3 px-6 text-center">
-          <span
+        <td className="py-3 px-6 text-center ">
+          <div
             className={`${
               candidate.completed == true
-                ? " bg-green-200 text-green-600 border border-green-300"
-                : " bg-yellow-200 text-yellow-600 border border-yellow-300"
+                ? " bg-gradient-to-tr from-green-500 to-green-300 text-white border"
+                : " bg-gradient-to-tr from-orange-500 to-yellow-300 text-white border"
             } py-1 px-3 rounded-full text-xs font-bold `}
           >
-            {`${candidate.completed == true ? "Completed" : "Pending"}`}
-          </span>
+            <p>{`${candidate.completed == true ? "Completed" : "Pending"}`}</p>
+          </div>
         </td>
         <td className="py-3 px-6 text-center">
           <div className="flex items-center justify-center ">
-            <span>
-              {candidate.time !== null ? (
-                <p>{candidate.time}</p>
-              ) : (
-                <BanIcon className="h-6 w-6 text-gray-500" />
-              )}
-            </span>
+            <span>{candidate.time !== null ? <p>{candidate.time}</p> : <BanIcon className="h-6 w-6 text-gray-500" />}</span>
           </div>
         </td>
         <td className="py-3 px-6 text-center">
@@ -91,9 +83,7 @@ function Candidate({ candidate }: ICandidateProps) {
           <div className="flex items-center justify-center">
             <StarIcon
               className={`${
-                candidate.favorite == true
-                  ? "text-yellow-400 hover:text-gray-400"
-                  : "text-gray-400 hover:text-yellow-400"
+                candidate.favorite == true ? "text-yellow-400 hover:text-gray-400" : "text-gray-400 hover:text-yellow-400"
               } h-8 w-8 hover:animate-pulse`}
             />
           </div>

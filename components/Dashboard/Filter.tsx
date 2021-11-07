@@ -17,6 +17,7 @@ import {
   setPosition,
   setRegion,
 } from "../../store/reducers/dashboardSlice";
+import { motion } from "framer-motion";
 
 export interface FilterProps {
   applyFilter: MouseEventHandler<HTMLButtonElement> | undefined;
@@ -121,11 +122,7 @@ function Filter({ applyFilter, isOpen, onClose }: FilterProps) {
                       Filter by Regions
                     </label>
                   </div>
-                  <SelectionFilter
-                    data={dashboardRegions}
-                    selected={dashboardRegion}
-                    setSelected={(e: any) => dispatch(setRegion(e))}
-                  />
+                  <SelectionFilter data={dashboardRegions} selected={dashboardRegion} setSelected={(e: any) => dispatch(setRegion(e))} />
                 </div>
 
                 <div className="mt-4">
@@ -189,14 +186,10 @@ function Filter({ applyFilter, isOpen, onClose }: FilterProps) {
                 <div className="mt-4 ">
                   <div className="flex justify-between items-center">
                     <div className="flex mb-2 ">
-                      <MenuAlt1Icon
-                        className={`h-6 w-6 ${dashboardDisableScore ? "text-gray-400" : "text-gray-600"}  mr-1`}
-                      />
+                      <MenuAlt1Icon className={`h-6 w-6 ${dashboardDisableScore ? "text-gray-400" : "text-gray-600"}  mr-1`} />
                       <label
                         htmlFor="filter-candidates"
-                        className={`block text-md font-medium ${
-                          dashboardDisableScore ? "text-gray-400" : "text-gray-700"
-                        }`}
+                        className={`block text-md font-medium ${dashboardDisableScore ? "text-gray-400" : "text-gray-700"}`}
                       >
                         Filter by Score
                       </label>
@@ -219,37 +212,42 @@ function Filter({ applyFilter, isOpen, onClose }: FilterProps) {
                       disabled={dashboardDisableScore}
                     />
                   </div>
-                  {!dashboardDisableScore ? (
-                    <p className="text-sm text-gray-500">{`The candidates are filtered with the score between ${dashboardScore[0]} and ${dashboardScore[1]}.`}</p>
-                  ) : null}
+                  <div className="h-2">
+                    {!dashboardDisableScore ? (
+                      <p className="text-sm text-gray-500">{`The candidates are filtered with the score between ${dashboardScore[0]} and ${dashboardScore[1]}.`}</p>
+                    ) : null}
+                  </div>
                 </div>
               </div>
               <div className="bg-gray-50 pr-4 py-3  flex justify-between">
                 <div>
-                  <button
-                    type="button"
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={() => reset()}
                   >
                     Reset filters
-                  </button>
+                  </motion.button>
                 </div>
                 <div className="flex">
-                  <button
-                    type="button"
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={onClose}
                     ref={cancelButtonRef}
                   >
                     Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-tr from-blue-700 to-blue-400 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={applyFilter}
                   >
                     Apply
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </div>

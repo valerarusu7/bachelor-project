@@ -12,7 +12,7 @@ function Layout({ children, header }: LayoutProps) {
     <div className="light">
       <div className="bg-gray-200 dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
         <Sidebar />
-        <div className="pl-2 pr-2 h-screen w-full transition duration-500">
+        <div className="pl-4 pr-4 h-screen w-full transition duration-500">
           <Header header={header} />
           <div className="hidden sm:block" aria-hidden="true">
             <div className="border-t border-gray-300" />

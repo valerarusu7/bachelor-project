@@ -30,27 +30,27 @@ function Template({ template }: ITemplateObject) {
         <div className="pl-4 pr-2 mt-2 flex justify-between">
           <div className="flex">
             {template.multiple ? (
-              <div className="rounded-full bg-blue-400 h-8 w-8 flex justify-center items-center border-2 border-blue-500 mr-1 p-1">
+              <div className="rounded-full bg-gradient-to-tr from-purple-700 to-purple-400 h-8 w-8 flex justify-center items-center mr-1 p-1">
                 <BiSelectMultiple className="h-6 w-6 text-white" />
               </div>
             ) : null}
             {template.single ? (
-              <div className="rounded-full bg-blue-400 h-8 w-8 flex justify-center items-center border-2 border-blue-500 mr-1">
+              <div className="rounded-full bg-gradient-to-tr from-sky-700 to-sky-400 h-8 w-8 flex justify-center items-center mr-1">
                 <BsQuestion className="h-6 w-6 text-white" />
               </div>
             ) : null}
 
             {template.mail ? (
-              <div className="rounded-full bg-blue-400 h-8 w-8 flex justify-center items-center border-2 border-blue-500 mr-1 p-1">
+              <div className="rounded-full bg-gradient-to-tr from-red-700 to-red-400 h-8 w-8 flex justify-center items-center  mr-1 p-1">
                 <MdEmail className="h-6 w-6 text-white" />
               </div>
             ) : null}
             {template.code ? (
-              <div className="rounded-full bg-blue-400 h-8 w-8 flex justify-center items-center border-2 border-blue-500 mr-1 p-1">
+              <div className="rounded-full bg-gradient-to-tr from-orange-700 to-orange-400 h-8 w-8 flex justify-center items-center mr-1 p-1">
                 <BiCodeAlt className="h-6 w-6 text-white" />
               </div>
             ) : null}
-          </div>
+          </div>  
           <div className="flex justify-center items-center pr-2">
             <p className="uppercase font-extrabold text-green-500 text-sm">{`${template.tasks} tasks`}</p>
           </div>
@@ -77,9 +77,7 @@ function Template({ template }: ITemplateObject) {
         </div>
 
         <div className="pb-2 pt-4 flex justify-center items-center">
-          <button className="bg-gray-800 pr-2 pl-2 pb-1 pt-1 rounded-lg text-white font-semibold hover:bg-gray-700">
-            In Use
-          </button>
+          <button className="bg-gray-800 pr-2 pl-2 pb-1 pt-1 rounded-lg text-white font-semibold hover:bg-gray-700">In Use</button>
         </div>
       </div>
     </Link>
