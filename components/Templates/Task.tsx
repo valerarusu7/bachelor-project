@@ -19,10 +19,12 @@ function Task({ task, idx }: ITaskTableObject) {
 
   return (
     <Reorder.Item
-      key={task.id}
+      key={task._id}
       value={task}
       as="tr"
-      className={`${idx % 2 ? "bg-white" : "bg-gray-50"} border-b border-gray-200 hover:bg-gray-100 cursor-move hover:overflow-hidden`}
+      className={`${
+        idx % 2 ? "bg-white" : "bg-gray-50"
+      } border-b border-gray-200 hover:bg-gray-100 cursor-move hover:overflow-hidden`}
     >
       <td className="py-3 px-6 text-center whitespace-nowrap">
         <p className="text-xl font-bold">{idx + 1}</p>
@@ -54,7 +56,7 @@ function Task({ task, idx }: ITaskTableObject) {
       </td>
       <td className="py-3 px-6 text-center whitespace-nowrap">
         <div className="flex justify-center items-center">
-          <p className="font-semibold">{task.id}</p>
+          <p className="font-semibold">{task._id}</p>
         </div>
       </td>
       <td className="py-3 px-6 text-center whitespace-nowrap">
