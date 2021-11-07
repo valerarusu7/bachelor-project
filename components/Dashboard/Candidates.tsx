@@ -1,23 +1,7 @@
+import { ICandidatesProps } from "../../types";
 import Candidate from "./Candidate";
-export interface Candidate {
-  _id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  position: string;
-  region: string;
-  countryCode: string;
-  completed: boolean;
-  time: string;
-  score: number;
-  favorite: boolean;
-}
 
-export interface Candidates {
-  candidates: Candidate[];
-}
-
-function Candidates({ candidates }: Candidates) {
+function Candidates({ candidates }: ICandidatesProps) {
   return (
     <div>
       <div className="inline-block min-w-full  overflow-hidden align-middle shadow-lg rounded-lg mt-2 border-r-2 border-l-2 border-gray-200">

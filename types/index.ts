@@ -6,13 +6,13 @@ export type IHeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
 
 // Pages
 export interface IDashboardProps {
-  candidates: ICandidates[];
+  candidates: ICandidate[];
   positions: IPositions[];
   regions: IRegions[];
 }
 
 // Objects
-export interface ICandidates {
+export interface ICandidate {
   _id: string;
   firstName: string;
   lastName: string;
@@ -23,7 +23,11 @@ export interface ICandidates {
   completed: boolean;
   score: number;
   time: string;
+  startedUtc: Date;
+  completedUtc: Date;
   favorite: boolean;
+  companyId: string;
+  jobId: string;
 }
 
 export interface IPosition {
@@ -57,19 +61,11 @@ export interface IRegions {
 }
 
 export interface ICandidateProps {
-  candidate: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    position: string;
-    region: string;
-    countryCode: string;
-    completed: boolean;
-    time: string;
-    score: number;
-    favorite: boolean;
-  };
+  candidate: ICandidate;
+}
+
+export interface ICandidatesProps {
+  candidates: ICandidate[];
 }
 
 export interface ICompany {
@@ -173,7 +169,7 @@ export interface ITimelineItem {
   date?: string;
   color?: string;
   comment?: boolean;
-  candidate?: ICandidates;
+  candidate?: ICandidate;
   time?: string;
   show?: boolean;
 }
@@ -243,4 +239,21 @@ export interface ITaskDocument extends Document {
 export interface IChoiceDocument extends Document {
   value: string;
   isCorrect: boolean;
+}
+
+export interface ICandidateDocument extends Document {
+  firstName: string;
+  lastName: string;
+  email: string;
+  position: string;
+  region: string;
+  countryCode: string;
+  completed: boolean;
+  time: string;
+  score: number;
+  startedUtc: Date;
+  completedUtc: Date;
+  favorite: boolean;
+  companyId: Types.ObjectId;
+  jobId: string;
 }

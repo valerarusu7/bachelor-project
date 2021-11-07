@@ -4,11 +4,16 @@ import Candidates from "../../components/Dashboard/Candidates";
 import Filter from "../../components/Dashboard/Filter";
 import { FilterIcon } from "@heroicons/react/solid";
 import Layout from "../../components/Layout/Layout";
-import candidates from "../../candidates.json";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectDashboard, setPosition, setPositions, setRegion, setRegions } from "../../store/reducers/dashboardSlice";
-import { IDashboardProps, ICandidates, IPositions, IRegions } from "../../types";
+import {
+  selectDashboard,
+  setPosition,
+  setPositions,
+  setRegion,
+  setRegions,
+} from "../../store/reducers/dashboardSlice";
+import { IDashboardProps, ICandidate, IPositions, IRegions } from "../../types";
 import absoluteUrl from "next-absolute-url";
 import { NextPageContext } from "next";
 
@@ -48,11 +53,11 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
           dashboardFilterPending,
           dashboardFilterFavorite,
           dashboardScore,
-          dashboardDisableScore,
+          dashboardDisableScore
         ),
         dashboardDisableScore,
-        dashboardScore,
-      ),
+        dashboardScore
+      )
     );
   }
 
@@ -75,7 +80,11 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
           />
         </div>
       </div>
-      <Filter isOpen={isOpen} onClose={() => applyFilter()} applyFilter={() => applyFilter()} />
+      <Filter
+        isOpen={isOpen}
+        onClose={() => applyFilter()}
+        applyFilter={() => applyFilter()}
+      />
       <Candidates candidates={filteredCandidates} />
     </Layout>
   );
@@ -85,12 +94,8 @@ export default DashboardPage;
 
 export const getServerSideProps = async ({ req }: NextPageContext) => {
   const { origin } = absoluteUrl(req);
-  const apiURL = `${origin}`;
-
-  console.log(apiURL);
-  // const res = await fetch("/api/templates");
-  // const data = await res.json();
-  const candidateData: ICandidates[] | undefined = candidates.slice(0, 20);
+  const res = await fetch(`${origin}/api/candidates`);
+  const candidateData: ICandidate[] | undefined = await res.json();
   const positionData: IPositions[] | undefined = [
     { name: "All positions" },
     { name: "Software Engineer" },

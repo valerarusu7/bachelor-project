@@ -3,8 +3,9 @@ import { ITemplate, ITemplatesProps } from "../../types";
 import Layout from "../../components/Layout/Layout";
 import Link from "next/link";
 import Template from "../../components/Templates/Template";
-import { templates } from "../../templates";
 import CustomButton from "../../components/common/CustomButton";
+import absoluteUrl from "next-absolute-url";
+import { NextPageContext } from "next";
 
 function Templates({ templates }: ITemplatesProps) {
   return (
@@ -25,10 +26,10 @@ function Templates({ templates }: ITemplatesProps) {
 
 export default Templates;
 
-export const getServerSideProps = async () => {
-  const res = await fetch(`${baseUrl}/api/templates`);
-  const data = await res.json();
-  const templatesData: ITemplate[] = data;
+export const getServerSideProps = async ({ req }: NextPageContext) => {
+  const { origin } = absoluteUrl(req);
+  const res = await fetch(`${origin}/api/templates`);
+  const templatesData: ITemplate[] = await res.json();
   return {
     props: {
       templates: templatesData,
