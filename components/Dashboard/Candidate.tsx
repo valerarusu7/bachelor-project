@@ -9,7 +9,7 @@ function Candidate({ candidate, idx }: ICandidateProps) {
     <Link href={`dashboard/candidate/${candidate._id}`}>
       <tr
         className={`${
-          idx % 2 ? "bg-white" : "bg-gray-50"
+          idx !== undefined && idx % 2 ? "bg-white" : "bg-gray-50"
         } border-b border-gray-200 cursor-pointer hover:overflow-hidden hover:bg-blue-100`}
       >
         <td className="py-3 px-3 text-left whitespace-nowrap">
