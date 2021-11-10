@@ -21,22 +21,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
   const id: string = req.query.id as string;
 
-  if (req.method === "GET") {
-    try {
-      const company = await Company.findById(id).lean();
-      if (company == null) {
-        return res.status(404).json({
-          success: false,
-          error: "No company with specified id found.",
-        });
-      }
-
-      return res.status(200).json(company);
-    } catch (error) {
-      return res.status(404).json({ success: false, error: error });
-    }
-  }
-
   if (req.method === "PUT") {
     try {
       const companyData: ICompany = req.body;
