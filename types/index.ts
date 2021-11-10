@@ -156,7 +156,7 @@ export interface ITemplateObject {
     mail?: boolean;
     single?: boolean;
     code?: boolean;
-    tasks?: number;
+    tasks?: ITask[];
   };
 }
 

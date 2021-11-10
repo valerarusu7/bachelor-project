@@ -1,12 +1,11 @@
-import Landing from "../components/Landing Page/Landing";
+import Welcome from "../pages/welcome";
 
 export default function Home() {
   return (
     <div>
       <div>
         <main>
-          <Landing />
-          {/* <Table /> */}
+          <Welcome/>
         </main>
       </div>
     </div>
