@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   editChoice,
+  editTaskChoice,
   removeChoice,
   selectTemplate,
 } from "../../store/reducers/template";
@@ -16,7 +17,8 @@ export interface IEmailChoice {
 
 function EmailChoice({ id }: IEmailChoice) {
   const dispatch = useAppDispatch();
-  const { templateChoices } = useAppSelector(selectTemplate);
+  const { templateChoices, templateTask, edit } =
+    useAppSelector(selectTemplate);
   const [choice, setStateChoice] = useState({ value: "", isCorrect: false });
 
   useEffect(() => {
@@ -28,6 +30,46 @@ function EmailChoice({ id }: IEmailChoice) {
       })
     );
   }, [choice]);
+
+  {
+    console.log(templateTask);
+  }
+
+  function updateChoiceValue(choiceValue: string) {
+    if (edit) {
+      if (templateTask.choices !== undefined) {
+        dispatch(
+          editTaskChoice({
+            ...templateTask.choices[id - 1],
+            value: choiceValue,
+          })
+        );
+      }
+    }
+    if (!edit) {
+      setStateChoice({ ...choice, value: choiceValue });
+    }
+  }
+
+  function updateCorrectValue() {
+    if (edit) {
+      if (templateTask.choices !== undefined) {
+        dispatch(
+          editTaskChoice({
+            ...templateTask.choices[id - 1],
+            isCorrect:
+              templateTask.choices[id - 1].isCorrect === true ? false : true,
+          })
+        );
+      }
+    }
+    if (!edit) {
+      setStateChoice({
+        ...choice,
+        isCorrect: choice.isCorrect === true ? false : true,
+      });
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -47,26 +89,27 @@ function EmailChoice({ id }: IEmailChoice) {
         <textarea
           className="focus:ring-blue-500 focus:border-blue-500 w-1/2 rounded-md sm:text-sm border-gray-300"
           rows={2}
-          onChange={(e) => setStateChoice({ ...choice, value: e.target.value })}
+          value={
+            edit && templateTask.choices !== undefined
+              ? templateTask?.choices[id - 1]?.value
+              : choice.value
+          }
+          onChange={(e) => updateChoiceValue(e.target.value)}
         />
-        {choice.isCorrect ? (
-          <CustomButton
-            color="green"
-            onClick={() => setStateChoice({ ...choice, isCorrect: false })}
-            customStyles="ml-4"
-          >
-            <CheckIcon className="h-6 w-6 text-white" />
-          </CustomButton>
-        ) : (
-          <CustomButton
-            color="green"
-            onClick={() => setStateChoice({ ...choice, isCorrect: true })}
-            disabled={true}
-            customStyles="ml-4"
-          >
-            <CheckIcon className="h-6 w-6 text-white" />
-          </CustomButton>
-        )}
+
+        <CustomButton
+          color="green"
+          onClick={() => updateCorrectValue()}
+          disabled={
+            edit && templateTask.choices !== undefined
+              ? !templateTask.choices[id - 1].isCorrect
+              : !choice.isCorrect
+          }
+          customStyles="ml-4"
+        >
+          <CheckIcon className="h-6 w-6 text-white" />
+        </CustomButton>
+
         {id === templateChoices.length && templateChoices.length != 2 ? (
           <CustomButton
             color="red"

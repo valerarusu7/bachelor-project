@@ -1,5 +1,5 @@
-import { Modal } from "@mui/material";
 import { Box } from "@mui/system";
+import { Modal } from "@mui/material";
 import TaskModalContent from "./TaskModalContent";
 
 export interface ITaskModal {
@@ -9,7 +9,15 @@ export interface ITaskModal {
 
 function TaskModal({ closeModal, isOpen }: ITaskModal) {
   return (
-    <Modal open={isOpen} onClose={closeModal} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <Modal
+      open={isOpen}
+      onClose={closeModal}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <Box
         style={{
           width: "50%",

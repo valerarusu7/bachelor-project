@@ -141,7 +141,7 @@ export interface ITask {
 }
 
 export interface IChoice {
-  _id?: string;
+  _id?: number;
   value: string;
   isCorrect: boolean;
 }
@@ -193,7 +193,7 @@ export interface ITaskTableObject {
   idx: number;
 }
 export interface IChoice {
-  _id?: string;
+  _id?: number;
   value: string;
   isCorrect: boolean;
 }

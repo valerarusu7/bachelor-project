@@ -1,12 +1,23 @@
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
+import {
+  removeTask,
+  setChoices,
+  setEdit,
+  setShow,
+  setTask,
+  setTaskType,
+} from "../../store/reducers/template";
 
 import { BiSelectMultiple } from "react-icons/bi";
 import { BsQuestion } from "react-icons/bs";
 import { ITaskTableObject } from "../../types";
 import { MdEmail } from "react-icons/md";
 import { Reorder } from "framer-motion";
+import { useAppDispatch } from "../../store/hooks";
 
 function Task({ task, idx }: ITaskTableObject) {
+  const dispatch = useAppDispatch();
+
   function correctAnswersCount() {
     let correctAnswers = 0;
     task.choices?.map((choice) => {
@@ -15,6 +26,14 @@ function Task({ task, idx }: ITaskTableObject) {
       }
     });
     return correctAnswers;
+  }
+
+  function editTask() {
+    console.log(task);
+    dispatch(setTaskType(task.taskType));
+    dispatch(setTask(task));
+    dispatch(setEdit(true));
+    dispatch(setShow(true));
   }
 
   return (
@@ -35,15 +54,15 @@ function Task({ task, idx }: ITaskTableObject) {
       <td className="py-3 px-6 text-center whitespace-nowrap">
         <div className="flex justify-center items-center">
           {task.taskType === "single" ? (
-            <div className="rounded-full bg-gradient-to-tr from-green-500 to-green-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
+            <div className="rounded-full bg-gradient-to-tr from-blue-700 to-blue-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
               <BsQuestion className="text-white h-6 w-6" />
             </div>
           ) : task.taskType === "multiple" ? (
-            <div className="rounded-full bg-gradient-to-tr from-purple-500 to-purple-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
+            <div className="rounded-full bg-gradient-to-tr from-purple-700 to-purple-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
               <BiSelectMultiple className="text-white h-6 w-6" />
             </div>
           ) : task.taskType === "email" ? (
-            <div className="rounded-full bg-gradient-to-tr from-red-500 to-red-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
+            <div className="rounded-full bg-gradient-to-tr from-red-700 to-red-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
               <MdEmail className="text-white h-6 w-6" />
             </div>
           ) : null}
@@ -61,8 +80,14 @@ function Task({ task, idx }: ITaskTableObject) {
       </td>
       <td className="py-3 px-6 text-center whitespace-nowrap">
         <div className="flex justify-center items-center">
-          <PencilAltIcon className="h-6 w-6 text-green-500 mr-2 cursor-pointer hover:text-green-400" />
-          <TrashIcon className="h-6 w-6 text-red-500 cursor-pointer hover:text-red-400" />
+          <PencilAltIcon
+            className="h-6 w-6 text-green-500 mr-2 cursor-pointer hover:text-green-400"
+            onClick={() => editTask()}
+          />
+          <TrashIcon
+            className="h-6 w-6 text-red-500 cursor-pointer hover:text-red-400"
+            onClick={() => dispatch(removeTask(task.order))}
+          />
         </div>
       </td>
     </Reorder.Item>

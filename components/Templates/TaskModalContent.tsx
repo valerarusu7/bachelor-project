@@ -1,8 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   addChoice,
+  addTaskChoice,
+  editTask,
   selectTemplate,
+  setEdit,
   setShow,
+  setTask,
   setTasks,
 } from "../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -18,8 +22,13 @@ import { VscTasklist } from "react-icons/vsc";
 
 function TaskModalContent() {
   const dispatch = useAppDispatch();
-  const { templateChoices, templateTasks, templateTaskType } =
-    useAppSelector(selectTemplate);
+  const {
+    templateChoices,
+    templateTasks,
+    templateTaskType,
+    templateTask,
+    edit,
+  } = useAppSelector(selectTemplate);
   const [question, setQuestion] = useState("");
   const [textAnswer, setTextAnswer] = useState(true);
   const [color, setColor] = useState("");
@@ -41,7 +50,6 @@ function TaskModalContent() {
   }, [templateTaskType]);
 
   function saveTask() {
-    console.log(templateChoices);
     dispatch(
       setTasks([
         ...templateTasks,
@@ -54,6 +62,21 @@ function TaskModalContent() {
       ])
     );
     dispatch(setShow(false));
+  }
+
+  function updateTask() {
+    dispatch(setEdit(false));
+    dispatch(editTask(templateTask));
+    dispatch(setShow(false));
+  }
+
+  function updateQuestion(questionValue: string) {
+    if (edit) {
+      dispatch(setTask({ ...templateTask, question: questionValue }));
+    }
+    if (!edit) {
+      setQuestion(questionValue);
+    }
   }
 
   return (
@@ -94,8 +117,8 @@ function TaskModalContent() {
                 className="mt-1 w-full resize-none rounded-lg"
                 rows={3}
                 placeholder="Enter the task here."
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
+                value={edit ? templateTask.question : question}
+                onChange={(e) => updateQuestion(e.target.value)}
               ></textarea>
             </div>
           </div>
@@ -157,10 +180,26 @@ function TaskModalContent() {
           ) : templateTaskType === "multiple" ? (
             <div>
               <div className="mt-4">
-                {templateChoices.map((choice, idx) => (
-                  <EmailChoice key={idx} id={idx + 1} />
-                ))}
-                {templateChoices.length <= 4 ? (
+                {edit
+                  ? templateTask?.choices?.map((choice, idx) => (
+                      <EmailChoice key={idx} id={idx + 1} />
+                    ))
+                  : templateChoices.map((choice, idx) => (
+                      <EmailChoice key={idx} id={idx + 1} />
+                    ))}
+                {edit &&
+                templateTask.choices !== undefined &&
+                templateTask.choices.length <= 4 ? (
+                  <div className="mt-2">
+                    <CustomButton
+                      color={color}
+                      onClick={() => dispatch(addTaskChoice())}
+                    >
+                      Add choice
+                    </CustomButton>
+                  </div>
+                ) : null}
+                {!edit && templateChoices.length <= 4 ? (
                   <div className="mt-2">
                     <CustomButton
                       color={color}
@@ -175,9 +214,15 @@ function TaskModalContent() {
           ) : null}
 
           <div className="mt-8 flex items-center justify-end">
-            <CustomButton onClick={() => saveTask()} color="green">
-              <p>Save</p>
-            </CustomButton>
+            {edit ? (
+              <CustomButton onClick={() => updateTask()} color="green">
+                <p>Save</p>
+              </CustomButton>
+            ) : (
+              <CustomButton onClick={() => saveTask()} color={color}>
+                <p>Add</p>
+              </CustomButton>
+            )}
           </div>
         </div>
       </motion.div>
