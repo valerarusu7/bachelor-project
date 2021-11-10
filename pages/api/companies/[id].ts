@@ -17,9 +17,8 @@ import { ICompany, ICompanyDocument } from "../../../types";
  *        description: UUID string of the company to get information
  */
 
-connectDB();
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await connectDB();
   const id: string = req.query.id as string;
 
   if (req.method === "GET") {

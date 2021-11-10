@@ -39,7 +39,7 @@ function TemplateDetails() {
 export default TemplateDetails;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  connectDB();
+  await connectDB();
 
   const templates = await Template.find({})
     .select("_id name description companyId jobId createdAt")
@@ -62,7 +62,7 @@ interface IParams extends ParsedUrlQuery {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  connectDB();
+  await connectDB();
 
   const { id } = context.params as IParams; // no longer causes error
 

@@ -16,7 +16,7 @@ function Positions({ positions }: IPositionsProps) {
 export default Positions;
 
 export const getServerSideProps = async () => {
-  connectDB();
+  await connectDB();
   const jobPositions = await JobPosition.find({})
     .select("_id name location type recruitingStartDate")
     .lean();

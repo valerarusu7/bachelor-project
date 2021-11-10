@@ -94,7 +94,7 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
 export default DashboardPage;
 
 export const getServerSideProps = async () => {
-  connectDB();
+  await connectDB();
   const candidates: ICandidate[] = await Candidate.find({}).lean();
   const candidatesData = candidates.map((candidate) => {
     candidate._id = candidate._id.toString();

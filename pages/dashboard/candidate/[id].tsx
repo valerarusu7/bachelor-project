@@ -25,7 +25,7 @@ function CandidateDetails({ candidate }: ICandidateProps) {
 export default CandidateDetails;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  connectDB();
+  await connectDB();
   const candidates: ICandidate[] = await Candidate.find({}).lean();
 
   const paths = candidates.map((candidate) => {
@@ -45,7 +45,7 @@ interface IParams extends ParsedUrlQuery {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  connectDB();
+  await connectDB();
   const { id } = context.params as IParams;
   const candidate: ICandidate = await Candidate.findOne({ _id: id }).lean();
   candidate._id = candidate._id.toString();

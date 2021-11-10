@@ -23,7 +23,7 @@ function Settings({ settings }: ISettingsProps) {
 export default Settings;
 
 export const getServerSideProps = async () => {
-  connectDB();
+  await connectDB();
   const company = await Company.findOne({ name: "Stibo Accelerator" }).lean();
   company._id = company._id.toString();
   const userData: IUser = {

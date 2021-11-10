@@ -225,6 +225,7 @@ export interface ITemplateDocument extends Document {
   name: string;
   description: string;
   createdAt?: Date;
+  tasks: ITaskDocument[];
   companyId: Types.ObjectId;
   jobId: string;
 }
@@ -234,8 +235,7 @@ export interface ITaskDocument extends Document {
   taskType: string;
   order: number;
   correctChoice: string;
-  choices: Array<IChoice>;
-  templateId: Types.ObjectId;
+  choices: IChoiceDocument[];
 }
 
 export interface IChoiceDocument extends Document {

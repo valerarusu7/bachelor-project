@@ -17,9 +17,8 @@ import { ICandidate } from "../../../types";
  *        description: UUID string of the position to get information
  */
 
-connectDB();
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await connectDB();
   if (req.method === "GET") {
     try {
       const candidates = await Candidate.find().lean();

@@ -1,4 +1,4 @@
-import { ITemplate, ITemplatesProps } from "../../types";
+import { ITemplatesProps } from "../../types";
 
 import Layout from "../../components/Layout/Layout";
 import Link from "next/link";
@@ -6,7 +6,6 @@ import Template from "../../components/Templates/Template";
 import CustomButton from "../../components/common/CustomButton";
 import connectDB from "../../utils/mongodb";
 import TemplateModel from "../../models/Template";
-import Task from "../../models/Task";
 
 function Templates({ templates }: ITemplatesProps) {
   return (
@@ -28,18 +27,14 @@ function Templates({ templates }: ITemplatesProps) {
 export default Templates;
 
 export const getServerSideProps = async () => {
-  connectDB();
+  await connectDB();
 
   const templates = await TemplateModel.find({})
-    .select("_id name description companyId jobId createdAt")
+    .select("_id name description tasks companyId jobId createdAt")
     .lean();
 
   const modifiedTemplates = templates.map(async (template) => {
-    const tasks = await Task.find({
-      templateId: template._id,
-    });
-
-    const taskTypes = tasks.map((task) => task.taskType);
+    const taskTypes = template.tasks.map((task) => task.taskType);
     if (taskTypes.length != 0) {
       template["multiple"] = taskTypes.includes("multiple");
       template["mail"] = taskTypes.includes("mail");
