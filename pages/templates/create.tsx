@@ -53,6 +53,16 @@ function Create({ positions }: ICreateTemplate) {
       tasks: templateTasks,
     };
     console.log(template);
+    fetch("/api/templates", {
+      method: "POST",
+      body: JSON.stringify(template),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      });
   }
 
   return (
