@@ -1,5 +1,6 @@
-import { HYDRATE } from "next-redux-wrapper";
 import { IChoice, ITask } from "./../../types/index";
+
+import { HYDRATE } from "next-redux-wrapper";
 import { RootState } from "../store";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -38,20 +39,25 @@ export const templateSlice = createSlice({
     },
     addChoice(state) {
       if (state.templateChoices.length <= 4) {
-        state.templateChoices = [...state.templateChoices, { value: "", isCorrect: false }];
+        state.templateChoices = [
+          ...state.templateChoices,
+          { value: "", isCorrect: false },
+        ];
       }
     },
     editChoice(state, action) {
       let newChoice = action.payload;
       let choices = state.templateChoices;
       choices.map((choice, idx) => {
-        if (idx === action.payload.id) {
+        if (idx === action.payload._id) {
           choices[idx] = newChoice;
         }
       });
     },
     removeChoice(state, action) {
-      state.templateChoices = state.templateChoices.filter((item) => item._id !== action.payload);
+      state.templateChoices = state.templateChoices.filter(
+        (item) => item._id !== action.payload
+      );
     },
   },
 
@@ -68,5 +74,13 @@ export const templateSlice = createSlice({
 
 export const selectTemplate = (state: RootState) => state.template;
 
-export const { setTasks, setTaskType, setShow, setChoices, addChoice, editChoice, removeChoice } = templateSlice.actions;
+export const {
+  setTasks,
+  setTaskType,
+  setShow,
+  setChoices,
+  addChoice,
+  editChoice,
+  removeChoice,
+} = templateSlice.actions;
 export default templateSlice.reducer;

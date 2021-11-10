@@ -1,10 +1,10 @@
-import { Reorder } from "framer-motion";
-import { ITaskTableObject } from "../../types";
-
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
+
 import { BiSelectMultiple } from "react-icons/bi";
 import { BsQuestion } from "react-icons/bs";
+import { ITaskTableObject } from "../../types";
 import { MdEmail } from "react-icons/md";
+import { Reorder } from "framer-motion";
 
 function Task({ task, idx }: ITaskTableObject) {
   function correctAnswersCount() {

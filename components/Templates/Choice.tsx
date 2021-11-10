@@ -1,8 +1,13 @@
-import { CheckIcon } from "@heroicons/react/solid";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import {
+  editChoice,
+  removeChoice,
+  selectTemplate,
+} from "../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { editChoice, removeChoice, selectTemplate } from "../../store/reducers/template";
+import { useEffect, useState } from "react";
+
+import { CheckIcon } from "@heroicons/react/solid";
 import CustomButton from "../common/CustomButton";
 
 export interface IEmailChoice {
@@ -15,7 +20,13 @@ function EmailChoice({ id }: IEmailChoice) {
   const [choice, setStateChoice] = useState({ value: "", isCorrect: false });
 
   useEffect(() => {
-    dispatch(editChoice({ id: id - 1, value: choice.value, isCorrect: choice.isCorrect }));
+    dispatch(
+      editChoice({
+        _id: id - 1,
+        value: choice.value,
+        isCorrect: choice.isCorrect,
+      })
+    );
   }, [choice]);
 
   return (
@@ -39,16 +50,29 @@ function EmailChoice({ id }: IEmailChoice) {
           onChange={(e) => setStateChoice({ ...choice, value: e.target.value })}
         />
         {choice.isCorrect ? (
-          <CustomButton color="green" onClick={() => setStateChoice({ ...choice, isCorrect: false })} customStyles="ml-4">
+          <CustomButton
+            color="green"
+            onClick={() => setStateChoice({ ...choice, isCorrect: false })}
+            customStyles="ml-4"
+          >
             <CheckIcon className="h-6 w-6 text-white" />
           </CustomButton>
         ) : (
-          <CustomButton color="green" onClick={() => setStateChoice({ ...choice, isCorrect: true })} disabled={true} customStyles="ml-4">
+          <CustomButton
+            color="green"
+            onClick={() => setStateChoice({ ...choice, isCorrect: true })}
+            disabled={true}
+            customStyles="ml-4"
+          >
             <CheckIcon className="h-6 w-6 text-white" />
           </CustomButton>
         )}
         {id === templateChoices.length && templateChoices.length != 2 ? (
-          <CustomButton color="red" onClick={() => dispatch(removeChoice(id - 1))} customStyles="ml-4">
+          <CustomButton
+            color="red"
+            onClick={() => dispatch(removeChoice(id - 1))}
+            customStyles="ml-4"
+          >
             <p>Remove</p>
           </CustomButton>
         ) : null}
