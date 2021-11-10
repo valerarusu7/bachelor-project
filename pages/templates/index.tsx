@@ -1,4 +1,4 @@
-import { ITemplatesProps } from "../../types";
+import { ITemplatesProps, ITaskDocument } from "../../types";
 
 import Layout from "../../components/Layout/Layout";
 import Link from "next/link";
@@ -34,7 +34,9 @@ export const getServerSideProps = async () => {
     .lean();
 
   const modifiedTemplates = templates.map(async (template) => {
-    const taskTypes = template.tasks.map((task) => task.taskType);
+    const taskTypes = template.tasks.map(
+      (task: ITaskDocument) => task.taskType
+    );
     if (taskTypes.length != 0) {
       template["multiple"] = taskTypes.includes("multiple");
       template["mail"] = taskTypes.includes("mail");
