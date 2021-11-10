@@ -4,6 +4,7 @@ import { BsQuestion } from "react-icons/bs";
 import { ITemplateObject } from "../../types";
 import Link from "next/link";
 import { MdEmail } from "react-icons/md";
+import moment from "moment";
 
 function Template({ template }: ITemplateObject) {
   return (
@@ -12,7 +13,7 @@ function Template({ template }: ITemplateObject) {
         <div className="relative h-20 flex items-center">
           <div className="absolute w-full flex justify-end mb-10 pr-4">
             <p className="uppercase font-bold text-gray-400">
-              {template.createdAt}
+              {moment(moment.utc(template.createdAt), "YYYYMMDD").fromNow()}
             </p>
           </div>
           <div className="absolute h-0.5 w-full bg-gray-200"></div>
@@ -50,7 +51,7 @@ function Template({ template }: ITemplateObject) {
                 <BiCodeAlt className="h-6 w-6 text-white" />
               </div>
             ) : null}
-          </div>  
+          </div>
           <div className="flex justify-center items-center pr-2">
             <p className="uppercase font-extrabold text-green-500 text-sm">{`${template.tasks} tasks`}</p>
           </div>
@@ -77,7 +78,9 @@ function Template({ template }: ITemplateObject) {
         </div>
 
         <div className="pb-2 pt-4 flex justify-center items-center">
-          <button className="bg-gray-800 pr-2 pl-2 pb-1 pt-1 rounded-lg text-white font-semibold hover:bg-gray-700">In Use</button>
+          <button className="bg-gray-800 pr-2 pl-2 pb-1 pt-1 rounded-lg text-white font-semibold hover:bg-gray-700">
+            In Use
+          </button>
         </div>
       </div>
     </Link>

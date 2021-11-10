@@ -1,5 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { Document, Types } from "mongoose";
+import { NextApiRequest, NextApiResponse } from "next";
+
 import { MouseEventHandler } from "react";
 
 export type IHeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
@@ -62,6 +63,7 @@ export interface IRegions {
 
 export interface ICandidateProps {
   candidate: ICandidate;
+  idx: number;
 }
 
 export interface ICandidatesProps {

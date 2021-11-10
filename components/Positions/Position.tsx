@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { IPositionProps } from "../../types";
+import Link from "next/link";
+import moment from "moment";
 
 function Position({ position }: IPositionProps) {
   return (
@@ -26,8 +27,11 @@ function Position({ position }: IPositionProps) {
           </div>
         </td>
         <td className="py-3 px-6 text-center">
-          <div className="flex items-center justify-center">
-            {position.recruitingStartDate}
+          <div className="flex items-center justify-center text-sm capitalize">
+            {moment(
+              moment.utc(position.recruitingStartDate),
+              "YYYYMMDD"
+            ).fromNow()}
           </div>
         </td>
       </tr>

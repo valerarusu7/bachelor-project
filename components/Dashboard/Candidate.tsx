@@ -4,33 +4,41 @@ import { ICandidateProps } from "../../types";
 import Link from "next/link";
 import { stringAvatar } from "../../helpers/stringAvatar";
 
-function Candidate({ candidate }: ICandidateProps) {
+function Candidate({ candidate, idx }: ICandidateProps) {
   return (
     <Link href={`dashboard/candidate/${candidate._id}`}>
       <tr
-        className={`border-b border-gray-200 hover:bg-gray-100 cursor-pointer hover:overflow-hidden`}
+        className={`${
+          idx % 2 ? "bg-white" : "bg-gray-50"
+        } border-b border-gray-200 cursor-pointer hover:overflow-hidden hover:bg-blue-100`}
       >
-        <td className="py-3 px-6 text-left whitespace-nowrap">
+        <td className="py-3 px-3 text-left whitespace-nowrap">
           <div className="flex items-center">
             <div className="mr-2">
-              <div className="bg-gradient-to-tr from-gray-700 to-gray-400 text-white w-8 h-8 rounded-full p-2 flex items-center justify-center">
-                <p className="font-semibold text-sm">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
+              <div className="bg-gradient-to-tr from-blue-600 to-blue-300 text-white w-8 h-8 rounded-full p-2 flex items-center justify-center">
+                <p className="font-semibold text-sm">
+                  {stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}
+                </p>
               </div>
             </div>
             <span>{`${candidate.firstName} ${candidate.lastName}`}</span>
           </div>
         </td>
-        <td className="py-3 px-6 text-left">
+        <td className="py-3 px-3 text-left">
           <div className="flex items-center">
             <span className="font-medium">{candidate.email}</span>
           </div>
         </td>
         <td className="py-3 px-6 text-left">
-          <div className="flex items-center">
-            <p className="font-medium hover:underline">{candidate.position}</p>
+          <div className=" flex items-center">
+            <p className="font-medium ">
+              {candidate.position.length >= 33
+                ? `${candidate.position.substring(0, 33)}...`
+                : candidate.position}
+            </p>
           </div>
         </td>
-        <td className="py-3 px-6 text-left">
+        <td className="py-3 px-3 text-left">
           <div className="flex items-center">
             {/* <span>
               <img className="h-4 w-4 mr-1" src={`https://www.countryflags.io/${candidate.countryCode.toLowerCase()}/shiny/64.png`} />
@@ -38,7 +46,7 @@ function Candidate({ candidate }: ICandidateProps) {
             <span className="font-medium">{candidate.region}</span>
           </div>
         </td>
-        <td className="py-3 px-6 text-center ">
+        <td className="py-3 px-3 text-center ">
           <div
             className={`${
               candidate.completed == true
@@ -46,15 +54,23 @@ function Candidate({ candidate }: ICandidateProps) {
                 : " bg-gradient-to-tr from-orange-500 to-yellow-300 text-white border"
             } py-1 px-3 rounded-full text-xs font-bold `}
           >
-            <p>{`${candidate.completed == true ? "Completed" : "Pending"}`}</p>
+            <p className="truncate">{`${
+              candidate.completed == true ? "Completed" : "Pending"
+            }`}</p>
           </div>
         </td>
-        <td className="py-3 px-6 text-center">
+        <td className="py-3 px-3 text-center">
           <div className="flex items-center justify-center ">
-            <span>{candidate.time !== null ? <p>{candidate.time}</p> : <BanIcon className="h-6 w-6 text-gray-500" />}</span>
+            <span>
+              {candidate.time !== "" ? (
+                <p>{candidate.time}</p>
+              ) : (
+                <BanIcon className="h-6 w-6 text-gray-500" />
+              )}
+            </span>
           </div>
         </td>
-        <td className="py-3 px-6 text-center">
+        <td className="py-3 px-3 text-center">
           <div className="flex item-center justify-center">
             <span
               className={`${
@@ -79,11 +95,13 @@ function Candidate({ candidate }: ICandidateProps) {
             </span>
           </div>
         </td>
-        <td className="py-3 px-6 text-center">
+        <td className="py-3 px-3 text-center">
           <div className="flex items-center justify-center">
             <StarIcon
               className={`${
-                candidate.favorite == true ? "text-yellow-400 hover:text-gray-400" : "text-gray-400 hover:text-yellow-400"
+                candidate.favorite == true
+                  ? "text-yellow-400 hover:text-gray-400"
+                  : "text-gray-400 hover:text-yellow-400"
               } h-8 w-8 hover:animate-pulse`}
             />
           </div>

@@ -10,14 +10,12 @@ export interface LayoutProps {
 function Layout({ children, header }: LayoutProps) {
   return (
     <div className="light">
-      <div className="bg-gray-200 dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
+      <div className="bg-white dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
         <Sidebar />
-        <div className="pl-4 pr-4 h-screen w-full transition duration-500">
-          <Header header={header} />
-          <div className="hidden sm:block" aria-hidden="true">
-            <div className="border-t border-gray-300" />
-          </div>
-          <div className="overflow-auto h-screen mt-2 p-1 pb-24 relative scrollbar-hide transition duration-500">
+        <div className=" h-screen w-full transition duration-500">
+          <div className="overflow-auto h-screen  pl-4 pr-4 pb-8 relative scrollbar-hide transition duration-500">
+            <Header header={header} />
+
             {children}
           </div>
         </div>

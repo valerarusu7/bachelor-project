@@ -1,11 +1,5 @@
+import { ICandidate, IDashboardProps, IPositions, IRegions } from "../../types";
 import { filterByScore, filterCandidates } from "../../helpers/filters";
-
-import Candidates from "../../components/Dashboard/Candidates";
-import Filter from "../../components/Dashboard/Filter";
-import { FilterIcon } from "@heroicons/react/solid";
-import Layout from "../../components/Layout/Layout";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   selectDashboard,
   setPosition,
@@ -13,9 +7,16 @@ import {
   setRegion,
   setRegions,
 } from "../../store/reducers/dashboardSlice";
-import { IDashboardProps, ICandidate, IPositions, IRegions } from "../../types";
-import connectDB from "../../utils/mongodb";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useEffect, useState } from "react";
+
+import { BsSliders } from "react-icons/bs";
 import Candidate from "../../models/Candidate";
+import Candidates from "../../components/Dashboard/Candidates";
+import CustomButton from "../../components/common/CustomButton";
+import Filter from "../../components/Dashboard/Filter";
+import Layout from "../../components/Layout/Layout";
+import connectDB from "../../utils/mongodb";
 
 function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
   const {
@@ -63,13 +64,13 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
 
   return (
     <Layout header="Dashboard">
-      <div className="flex items-center justify-between">
-        <div
-          onClick={() => setIsOpen(true)}
-          className="flex items-center justify-center p-1 hover:bg-gray-400 h-8 w-8 hover:rounded-lg hover:shadow-lg cursor-pointer mr-2"
-        >
-          <FilterIcon className="h-6 w-6 text-gray-700" />
-        </div>
+      <div className="flex items-center justify-between ">
+        <CustomButton onClick={() => setIsOpen(true)} color="blue">
+          <div className="text-white flex justify-center items-center">
+            <BsSliders className="h-4 w-4 mr-2" />
+            <p>Filters</p>
+          </div>
+        </CustomButton>
         <div className="pr-1 pt-1">
           <input
             value={dashboardSearch}
@@ -95,7 +96,6 @@ export default DashboardPage;
 export const getServerSideProps = async () => {
   connectDB();
   const candidates: ICandidate[] = await Candidate.find({}).lean();
-
   const candidatesData = candidates.map((candidate) => {
     candidate._id = candidate._id.toString();
     if (candidate.startedUtc !== undefined) {

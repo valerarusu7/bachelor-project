@@ -17,11 +17,16 @@ module.exports = {
       blue: colors.blue,
       orange: colors.orange,
       sky: colors.sky,
+      darkBlue: "#00365c",
     },
     extend: {},
   },
   variants: {
     extend: { margin: ["last", "first"] },
   },
-  plugins: [require("tailwind-scrollbar-hide"), require("@tailwindcss/forms"), require("@tailwindcss/line-clamp")],
+  plugins: [
+    require("tailwind-scrollbar-hide"),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/line-clamp"),
+  ],
 };

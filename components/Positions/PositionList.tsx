@@ -11,7 +11,7 @@ function PositionList({ positions }: IPositionsProps) {
             <th className="py-3 px-6 text-left">Position</th>
             <th className="py-3 px-6 text-center">Location</th>
             <th className="py-3 px-6 text-center">Type</th>
-            <th className="py-3 px-6 text-center">Start date</th>
+            <th className="py-3 px-6 text-center">Posted</th>
           </tr>
         </thead>
         <tbody className="text-gray-600">
