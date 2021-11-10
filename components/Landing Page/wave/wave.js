@@ -8,8 +8,8 @@ var Wave = function () {
   const { width, height } = useResponsiveSize();
   let frequency = 0.013;
   const waves = {
-    frontWave: new WaveObj([0.0211, 0.028, 0.015], "rgba(211,211,211,0.88)"),
-    backWave: new WaveObj([0.0122, 0.018, 0.005], "rgba(169,169,169,0.48)"),
+    frontWave: new WaveObj([0.0211, 0.028, 0.015], "rgb(167, 199, 231,0.48)"),
+    backWave: new WaveObj([0.0122, 0.018, 0.005], "rgba(111, 143, 175,0.18)"),
   };
 
   const render = () => {
