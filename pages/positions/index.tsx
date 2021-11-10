@@ -1,9 +1,8 @@
 import Layout from "../../components/Layout/Layout";
 import PositionList from "../../components/Positions/PositionList";
-import { IPosition, IPositions, IPositionsProps } from "../../types";
+import { IPositionsProps } from "../../types";
 import JobPosition from "../../models/JobPosition";
 import connectDB from "../../utils/mongodb";
-import positions from "../api/positions";
 
 function Positions({ positions }: IPositionsProps) {
   return (
