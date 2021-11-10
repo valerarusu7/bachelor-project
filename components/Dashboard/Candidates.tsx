@@ -4,7 +4,7 @@ import { ICandidatesProps } from "../../types";
 function Candidates({ candidates }: ICandidatesProps) {
   return (
     <div>
-      <div className="inline-block min-w-full  overflow-hidden align-middle shadow-xl rounded-md mt-2 ">
+      <div className="inline-block min-w-full  overflow-hidden align-middle shadow-2xl rounded-md mt-2 ">
         <table className="min-w-full table-fixed">
           <thead className="bg-gray-200 uppercase text-sm rounded-t-lg w-full pointer-events-none">
             <tr>

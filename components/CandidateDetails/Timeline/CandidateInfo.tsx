@@ -1,9 +1,9 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/solid";
 
+import { ICandidateProps } from "../../../types";
 import InfoItem from "../InfoItem";
 import Separator from "../../common/Separator";
 import { stringAvatar } from "../../../helpers/stringAvatar";
-import { ICandidateProps } from "../../../types";
 
 function CandidateInfo({ candidate }: ICandidateProps) {
   return (

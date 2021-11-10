@@ -63,7 +63,7 @@ export interface IRegions {
 
 export interface ICandidateProps {
   candidate: ICandidate;
-  idx: number;
+  idx?: number;
 }
 
 export interface ICandidatesProps {
@@ -128,7 +128,7 @@ export interface ITemplate {
   mail?: boolean;
   single?: boolean;
   code?: boolean;
-  tasks?: number;
+  tasks?: ITask[];
 }
 
 export interface ITask {

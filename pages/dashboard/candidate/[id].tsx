@@ -1,11 +1,12 @@
+import { GetStaticPaths, GetStaticProps } from "next";
+import { ICandidate, ICandidateProps } from "../../../types";
+
+import Candidate from "../../../models/Candidate";
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
 import CandidateTimeline from "../../../components/CandidateDetails/Timeline/CandidateTimeline";
 import Layout from "../../../components/Layout/Layout";
 import { ParsedUrlQuery } from "querystring";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { ICandidate, ICandidateProps } from "../../../types";
 import connectDB from "../../../utils/mongodb";
-import Candidate from "../../../models/Candidate";
 
 function CandidateDetails({ candidate }: ICandidateProps) {
   return (
