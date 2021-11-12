@@ -44,6 +44,7 @@ export interface IPosition {
   supervisoryOrganization: string;
   recruitingStartDate: string;
   companyId: string;
+  type: any;
 }
 
 export interface IPositions {
@@ -163,7 +164,7 @@ export interface ITemplateObject {
     email?: boolean;
     single?: boolean;
     code?: boolean;
-    tasks?: ITask[];
+    tasks?: ITask[] | number;
   };
 }
 

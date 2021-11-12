@@ -56,7 +56,7 @@ function Template({ template }: ITemplateObject) {
             <p className="uppercase font-extrabold text-green-500 text-sm">{`${
               template.tasks
             } ${
-              template.tasks !== undefined && template?.tasks?.length > 1
+              template.tasks !== undefined && template?.tasks > 1
                 ? "tasks"
                 : "task"
             }`}</p>

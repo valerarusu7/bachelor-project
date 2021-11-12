@@ -74,6 +74,18 @@ function TemplatePage({
       });
   }
 
+  function deleteTemplate() {
+    fetch(`/api/templates/${template._id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      });
+  }
+
   return (
     <Layout header={template.name}>
       <div className="m-2">
@@ -93,7 +105,7 @@ function TemplatePage({
       <div className="mt-4 flex justify-end items-center">
         <CustomButton
           color="red"
-          onClick={() => console.log("aaa")}
+          onClick={() => deleteTemplate()}
           customStyles="mr-2"
         >
           <p>Delete</p>

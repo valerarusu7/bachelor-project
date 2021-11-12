@@ -15,7 +15,7 @@ function Templates({ templates }: ITemplatesProps) {
           <CustomButton color="blue">New template</CustomButton>
         </Link>
       </div>
-      <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4 ">
+      <div className="grid 2xl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4 ">
         {templates.map((template) => (
           <Template template={template} key={template._id} />
         ))}
@@ -32,8 +32,8 @@ export const getServerSideProps = async () => {
   const templates = await TemplateModel.find({})
     .select("_id name description tasks companyId jobId createdAt")
     .lean();
-  
-  console.log(templates)
+
+  console.log(templates);
 
   const modifiedTemplates = templates.map(async (template) => {
     const taskTypes = template.tasks.map(
@@ -52,7 +52,6 @@ export const getServerSideProps = async () => {
     template.createdAt = template.createdAt.toString();
     return template;
   });
-
 
   const templatesData = await Promise.all(modifiedTemplates);
   return {
