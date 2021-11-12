@@ -259,3 +259,12 @@ export interface ICandidateDocument extends Document {
   companyId: Types.ObjectId;
   jobId: string;
 }
+
+export interface IUserDocument extends Document {
+  email: string;
+  firstName: string;
+  lastName: string;
+  position: string;
+  department: string;
+  isAdmin: boolean;
+}

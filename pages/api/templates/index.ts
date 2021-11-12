@@ -1,7 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-
+import HandleError from "../../../helpers/ErrorHandler";
 import Template from "../../../models/Template";
+import { ITemplateDocument } from "../../../types";
 import connectDB from "../../../utils/mongodb";
+
+/**
+ * @swagger
+ * /api/templates:
+ *   post:
+ *     description: Create a new template
+ */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
@@ -9,14 +17,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     try {
       const body = req.body;
-      const template = await Template.create(JSON.parse(body));
+      let template: ITemplateDocument;
+      if (body.constructor !== Object) {
+        template = new Template(JSON.parse(body));
+      } else {
+        template = new Template(body);
+      }
 
-      return res
-        .status(201)
-        .json({ success: true, templateId: template._id.toString() });
+      const savedTemplate = await template.save();
+
+      return res.status(201).json({ templateId: savedTemplate._id.toString() });
     } catch (error) {
-      console.log(error);
-      return res.status(400).json({ success: false, error: error });
+      const result = HandleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
     }
   }
 };

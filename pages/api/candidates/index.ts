@@ -2,32 +2,30 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Candidate from "../../../models/Candidate";
 import { ICandidate } from "../../../types";
+import HandleError from "../../../helpers/ErrorHandler";
 
 /**
  * @swagger
- * /api/positions:
- *   get:
- *     description: Returns the all positions
+ * /api/candidates:
+ *   post:
+ *     description: Create a new candidate
  *     parameters:
- *      - in: path
- *        name: id
- *        schema:
- *          type: string
+ *      - in: body
+ *        description: Candidate object to be created
  *        required: true
- *        description: UUID string of the position to get information
+ *     responses:
+ *        201:
+ *          description: Candidate successfully created
+ *        400:
+ *          description: Bad request
+ *        409:
+ *          description: Duplicated field
+ *        500:
+ *          description: Internal error
  */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
-  if (req.method === "GET") {
-    try {
-      const candidates = await Candidate.find().lean();
-
-      return res.status(200).json(candidates);
-    } catch (error) {
-      return res.status(404).json({ success: false, error: error });
-    }
-  }
 
   if (req.method === "POST") {
     try {
@@ -36,7 +34,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(201).json(candidate._id);
     } catch (error) {
-      return res.status(404).json({ success: false, error: error });
+      const result = HandleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
     }
   }
 };

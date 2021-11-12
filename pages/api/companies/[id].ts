@@ -2,11 +2,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
 import { ICompany, ICompanyDocument } from "../../../types";
+import HandleError from "../../../helpers/ErrorHandler";
 
 /**
  * @swagger
  * /api/company/{id}:
- *   get:
+ *   put:
  *     description: Returns the company information
  *     parameters:
  *      - in: path
@@ -15,6 +16,7 @@ import { ICompany, ICompanyDocument } from "../../../types";
  *          type: string
  *        required: true
  *        description: UUID string of the company to get information
+ *      - in: body
  */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -38,7 +40,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         company,
       });
     } catch (error) {
-      return res.status(404).json({ success: false, error: error });
+      const result = HandleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
     }
   }
 
@@ -59,7 +62,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         company,
       });
     } catch (error) {
-      return res.status(404).json({ success: false, error: error });
+      const result = HandleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
     }
   }
 };
