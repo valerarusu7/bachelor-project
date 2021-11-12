@@ -41,7 +41,7 @@ function Template({ template }: ITemplateObject) {
               </div>
             ) : null}
 
-            {template.mail ? (
+            {template.email ? (
               <div className="rounded-full bg-gradient-to-tr from-red-700 to-red-400 h-8 w-8 flex justify-center items-center  mr-1 p-1">
                 <MdEmail className="h-6 w-6 text-white" />
               </div>
@@ -53,7 +53,13 @@ function Template({ template }: ITemplateObject) {
             ) : null}
           </div>
           <div className="flex justify-center items-center pr-2">
-            <p className="uppercase font-extrabold text-green-500 text-sm">{`${template.tasks} tasks`}</p>
+            <p className="uppercase font-extrabold text-green-500 text-sm">{`${
+              template.tasks
+            } ${
+              template.tasks !== undefined && template?.tasks?.length > 1
+                ? "tasks"
+                : "task"
+            }`}</p>
           </div>
         </div>
 

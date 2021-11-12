@@ -153,7 +153,7 @@ export interface ITemplateObject {
     description: string;
     createdAt?: string;
     multiple?: boolean;
-    mail?: boolean;
+    email?: boolean;
     single?: boolean;
     code?: boolean;
     tasks?: ITask[];

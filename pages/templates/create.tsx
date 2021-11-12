@@ -77,6 +77,8 @@ function Create({ positions }: ICreateTemplate) {
           positions={positions}
           selectedPosition={selectedPosition}
           onChangeDescription={(e) => setTemplateDescription(e.target.value)}
+          templateDescription={templateDescription}
+          templateName={templateName}
         />
 
         <Tasks setStateTasks={setStateTasks} />

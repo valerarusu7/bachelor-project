@@ -8,13 +8,18 @@ export interface ITemplatesDetails {
   positions: IPosition[];
   selectedPosition: any;
   onChangeDescription: ChangeEventHandler<HTMLTextAreaElement>;
+  templateName: string;
+  templateDescription: string;
 }
+
 function TemplateDetails({
   onChangeName,
   selectPosition,
   positions,
   selectedPosition,
   onChangeDescription,
+  templateName,
+  templateDescription,
 }: ITemplatesDetails) {
   return (
     <div>
@@ -30,6 +35,7 @@ function TemplateDetails({
             type="text"
             className="focus:ring-blue-500 focus:border-blue-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300"
             onChange={(e) => onChangeName(e)}
+            value={templateName}
           />
         </div>
         <div>
@@ -60,6 +66,7 @@ function TemplateDetails({
           id="template-description"
           rows={5}
           onChange={(e) => onChangeDescription(e)}
+          value={templateDescription}
         ></textarea>
       </div>
     </div>

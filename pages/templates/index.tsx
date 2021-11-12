@@ -1,11 +1,11 @@
-import { ITemplatesProps, ITaskDocument } from "../../types";
+import { ITaskDocument, ITemplatesProps } from "../../types";
 
+import CustomButton from "../../components/common/CustomButton";
 import Layout from "../../components/Layout/Layout";
 import Link from "next/link";
 import Template from "../../components/Templates/Template";
-import CustomButton from "../../components/common/CustomButton";
-import connectDB from "../../utils/mongodb";
 import TemplateModel from "../../models/Template";
+import connectDB from "../../utils/mongodb";
 
 function Templates({ templates }: ITemplatesProps) {
   return (
@@ -32,6 +32,8 @@ export const getServerSideProps = async () => {
   const templates = await TemplateModel.find({})
     .select("_id name description tasks companyId jobId createdAt")
     .lean();
+  
+  console.log(templates)
 
   const modifiedTemplates = templates.map(async (template) => {
     const taskTypes = template.tasks.map(
@@ -39,7 +41,7 @@ export const getServerSideProps = async () => {
     );
     if (taskTypes.length != 0) {
       template["multiple"] = taskTypes.includes("multiple");
-      template["mail"] = taskTypes.includes("mail");
+      template["email"] = taskTypes.includes("email");
       template["single"] = taskTypes.includes("single");
       template["code"] = taskTypes.includes("code");
       template["tasks"] = taskTypes.length;
@@ -50,6 +52,7 @@ export const getServerSideProps = async () => {
     template.createdAt = template.createdAt.toString();
     return template;
   });
+
 
   const templatesData = await Promise.all(modifiedTemplates);
   return {
