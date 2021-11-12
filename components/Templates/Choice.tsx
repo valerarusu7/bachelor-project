@@ -31,10 +31,6 @@ function EmailChoice({ id }: IEmailChoice) {
     );
   }, [choice]);
 
-  {
-    console.log(templateTask);
-  }
-
   function updateChoiceValue(choiceValue: string) {
     if (edit) {
       if (templateTask.choices !== undefined) {

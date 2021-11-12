@@ -1,7 +1,10 @@
 import { BiCodeAlt, BiSelectMultiple } from "react-icons/bi";
 import { IPosition, ITemplate } from "../../types";
 import {
+  resetTask,
+  resetTemplateState,
   selectTemplate,
+  setEdit,
   setShow,
   setTaskType,
   setTasks,
@@ -20,6 +23,7 @@ import TaskType from "../../components/Templates/TaskType";
 import Tasks from "../../components/Templates/Tasks";
 import { VideoCameraIcon } from "@heroicons/react/solid";
 import connectDB from "../../utils/mongodb";
+import { useRouter } from "next/router";
 
 export interface ICreateTemplate {
   positions: IPosition[];
@@ -44,6 +48,10 @@ function Create({ positions }: ICreateTemplate) {
     dispatch(setShow(true));
   }
 
+  useEffect(() => {
+    dispatch(resetTemplateState());
+  }, []);
+
   function createTemplate() {
     let template: ITemplate = {
       name: templateName,
@@ -63,6 +71,12 @@ function Create({ positions }: ICreateTemplate) {
       .then((data) => {
         console.log(data);
       });
+  }
+
+  function closeModal() {
+    dispatch(resetTask());
+    dispatch(setShow(false));
+    dispatch(setEdit(false));
   }
 
   return (
@@ -161,10 +175,7 @@ function Create({ positions }: ICreateTemplate) {
             </div>
           </div>
         </div>
-        <TaskModal
-          isOpen={showModal}
-          closeModal={() => dispatch(setShow(false))}
-        />
+        <TaskModal isOpen={showModal} closeModal={() => closeModal()} />
         <div className="mt-4 flex justify-end items-center">
           <CustomButton color="blue" onClick={() => createTemplate()}>
             <p>Create template</p>

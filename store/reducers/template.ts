@@ -111,6 +111,13 @@ export const templateSlice = createSlice({
         (item) => item._id !== action.payload
       );
     },
+    resetTask(state) {
+      state.templateChoices = initialState.templateChoices;
+      state.templateTask = initialState.templateTask;
+    },
+    resetTemplateState() {
+      return initialState;
+    },
   },
 
   extraReducers: {
@@ -140,5 +147,7 @@ export const {
   addChoice,
   editChoice,
   removeChoice,
+  resetTask,
+  resetTemplateState,
 } = templateSlice.actions;
 export default templateSlice.reducer;

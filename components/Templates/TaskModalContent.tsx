@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import {
+import template, {
   addChoice,
   addTaskChoice,
   editTask,
+  resetTask,
   selectTemplate,
   setEdit,
   setShow,
@@ -32,6 +33,12 @@ function TaskModalContent() {
   const [question, setQuestion] = useState("");
   const [textAnswer, setTextAnswer] = useState(true);
   const [color, setColor] = useState("");
+
+  useEffect(() => {
+    if (templateTask.choices !== undefined) {
+      setTextAnswer(templateTask?.choices[0]?._id !== undefined ? false : true);
+    }
+  }, [templateTask]);
 
   useEffect(() => {
     switch (templateTaskType) {
@@ -161,10 +168,26 @@ function TaskModalContent() {
               </div>
               {!textAnswer ? (
                 <div className="mt-4">
-                  {templateChoices.map((choice, idx) => (
-                    <EmailChoice key={idx} id={idx + 1} />
-                  ))}
-                  {templateChoices.length <= 4 ? (
+                  {edit
+                    ? templateTask?.choices?.map((choice, idx) => (
+                        <EmailChoice key={idx} id={idx + 1} />
+                      ))
+                    : templateChoices.map((choice, idx) => (
+                        <EmailChoice key={idx} id={idx + 1} />
+                      ))}
+                  {edit &&
+                  templateTask.choices !== undefined &&
+                  templateTask.choices.length <= 4 ? (
+                    <div className="mt-2">
+                      <CustomButton
+                        color={color}
+                        onClick={() => dispatch(addTaskChoice())}
+                      >
+                        Add choice
+                      </CustomButton>
+                    </div>
+                  ) : null}
+                  {!edit && templateChoices.length <= 4 ? (
                     <div className="mt-2">
                       <CustomButton
                         color={color}
