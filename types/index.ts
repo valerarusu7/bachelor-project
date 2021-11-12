@@ -34,9 +34,16 @@ export interface ICandidate {
 export interface IPosition {
   _id: string;
   name: string;
+  openings: number;
+  targetHireDate: string;
+  status: string;
+  requestCompletedDate: string;
   location: string;
-  type: string;
+  profile: string;
+  isLinked: boolean;
+  supervisoryOrganization: string;
   recruitingStartDate: string;
+  companyId: string;
 }
 
 export interface IPositions {
@@ -216,6 +223,7 @@ export interface IPositionDocument extends Document {
   requestCompletedDate: Date;
   location: string;
   profile: string;
+  isLinked: boolean;
   supervisoryOrganization: string;
   recruitingStartDate: Date;
   companyId: Types.ObjectId;
@@ -243,10 +251,7 @@ export interface IChoiceDocument extends Document {
   isCorrect: boolean;
 }
 
-export interface ICandidateDocument extends Document {
-  firstName: string;
-  lastName: string;
-  email: string;
+export interface ICandidateInterviewDocument extends Document {
   position: string;
   region: string;
   countryCode: string;
@@ -255,9 +260,17 @@ export interface ICandidateDocument extends Document {
   score: number;
   startedUtc: Date;
   completedUtc: Date;
+  jobId: string;
+}
+
+export interface ICandidateDocument extends Document {
+  firstName: string;
+  lastName: string;
+  email: string;
   favorite: boolean;
   companyId: Types.ObjectId;
   jobId: string;
+  interviews: ICandidateInterviewDocument[];
 }
 
 export interface IUserDocument extends Document {

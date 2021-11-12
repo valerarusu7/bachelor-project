@@ -56,13 +56,22 @@ function TemplatePage({
   }
 
   function updateTemplate() {
-    console.log({
-      ...template,
-      name: templateName,
-      description: templateDescription,
-      jobId: position._id,
-      tasks: templateTasks,
-    });
+    fetch(`/api/templates/${template._id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        ...template,
+        name: templateName,
+        description: templateDescription,
+        jobId: position._id,
+        tasks: templateTasks,
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      });
   }
 
   return (

@@ -1,25 +1,10 @@
 import { Schema, model, models } from "mongoose";
-import { ICandidateDocument } from "../types";
+import { ICandidateDocument, ICandidateInterviewDocument } from "../types";
 
-const CandidateSchema = new Schema<ICandidateDocument>({
+const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
   _id: {
     type: Schema.Types.ObjectId,
     auto: true,
-  },
-  firstName: {
-    type: String,
-    required: true,
-    maxlength: [64, "First name cannot be more than 64 characters."],
-  },
-  lastName: {
-    type: String,
-    required: true,
-    maxlength: [64, "Last name cannot be more than 64 characters."],
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
   },
   position: {
     type: String,
@@ -50,6 +35,33 @@ const CandidateSchema = new Schema<ICandidateDocument>({
     type: Number,
     default: 0,
   },
+  jobId: {
+    type: String,
+    required: true,
+    ref: "JobPosition",
+  },
+});
+
+const CandidateSchema = new Schema<ICandidateDocument>({
+  _id: {
+    type: Schema.Types.ObjectId,
+    auto: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+    maxlength: [64, "First name cannot be more than 64 characters."],
+  },
+  lastName: {
+    type: String,
+    required: true,
+    maxlength: [64, "Last name cannot be more than 64 characters."],
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   favorite: {
     type: Boolean,
     default: false,
@@ -59,11 +71,7 @@ const CandidateSchema = new Schema<ICandidateDocument>({
     required: true,
     ref: "Company",
   },
-  jobId: {
-    type: String,
-    required: true,
-    ref: "JobPosition",
-  },
+  interviews: [CandidateInterviewSchema],
 });
 
 export default models.Candidate ||

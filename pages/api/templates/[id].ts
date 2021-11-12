@@ -34,29 +34,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "PUT") {
     try {
       const body = req.body;
-      let templateData: ITemplateDocument;
+      let template: ITemplateDocument;
       if (body.constructor !== Object) {
-        templateData = JSON.parse(body);
+        template = new Template(JSON.parse(body));
       } else {
-        templateData = body;
+        template = new Template(body);
       }
 
-      templateData.tasks.forEach((task: ITaskDocument, index: number) => {
+      template.tasks.forEach((task, index) => {
         task.order = index;
       });
 
-      Template.findById(id, (err: Error, template: ITemplateDocument) => {
-        template.name = templateData.name;
-        template.description = templateData.description;
-        template.jobId = templateData.jobId;
-        template.tasks = templateData.tasks;
+      await Template.findByIdAndUpdate(id, template);
 
-        template.save((saveErr, updatedTemplate) => {
-          return res.status(200).json(updatedTemplate);
-        });
-      });
+      return res.status(200).json({ success: true });
     } catch (error) {
       const result = HandleError(error as Error);
+      console.log(result);
       return res.status(result.code).json({ error: result.error });
     }
   }

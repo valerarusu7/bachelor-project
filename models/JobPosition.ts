@@ -10,6 +10,10 @@ const JobPositionSchema = new Schema<IPositionDocument>({
   requestCompletedDate: Date,
   location: String,
   profile: String,
+  isLinked: {
+    type: Boolean,
+    default: false,
+  },
   supervisoryOrganization: String,
   recruitingStartDate: Date,
   companyId: {

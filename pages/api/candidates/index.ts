@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Candidate from "../../../models/Candidate";
-import { ICandidate } from "../../../types";
+import { ICandidateDocument } from "../../../types";
 import HandleError from "../../../helpers/ErrorHandler";
 
 /**
@@ -29,10 +29,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     try {
-      const body: ICandidate = req.body;
-      const candidate = await Candidate.create(body);
+      const body = req.body;
+      let candidate: ICandidateDocument;
+      if (body.constructor !== Object) {
+        candidate = new Candidate(JSON.parse(body));
+      } else {
+        candidate = new Candidate(body);
+      }
 
-      return res.status(201).json(candidate._id);
+      const savedCandidate = await candidate.save();
+
+      return res
+        .status(201)
+        .json({ templateId: savedCandidate._id.toString() });
     } catch (error) {
       const result = HandleError(error as Error);
       return res.status(result.code).json({ error: result.error });
