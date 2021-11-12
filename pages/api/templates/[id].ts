@@ -1,7 +1,31 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Template from "../../../models/Template";
-import JobPosition from "../../../models/JobPosition";
+import { ITemplateDocument, ITaskDocument } from "../../../types";
+import HandleError from "../../../helpers/ErrorHandler";
+
+/**
+ * @swagger
+ * /api/templates/{id}:
+ *   put:
+ *     description: Update template
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: UUID string of the template to update
+ *   delete:
+ *     description: Delete template
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: UUID string of the template to delete
+ */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const id: string = req.query.id as string;
@@ -9,33 +33,31 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "PUT") {
     try {
-      const templateData = req.body;
-      JobPosition.countDocuments(
-        { _id: templateData.jobId },
-        async function (err, count) {
-          if (count == 1) {
-            const updatedTemplate = await Template.findByIdAndUpdate(
-              id,
-              templateData,
-              {
-                new: true,
-              }
-            );
+      const body = req.body;
+      let templateData: ITemplateDocument;
+      if (body.constructor !== Object) {
+        templateData = JSON.parse(body);
+      } else {
+        templateData = body;
+      }
 
-            return res.status(200).json({
-              success: true,
-              updatedTemplate,
-            });
-          } else {
-            return res.status(400).json({
-              success: false,
-              message: "Template should be linked with existing job id.",
-            });
-          }
-        }
-      );
+      templateData.tasks.forEach((task: ITaskDocument, index: number) => {
+        task.order = index;
+      });
+
+      Template.findById(id, (err: Error, template: ITemplateDocument) => {
+        template.name = templateData.name;
+        template.description = templateData.description;
+        template.jobId = templateData.jobId;
+        template.tasks = templateData.tasks;
+
+        template.save((saveErr, updatedTemplate) => {
+          return res.status(200).json(updatedTemplate);
+        });
+      });
     } catch (error) {
-      return res.status(404).json({ success: false, error: error });
+      const result = HandleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
     }
   }
 
@@ -45,7 +67,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json({ success: true });
     } catch (error) {
-      return res.status(400).json({ success: false, error: error });
+      const result = HandleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
     }
   }
 };

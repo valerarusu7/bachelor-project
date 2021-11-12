@@ -4,14 +4,15 @@ import { Schema, model, models } from "mongoose";
 const ChoiceSchema = new Schema<IChoiceDocument>({
   _id: {
     type: Number,
+    min: 0,
   },
   value: {
     type: String,
-    required: true,
+    required: [true, "Choice cannot be empty."],
   },
   isCorrect: {
     type: Boolean,
-    required: true,
+    required: [true, "Choice must be selected as correct or not correct."],
   },
 });
 
@@ -22,12 +23,13 @@ const TaskSchema = new Schema<ITaskDocument>({
   },
   question: {
     type: String,
-    required: true,
-    maxLength: [256, "Description cannot be more than 256 characters."],
+    required: [true, "Question cannot be empty."],
+    maxLength: [2048, "Question cannot be more than 2048 characters."],
   },
   order: {
     type: Number,
     required: true,
+    min: [0, "Order cannot be negative integer"],
   },
   taskType: {
     type: String,
@@ -44,7 +46,7 @@ const TemplateSchema = new Schema<ITemplateDocument>(
     },
     name: {
       type: String,
-      required: true,
+      required: [true, "Name cannot be empty."],
     },
     description: {
       type: String,
@@ -53,12 +55,12 @@ const TemplateSchema = new Schema<ITemplateDocument>(
     tasks: [TaskSchema],
     companyId: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: [true, "Company id cannot be empty."],
       ref: "Company",
     },
     jobId: {
       type: String,
-      required: true,
+      required: [true, "Job id cannot be empty."],
       unique: true,
       ref: "JobPosition",
     },

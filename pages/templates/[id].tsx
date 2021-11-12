@@ -3,11 +3,11 @@ import { GetStaticPaths, GetStaticProps } from "next";
 
 import { BsQuestion } from "react-icons/bs";
 import { ParsedUrlQuery } from "querystring";
-import { templates } from "../../templates";
 import connectDB from "../../utils/mongodb";
 import Template from "../../models/Template";
+import { ITaskDocument, ITemplateObject } from "../../types";
 
-function TemplateDetails() {
+function TemplateDetails({ template }: ITemplateObject) {
   return (
     <div className="grid grid-cols-5 h-screen">
       <div className="bg-red-200 col-span-1"></div>
@@ -41,9 +41,7 @@ export default TemplateDetails;
 export const getStaticPaths: GetStaticPaths = async () => {
   await connectDB();
 
-  const templates = await Template.find({})
-    .select("_id name description companyId jobId createdAt")
-    .lean();
+  const templates = await Template.find({}).select("_id").lean();
 
   const paths = templates.map((template) => {
     return {
@@ -66,13 +64,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const { id } = context.params as IParams; // no longer causes error
 
-  const template = await Template.findOne({ _id: id })
-    .select("_id name description companyId jobId createdAt")
+  const template = await Template.findById(id)
+    .select("_id name description tasks companyId jobId createdAt")
     .lean();
 
   template._id = template._id.toString();
   template.companyId = template.companyId.toString();
   template.createdAt = template.createdAt.toString();
+  template.tasks.map((task: ITaskDocument) => {
+    task._id = task._id.toString();
+  });
 
   return {
     props: { template: template },
