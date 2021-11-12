@@ -2,12 +2,17 @@ import { BiCodeAlt, BiSelectMultiple } from "react-icons/bi";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 import { BsQuestion } from "react-icons/bs";
+import { ITemplate } from "../../types";
 import { ParsedUrlQuery } from "querystring";
-import { templates } from "../../templates";
-import connectDB from "../../utils/mongodb";
 import Template from "../../models/Template";
+import connectDB from "../../utils/mongodb";
 
-function TemplateDetails() {
+export interface ITemplateProps {
+  template: ITemplate;
+}
+
+function TemplatePage({ template }: ITemplateProps) {
+  console.log(template);
   return (
     <div className="grid grid-cols-5 h-screen">
       <div className="bg-red-200 col-span-1"></div>
@@ -36,7 +41,7 @@ function TemplateDetails() {
   );
 }
 
-export default TemplateDetails;
+export default TemplatePage;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   await connectDB();
