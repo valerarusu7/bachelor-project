@@ -96,7 +96,7 @@ function TaskModalContent() {
           pre: { opacity: 0 },
           visible: { opacity: 1 },
         }}
-        className="bg-white rounded-lg pl-4 pr-4 pt-4 pb-2  shadow-lg relative w-full border-2 border-gray-300"
+        className="bg-white rounded-lg pl-4 pr-4 pt-4 pb-2  shadow-lg relative w-full border border-gray-400"
       >
         <div className="bg-red-200 w-full flex justify-center items-center">
           <div

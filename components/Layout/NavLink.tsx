@@ -10,18 +10,17 @@ export interface NavLinkProps {
 
 function NavLink({ name, href, Icon }: NavLinkProps) {
   const router = useRouter();
-  const activeClassName =
-    "active text-white bg-gradient-to-r from-blue-500 to-white";
+  const activeClassName = "active text-blue-400 font-bold bg-darkBlue";
 
   return (
     <Link href={href}>
       <div
         className={`${
-          router.asPath === href ? activeClassName : "text-black"
-        }  flex flex-row group  hover:text-white hover:opacity-90 hover:bg-gradient-to-r from-blue-500 to-white cursor-pointer font-thin items-center p-2 my-2 justify-start`}
+          router.asPath === href ? activeClassName : "text-gray-500 "
+        } w-4/5 rounded-lg flex text-md flex-row group  cursor-pointer items-center p-4 my-2 justify-start`}
       >
-        {Icon && <Icon className="h-6 mr-2" />}
-        <p className="h-6 mr-2 font-normal">{name}</p>
+        {Icon && <Icon className="h-6 mr-4" />}
+        <p className="h-6 mr-2 font-semibold">{name}</p>
       </div>
     </Link>
   );

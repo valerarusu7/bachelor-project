@@ -15,7 +15,7 @@ function CandidateDetails({ candidate }: ICandidateProps) {
         <div className="col-span-4 flex flex-col ">
           <CandidateInfo candidate={candidate} />
         </div>
-        <div className="col-span-2 bg-white rounded-lg shadow-lg p-2 h-auto">
+        <div className="col-span-2 bg-white rounded-lg shadow-lg p-2 h-auto border border-gray-300">
           <CandidateTimeline candidate={candidate} />
         </div>
       </div>

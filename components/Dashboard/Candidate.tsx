@@ -10,15 +10,13 @@ function Candidate({ candidate, idx }: ICandidateProps) {
       <tr
         className={`${
           idx !== undefined && idx % 2 ? "bg-white" : "bg-gray-50"
-        } border-b border-gray-200 cursor-pointer hover:overflow-hidden hover:bg-blue-100`}
+        } border-b border-gray-200 cursor-pointer hover:overflow-hidden hover:bg-gray-200`}
       >
         <td className="py-3 px-3 text-left whitespace-nowrap">
           <div className="flex items-center">
             <div className="mr-2">
               <div className="bg-gradient-to-tr from-blue-600 to-blue-300 text-white w-8 h-8 rounded-full p-2 flex items-center justify-center">
-                <p className="font-semibold text-sm">
-                  {stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}
-                </p>
+                <p className="font-semibold text-sm">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
               </div>
             </div>
             <span>{`${candidate.firstName} ${candidate.lastName}`}</span>
@@ -29,24 +27,21 @@ function Candidate({ candidate, idx }: ICandidateProps) {
             <span className="font-medium">{candidate.email}</span>
           </div>
         </td>
-        <td className="py-3 px-6 text-left">
-          <div className=" flex items-center">
-            <p className="font-medium ">
-              {candidate.position.length >= 33
-                ? `${candidate.position.substring(0, 33)}...`
-                : candidate.position}
-            </p>
-          </div>
-        </td>
         <td className="py-3 px-3 text-left">
           <div className="flex items-center">
             {/* <span>
-              <img className="h-4 w-4 mr-1" src={`https://www.countryflags.io/${candidate.countryCode.toLowerCase()}/shiny/64.png`} />
+              <Flags.US title="United States" />
             </span> */}
             <span className="font-medium">{candidate.region}</span>
           </div>
         </td>
-        <td className="py-3 px-3 text-center ">
+
+        <td className="py-3 px-6 text-left">
+          <div className=" flex items-center">
+            <p className="font-medium ">{candidate.position}</p>
+          </div>
+        </td>
+        {/* <td className="py-3 px-3 text-center ">
           <div
             className={`${
               candidate.completed == true
@@ -94,14 +89,12 @@ function Candidate({ candidate, idx }: ICandidateProps) {
               )}
             </span>
           </div>
-        </td>
+        </td> */}
         <td className="py-3 px-3 text-center">
           <div className="flex items-center justify-center">
             <StarIcon
               className={`${
-                candidate.favorite == true
-                  ? "text-yellow-400 hover:text-gray-400"
-                  : "text-gray-400 hover:text-yellow-400"
+                candidate.favorite == true ? "text-yellow-400 hover:text-gray-400" : "text-gray-400 hover:text-yellow-400"
               } h-8 w-8 hover:animate-pulse`}
             />
           </div>

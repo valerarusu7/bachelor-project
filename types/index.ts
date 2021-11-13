@@ -63,6 +63,7 @@ export interface IPositionProps {
     type: string;
     recruitingStartDate: string;
   };
+  idx: number;
 }
 export interface IRegions {
   name: string;
@@ -206,10 +207,7 @@ export interface IChoice {
   isCorrect: boolean;
 }
 
-export type AsyncRequestHandler = (
-  req: NextApiRequest,
-  res: NextApiResponse
-) => Promise<any>;
+export type AsyncRequestHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<any>;
 
 export interface ICompanyDocument extends Document {
   name: string;

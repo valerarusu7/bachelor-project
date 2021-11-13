@@ -6,7 +6,7 @@ export interface HeaderProps {
 
 function Header({ header }: HeaderProps) {
   return (
-    <header className="dark:bg-gray-700 h-16 relative z-40 w-full items-center flex justify-end transition duration-500">
+    <header className="bg-white h-16 relative w-full items-center flex justify-end transition duration-500  p-4 shadow">
       <div className="flex items-center justify-between w-full">
         <div>
           <p className="text-2xl font-bold">{header}</p>

@@ -8,8 +8,8 @@ import CustomButton from "../../common/CustomButton";
 
 function CandidateTimeline({ candidate }: ICandidateProps) {
   return (
-    <div className="flex justify-start">
-      <div className="flex flex-col w-full">
+    <div className="flex justify-start ">
+      <div className="flex flex-col w-full ">
         <p className="font-bold text-gray-600 text-xl mb-2">Activity History</p>
         <TimelineItem Icon={UserCircleIcon} date="23 sep" helpText="Applied to" position="Backend Developer" color="blue" />
         <TimelineItem Icon={VideoCameraIcon} date="23 sep" helpText="Interacted with the video" position="" color="purple" />
