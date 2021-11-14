@@ -65,6 +65,10 @@ export interface IPositionsProps {
   positions: string;
 }
 
+export interface IPositionsObject {
+  positions: IPosition[];
+}
+
 export interface IPositionProps {
   position: {
     _id: string;

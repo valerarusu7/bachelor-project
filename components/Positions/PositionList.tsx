@@ -1,7 +1,7 @@
-import { IPositionsProps } from "../../types";
+import { IPositionsObject } from "../../types";
 import Position from "./Position";
 
-function PositionList({ positions }: IPositionsProps) {
+function PositionList({ positions }: IPositionsObject) {
   return (
     <div className="inline-block min-w-full overflow-hidden align-middle shadow-lg rounded-md mt-2 border border-gray-300">
       <table className="min-w-full table-fixed ">
