@@ -297,3 +297,30 @@ export interface IUserDocument extends Document {
   department: string;
   isAdmin: boolean;
 }
+
+export interface IMembers {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
+export interface IRoles {
+  id: number;
+  role: string;
+}
+export interface IMembersProps {
+  members: IMembers[];
+}
+
+export interface IMemberProps {
+  member
+  : {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+  };
+}
+
