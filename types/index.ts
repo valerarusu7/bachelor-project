@@ -1,13 +1,23 @@
 import { Document, Types } from "mongoose";
 import { NextApiRequest, NextApiResponse } from "next";
+import { ParsedUrlQuery } from "querystring";
 
 import { MouseEventHandler } from "react";
 
 export type IHeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
 
+export interface IParams extends ParsedUrlQuery {
+  id: string;
+}
+
+export type AsyncRequestHandler = (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => Promise<any>;
+
 // Pages
 export interface IDashboardProps {
-  candidates: ICandidate[];
+  candidates: string;
   positions: IPositions[];
   regions: IRegions[];
 }
@@ -52,7 +62,7 @@ export interface IPositions {
 }
 
 export interface IPositionsProps {
-  positions: IPosition[];
+  positions: string;
 }
 
 export interface IPositionProps {
@@ -71,6 +81,10 @@ export interface IRegions {
 }
 
 export interface ICandidateProps {
+  candidate: string;
+}
+
+export interface ICandidateObject {
   candidate: ICandidate;
   idx?: number;
 }
@@ -86,11 +100,7 @@ export interface ICompany {
 }
 
 export interface ICompanySettingsProps {
-  company: {
-    _id?: string;
-    name: string;
-    website?: string;
-  };
+  company: ICompany;
 }
 
 export interface ISettingsProps {
@@ -134,10 +144,24 @@ export interface ITemplate {
   jobId: string;
   createdAt?: string;
   multiple?: boolean;
-  mail?: boolean;
+  email?: boolean;
   single?: boolean;
   code?: boolean;
-  tasks?: ITask[];
+  tasks: ITask[] | number;
+}
+
+export interface ITemplateProps {
+  template: string;
+  positions: string;
+  selectedPosition: string;
+}
+
+export interface ITemplatesProps {
+  templates: string;
+}
+
+export interface ITemplateObject {
+  template: ITemplate;
 }
 
 export interface ITask {
@@ -147,42 +171,6 @@ export interface ITask {
   order: number;
   choices?: IChoice[];
   templateId?: string;
-}
-
-export interface IChoice {
-  _id?: number;
-  value: string;
-  isCorrect: boolean;
-}
-
-export interface ITemplateObject {
-  template: {
-    _id?: string;
-    name: string;
-    description: string;
-    createdAt?: string;
-    multiple?: boolean;
-    email?: boolean;
-    single?: boolean;
-    code?: boolean;
-    tasks?: ITask[] | number;
-  };
-}
-
-export interface ITemplatesProps {
-  templates: ITemplate[];
-}
-
-export interface ITimelineItem {
-  Icon: IHeroIcon;
-  helpText?: string;
-  position?: string;
-  date?: string;
-  color?: string;
-  comment?: boolean;
-  candidate?: ICandidate;
-  time?: string;
-  show?: boolean;
 }
 
 export interface ITaskType {
@@ -201,13 +189,32 @@ export interface ITaskTableObject {
   task: ITask;
   idx: number;
 }
+
 export interface IChoice {
   _id?: number;
   value: string;
   isCorrect: boolean;
 }
 
-export type AsyncRequestHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<any>;
+export interface ITimelineItem {
+  Icon: IHeroIcon;
+  helpText?: string;
+  position?: string;
+  date?: string;
+  color?: string;
+  comment?: boolean;
+  candidate?: ICandidate;
+  time?: string;
+  show?: boolean;
+}
+
+export interface IChoice {
+  _id?: number;
+  value: string;
+  isCorrect: boolean;
+}
+
+//Interfaces for mongoose models
 
 export interface ICompanyDocument extends Document {
   name: string;
@@ -250,6 +257,11 @@ export interface IChoiceDocument extends Document {
   isCorrect: boolean;
 }
 
+export interface ICandidateAnswerDocument extends Document {
+  taskId: Types.ObjectId;
+  answer: string;
+}
+
 export interface ICandidateInterviewDocument extends Document {
   position: string;
   region: string;
@@ -259,6 +271,7 @@ export interface ICandidateInterviewDocument extends Document {
   score: number;
   startedUtc: Date;
   completedUtc: Date;
+  answers: ICandidateAnswerDocument[];
   jobId: string;
 }
 
@@ -279,4 +292,5 @@ export interface IUserDocument extends Document {
   position: string;
   department: string;
   isAdmin: boolean;
+  is
 }

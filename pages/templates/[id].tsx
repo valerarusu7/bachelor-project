@@ -1,5 +1,11 @@
-import { GetStaticPaths, GetStaticProps } from "next";
-import { IPosition, ITaskDocument, ITemplate } from "../../types";
+import { GetServerSideProps } from "next";
+import {
+  IPosition,
+  ITemplate,
+  ITemplateDocument,
+  ITemplateProps,
+  IParams,
+} from "../../types";
 import template, {
   resetTask,
   selectTemplate,
@@ -21,32 +27,29 @@ import Template from "../../models/Template";
 import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
 
-export interface ITemplateProps {
-  template: ITemplate;
-  positions: IPosition[];
-  selectedPosition: IPosition;
-}
-
 function TemplatePage({
   template,
   positions,
   selectedPosition,
 }: ITemplateProps) {
+  const templateData: ITemplate = JSON.parse(template);
+  const positionsData: IPosition[] = JSON.parse(positions);
+  const selectedPositionData: IPosition = JSON.parse(selectedPosition);
+
   const dispatch = useAppDispatch();
   const { templateTasks, showModal } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
-  const [position, setSelectedPosition] = useState(selectedPosition);
-  const [templateName, setTemplateName] = useState(template.name);
+  const [position, setSelectedPosition] = useState(selectedPositionData);
+  const [templateName, setTemplateName] = useState(templateData.name);
   const [templateDescription, setTemplateDescription] = useState(
-    template.description
+    templateData.description
   );
   useEffect(() => {
     dispatch(setTasks(tasks));
   }, [tasks]);
 
   useEffect(() => {
-    dispatch(setTasks(template.tasks));
-    console.log(template);
+    dispatch(setTasks(templateData.tasks));
   }, []);
 
   function closeModal() {
@@ -56,10 +59,10 @@ function TemplatePage({
   }
 
   function updateTemplate() {
-    fetch(`/api/templates/${template._id}`, {
+    fetch(`/api/templates/${templateData._id}`, {
       method: "PUT",
       body: JSON.stringify({
-        ...template,
+        ...templateData,
         name: templateName,
         description: templateDescription,
         jobId: position._id,
@@ -75,7 +78,7 @@ function TemplatePage({
   }
 
   function deleteTemplate() {
-    fetch(`/api/templates/${template._id}`, {
+    fetch(`/api/templates/${templateData._id}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -87,12 +90,12 @@ function TemplatePage({
   }
 
   return (
-    <Layout header={template.name}>
+    <Layout header={templateData.name}>
       <div className="m-2">
         <TemplateDetails
           onChangeName={(e) => setTemplateName(e.target.value)}
           selectPosition={(e: any) => setSelectedPosition(e)}
-          positions={positions}
+          positions={positionsData}
           selectedPosition={position}
           onChangeDescription={(e) => setTemplateDescription(e.target.value)}
           templateDescription={templateDescription}
@@ -121,70 +124,28 @@ function TemplatePage({
 
 export default TemplatePage;
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   await connectDB();
 
-  const templates = await Template.find({}).select("_id").lean();
+  const { id } = context.params as IParams;
 
-  const paths = templates.map((template) => {
-    return {
-      params: { id: template._id.toString() },
-    };
-  });
+  const template: ITemplateDocument = await Template.findById(id).select(
+    "_id name description tasks companyId jobId createdAt"
+  );
 
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-interface IParams extends ParsedUrlQuery {
-  id: string;
-}
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  await connectDB();
-
-  const { id } = context.params as IParams; // no longer causes error
-
-  const template = await Template.findById(id)
-    .select("_id name description tasks companyId jobId createdAt")
-    .lean();
-
-  template._id = template._id.toString();
-  template.companyId = template.companyId.toString();
-  template.createdAt = template.createdAt.toString();
-  template.tasks.map((task: ITaskDocument) => {
-    task._id = task._id.toString();
-  });
-
-  const jobPositions = await JobPosition.find({})
+  const jobPositions: IPosition[] = await JobPosition.find({})
     .select("_id name location type recruitingStartDate")
     .lean();
-  const positionsData = jobPositions.map((position) => {
-    position.recruitingStartDate = position.recruitingStartDate.toString();
-    if (position.location === undefined) {
-      position.location = null;
-    }
-    return position;
-  });
 
-  let selectedPosition = await JobPosition.findById(template.jobId).lean();
-  selectedPosition.recruitingStartDate =
-    selectedPosition.recruitingStartDate.toString();
-  selectedPosition.requestCompletedDate =
-    selectedPosition.requestCompletedDate.toString();
-  selectedPosition.companyId = selectedPosition.companyId.toString();
-
-  if (selectedPosition.location === undefined) {
-    selectedPosition.location = null;
-  }
+  const selectedPosition: IPosition = await JobPosition.findById(
+    template.jobId
+  ).lean();
 
   return {
     props: {
-      template: template,
-      positions: jobPositions,
-      selectedPosition: selectedPosition,
+      template: JSON.stringify(template),
+      positions: JSON.stringify(jobPositions),
+      selectedPosition: JSON.stringify(selectedPosition),
     },
   };
 };

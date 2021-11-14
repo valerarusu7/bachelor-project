@@ -1,10 +1,10 @@
 import { BanIcon, StarIcon } from "@heroicons/react/solid";
 
-import { ICandidateProps } from "../../types";
+import { ICandidateObject } from "../../types";
 import Link from "next/link";
 import { stringAvatar } from "../../helpers/stringAvatar";
 
-function Candidate({ candidate, idx }: ICandidateProps) {
+function Candidate({ candidate, idx }: ICandidateObject) {
   return (
     <Link href={`dashboard/candidate/${candidate._id}`}>
       <tr
@@ -16,7 +16,9 @@ function Candidate({ candidate, idx }: ICandidateProps) {
           <div className="flex items-center">
             <div className="mr-2">
               <div className="bg-gradient-to-tr from-blue-600 to-blue-300 text-white w-8 h-8 rounded-full p-2 flex items-center justify-center">
-                <p className="font-semibold text-sm">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
+                <p className="font-semibold text-sm">
+                  {stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}
+                </p>
               </div>
             </div>
             <span>{`${candidate.firstName} ${candidate.lastName}`}</span>
@@ -94,7 +96,9 @@ function Candidate({ candidate, idx }: ICandidateProps) {
           <div className="flex items-center justify-center">
             <StarIcon
               className={`${
-                candidate.favorite == true ? "text-yellow-400 hover:text-gray-400" : "text-gray-400 hover:text-yellow-400"
+                candidate.favorite == true
+                  ? "text-yellow-400 hover:text-gray-400"
+                  : "text-gray-400 hover:text-yellow-400"
               } h-8 w-8 hover:animate-pulse`}
             />
           </div>

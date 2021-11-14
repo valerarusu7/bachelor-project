@@ -1,5 +1,25 @@
 import { Schema, model, models } from "mongoose";
-import { ICandidateDocument, ICandidateInterviewDocument } from "../types";
+import {
+  ICandidateDocument,
+  ICandidateInterviewDocument,
+  ICandidateAnswerDocument,
+} from "../types";
+
+const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
+  _id: {
+    type: Schema.Types.ObjectId,
+    auto: true,
+  },
+  taskId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "JobPosition",
+  },
+  answer: {
+    type: String,
+    required: true,
+  },
+});
 
 const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
   _id: {
@@ -35,6 +55,7 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
     type: Number,
     default: 0,
   },
+  answers: [CandidateAnswerSchema],
   jobId: {
     type: String,
     required: true,

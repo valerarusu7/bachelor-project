@@ -5,9 +5,10 @@ import JobPosition from "../../models/JobPosition";
 import connectDB from "../../utils/mongodb";
 
 function Positions({ positions }: IPositionsProps) {
+  const positionsData = JSON.parse(positions);
   return (
     <Layout header="Positions">
-      <PositionList positions={positions} />
+      <PositionList positions={positionsData} />
     </Layout>
   );
 }
@@ -16,19 +17,14 @@ export default Positions;
 
 export const getServerSideProps = async () => {
   await connectDB();
+
   const jobPositions = await JobPosition.find({})
     .select("_id name location type recruitingStartDate")
     .lean();
-  const positionsData = jobPositions.map((position) => {
-    position.recruitingStartDate = position.recruitingStartDate.toString();
-    if (position.location === undefined) {
-      position.location = null;
-    }
-    return position;
-  });
+
   return {
     props: {
-      positions: positionsData,
+      positions: JSON.stringify(jobPositions),
     },
   };
 };

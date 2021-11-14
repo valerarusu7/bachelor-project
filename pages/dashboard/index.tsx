@@ -32,7 +32,9 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
   } = useAppSelector(selectDashboard);
   const dispatch = useAppDispatch();
 
-  const [filteredCandidates, setFilteredCandidates] = useState(candidates);
+  const candidatesData = JSON.parse(candidates);
+
+  const [filteredCandidates, setFilteredCandidates] = useState(candidatesData);
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     dispatch(setRegions(regions));
@@ -46,7 +48,7 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
     setFilteredCandidates(
       filterByScore(
         filterCandidates(
-          candidates,
+          candidatesData,
           dashboardPosition,
           dashboardRegion,
           dashboardFilterAll,
@@ -96,17 +98,6 @@ export default DashboardPage;
 export const getServerSideProps = async () => {
   await connectDB();
   const candidates: ICandidate[] = await Candidate.find({}).lean();
-  const candidatesData = candidates.map((candidate) => {
-    candidate._id = candidate._id.toString();
-    if (candidate.startedUtc !== undefined) {
-      candidate.startedUtc = candidate.startedUtc.toString();
-    }
-    if (candidate.completedUtc !== undefined) {
-      candidate.completedUtc = candidate.completedUtc.toString();
-    }
-    candidate.companyId = candidate.companyId.toString();
-    return candidate;
-  });
 
   const positionData: IPositions[] | undefined = [
     { name: "All positions" },
@@ -127,7 +118,7 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      candidates: candidatesData,
+      candidates: JSON.stringify(candidates),
       positions: positionData,
       regions: regionData,
     },

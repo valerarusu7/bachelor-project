@@ -1,4 +1,4 @@
-import { ITaskDocument, ITemplatesProps } from "../../types";
+import { ITemplate, ITask, ITemplatesProps } from "../../types";
 
 import CustomButton from "../../components/common/CustomButton";
 import Layout from "../../components/Layout/Layout";
@@ -8,6 +8,7 @@ import TemplateModel from "../../models/Template";
 import connectDB from "../../utils/mongodb";
 
 function Templates({ templates }: ITemplatesProps) {
+  const templatesData: ITemplate[] = JSON.parse(templates);
   return (
     <Layout header="Templates">
       <div className="w-full flex justify-end items-center pb-2">
@@ -16,7 +17,7 @@ function Templates({ templates }: ITemplatesProps) {
         </Link>
       </div>
       <div className="grid 2xl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4 ">
-        {templates.map((template) => (
+        {templatesData.map((template) => (
           <Template template={template} key={template._id} />
         ))}
       </div>
@@ -29,34 +30,27 @@ export default Templates;
 export const getServerSideProps = async () => {
   await connectDB();
 
-  const templates = await TemplateModel.find({})
+  const templates: ITemplate[] = await TemplateModel.find({})
     .select("_id name description tasks companyId jobId createdAt")
     .lean();
 
-  console.log(templates);
+  const modifiedTemplates = templates.map(async (template: ITemplate) => {
+    const tasks = template.tasks as ITask[];
+    const taskTypes = tasks.map((task: ITask) => task.taskType);
+    template["multiple"] = taskTypes.includes("multiple");
+    template["email"] = taskTypes.includes("email");
+    template["single"] = taskTypes.includes("single");
+    template["code"] = taskTypes.includes("code");
+    template["tasks"] = taskTypes.length;
 
-  const modifiedTemplates = templates.map(async (template) => {
-    const taskTypes = template.tasks.map(
-      (task: ITaskDocument) => task.taskType
-    );
-    if (taskTypes.length != 0) {
-      template["multiple"] = taskTypes.includes("multiple");
-      template["email"] = taskTypes.includes("email");
-      template["single"] = taskTypes.includes("single");
-      template["code"] = taskTypes.includes("code");
-      template["tasks"] = taskTypes.length;
-    }
-
-    template._id = template._id.toString();
-    template.companyId = template.companyId.toString();
-    template.createdAt = template.createdAt.toString();
     return template;
   });
 
-  const templatesData = await Promise.all(modifiedTemplates);
+  const templatesData: ITemplate[] = await Promise.all(modifiedTemplates);
+
   return {
     props: {
-      templates: templatesData,
+      templates: JSON.stringify(templatesData),
     },
   };
 };

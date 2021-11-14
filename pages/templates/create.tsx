@@ -1,4 +1,4 @@
-import { IPosition, ITemplate } from "../../types";
+import { IPosition, ITemplate, IPositionsProps } from "../../types";
 import {
   resetTask,
   resetTemplateState,
@@ -19,10 +19,9 @@ import Tasks from "../../components/Templates/Tasks";
 import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
 
-export interface ICreateTemplate {
-  positions: IPosition[];
-}
-function Create({ positions }: ICreateTemplate) {
+function Create({ positions }: IPositionsProps) {
+  const positionsData: IPosition[] = JSON.parse(positions);
+
   const dispatch = useAppDispatch();
   const { templateTasks, showModal } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
@@ -49,7 +48,6 @@ function Create({ positions }: ICreateTemplate) {
       jobId: selectedPosition._id,
       tasks: templateTasks,
     };
-    console.log(template);
     fetch("/api/templates", {
       method: "POST",
       body: JSON.stringify(template),
@@ -74,7 +72,7 @@ function Create({ positions }: ICreateTemplate) {
         <TemplateDetails
           onChangeName={(e) => setTemplateName(e.target.value)}
           selectPosition={(e: any) => setSelectedPosition(e)}
-          positions={positions}
+          positions={positionsData}
           selectedPosition={selectedPosition}
           onChangeDescription={(e) => setTemplateDescription(e.target.value)}
           templateDescription={templateDescription}
@@ -98,19 +96,14 @@ export default Create;
 
 export const getServerSideProps = async () => {
   connectDB();
-  const jobPositions = await JobPosition.find({})
+
+  const jobPositions: IPosition[] = await JobPosition.find({})
     .select("_id name location type recruitingStartDate")
     .lean();
-  const positionsData = jobPositions.map((position) => {
-    position.recruitingStartDate = position.recruitingStartDate.toString();
-    if (position.location === undefined) {
-      position.location = null;
-    }
-    return position;
-  });
+
   return {
     props: {
-      positions: positionsData,
+      positions: JSON.stringify(jobPositions),
     },
   };
 };
