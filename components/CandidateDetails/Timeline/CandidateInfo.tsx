@@ -1,16 +1,18 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/solid";
 
-import { ICandidateProps } from "../../../types";
+import { ICandidateObject } from "../../../types";
 import InfoItem from "../InfoItem";
 import Separator from "../../common/Separator";
 import { stringAvatar } from "../../../helpers/stringAvatar";
 
-function CandidateInfo({ candidate }: ICandidateProps) {
+function CandidateInfo({ candidate }: ICandidateObject) {
   return (
     <div className=" max-h-80 bg-white rounded-lg shadow-lg mr-4 p-2 flex flex-col border border-gray-300">
       <div className="flex h-28 w-full">
         <div className="h-40 w-40 rounded-full bg-gray-300 relative border-8 border-gray-200 ml-8 -top-12 flex justify-center items-center p-1">
-          <p className="text-6xl font-bold text-gray-500">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
+          <p className="text-6xl font-bold text-gray-500">
+            {stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}
+          </p>
         </div>
         <div className="flex flex-grow justify-between items-center ml-4 mb-8">
           <div>
@@ -19,7 +21,9 @@ function CandidateInfo({ candidate }: ICandidateProps) {
           <div className="h-full">
             <StarIcon
               className={`${
-                candidate.favorite == true ? "text-yellow-400 hover:text-gray-400" : "text-gray-400 hover:text-yellow-400"
+                candidate.favorite == true
+                  ? "text-yellow-400 hover:text-gray-400"
+                  : "text-gray-400 hover:text-yellow-400"
               } h-8 w-8 cursor-pointer hover:animate-pulse mb-2`}
             />
             <PencilIcon className="h-8 w-8 cursor-pointer hover:text-green-500 text-gray-500 mb-2" />

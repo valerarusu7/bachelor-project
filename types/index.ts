@@ -292,5 +292,4 @@ export interface IUserDocument extends Document {
   position: string;
   department: string;
   isAdmin: boolean;
-  is
 }
