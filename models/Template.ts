@@ -1,5 +1,6 @@
 import { IChoiceDocument, ITaskDocument, ITemplateDocument } from "../types";
 import { Schema, model, models } from "mongoose";
+import "./Company";
 
 const ChoiceSchema = new Schema<IChoiceDocument>({
   _id: {

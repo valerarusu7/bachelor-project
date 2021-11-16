@@ -4,6 +4,7 @@ import {
   ICandidateInterviewDocument,
   ICandidateAnswerDocument,
 } from "../types";
+import "./JobPosition";
 
 const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
   _id: {
@@ -26,10 +27,6 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
     type: Schema.Types.ObjectId,
     auto: true,
   },
-  position: {
-    type: String,
-    maxlength: [128, "Position cannot be more than 128 characters."],
-  },
   region: {
     type: String,
   },
@@ -38,6 +35,10 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
     maxlength: [3, "Country code cannot be more than 3 characters."],
   },
   completed: {
+    type: Boolean,
+    default: false,
+  },
+  favorite: {
     type: Boolean,
     default: false,
   },
@@ -59,6 +60,7 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
   jobId: {
     type: String,
     required: true,
+    unique: true,
     ref: "JobPosition",
   },
 });
@@ -82,10 +84,6 @@ const CandidateSchema = new Schema<ICandidateDocument>({
     type: String,
     required: true,
     unique: true,
-  },
-  favorite: {
-    type: Boolean,
-    default: false,
   },
   companyId: {
     type: Schema.Types.ObjectId,

@@ -271,6 +271,7 @@ export interface ICandidateInterviewDocument extends Document {
   region: string;
   countryCode: string;
   completed: boolean;
+  favorite: boolean;
   time: string;
   score: number;
   startedUtc: Date;
@@ -283,7 +284,6 @@ export interface ICandidateDocument extends Document {
   firstName: string;
   lastName: string;
   email: string;
-  favorite: boolean;
   companyId: Types.ObjectId;
   jobId: string;
   interviews: ICandidateInterviewDocument[];

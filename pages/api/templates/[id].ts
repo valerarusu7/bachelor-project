@@ -65,4 +65,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(result.code).json({ error: result.error });
     }
   }
+
+  if (req.method === "GET") {
+    try {
+      const template = await Template.findById(id, {
+        tasks: { $slice: 1 },
+      })
+        .select("_id name description companyId")
+        .populate("companyId")
+        .lean();
+
+      return res.status(200).json(template);
+    } catch (error) {
+      const result = HandleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
+    }
+  }
 };

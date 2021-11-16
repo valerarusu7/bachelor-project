@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Candidate from "../../../models/Candidate";
-import { ICandidateDocument } from "../../../types";
+import {
+  ICandidateDocument,
+  ICandidateInterviewDocument,
+} from "../../../types";
 import HandleError from "../../../helpers/ErrorHandler";
 
 /**
@@ -37,11 +40,39 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         candidate = new Candidate(body);
       }
 
-      const savedCandidate = await candidate.save();
-
-      return res
-        .status(201)
-        .json({ templateId: savedCandidate._id.toString() });
+      Candidate.countDocuments(
+        { email: body.email },
+        async function (err, count) {
+          if (count === 1) {
+            var updatedCandidate = await Candidate.findOne({
+              email: body.email,
+            });
+            body.interviews.forEach(
+              (interview: ICandidateInterviewDocument) => {
+                if (
+                  !updatedCandidate.interviews
+                    .map(
+                      (interview: ICandidateInterviewDocument) =>
+                        interview.jobId
+                    )
+                    .includes(interview.jobId)
+                ) {
+                  updatedCandidate.interviews.push(interview);
+                }
+              }
+            );
+            updatedCandidate.save();
+            return res
+              .status(201)
+              .json({ templateId: updatedCandidate._id.toString() });
+          } else {
+            const savedCandidate = await candidate.save();
+            return res
+              .status(201)
+              .json({ templateId: savedCandidate._id.toString() });
+          }
+        }
+      );
     } catch (error) {
       const result = HandleError(error as Error);
       return res.status(result.code).json({ error: result.error });

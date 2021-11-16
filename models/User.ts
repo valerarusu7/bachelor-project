@@ -1,7 +1,7 @@
 import { IUserDocument } from "../types";
 import { Schema, model, models } from "mongoose";
 
-const CompanySchema = new Schema<IUserDocument>({
+const UserSchema = new Schema<IUserDocument>({
   _id: {
     type: Schema.Types.ObjectId,
     auto: true,
@@ -18,4 +18,4 @@ const CompanySchema = new Schema<IUserDocument>({
   },
 });
 
-export default models.Company || model<IUserDocument>("Company", CompanySchema);
+export default models.User || model<IUserDocument>("User", UserSchema);
