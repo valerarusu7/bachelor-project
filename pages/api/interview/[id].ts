@@ -3,8 +3,9 @@ import connectDB from "../../../utils/mongodb";
 import Template from "../../../models/Template";
 import Candidate from "../../../models/Candidate";
 import { ICandidateInterviewDocument, ITaskDocument } from "../../../types";
-import HandleError from "../../../helpers/ErrorHandler";
+import handleError from "../../../helpers/errorHandler";
 import convertToTimeSpan from "../../../helpers/timeFormatter";
+import verifyAuthValue from "../../../helpers/tokenVerifier";
 
 /**
  * @swagger
@@ -27,40 +28,46 @@ import convertToTimeSpan from "../../../helpers/timeFormatter";
  */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const authValue = req.headers.authorization;
+  const { order } = req.query;
+  const body = req.body;
   await connectDB();
-  const { id, order } = req.query;
 
   if (req.method === "GET") {
     try {
-      await Candidate.findOne({ "interviews._id": id }).exec(async function (
-        err,
-        candidate
-      ) {
-        var foundInterview = candidate.interviews.find(
-          (interview: ICandidateInterviewDocument) => interview._id == id
-        );
-        await Template.findOne({ jobId: foundInterview.jobId }).exec(function (
-          err,
-          template
-        ) {
-          var task = template.tasks.find(
-            (item: ITaskDocument) => item.order == parseInt(order as string) + 1
+      var interviewId = verifyAuthValue(authValue);
+      await Candidate.findOne({ "interviews._id": interviewId }).exec(
+        async function (err, candidate) {
+          var foundInterview = candidate.interviews.find(
+            (interview: ICandidateInterviewDocument) =>
+              interview._id == interviewId
           );
-          return res.status(200).json(task);
-        });
-      });
+          if (foundInterview == undefined) {
+            return res.status(404).json({ error: "No template found." });
+          }
+          await Template.findOne({ jobId: foundInterview.jobId }).exec(
+            function (err, template) {
+              var task = template.tasks.find(
+                (item: ITaskDocument) =>
+                  item.order == parseInt(order as string) + 1
+              );
+              return res.status(200).json(task);
+            }
+          );
+        }
+      );
     } catch (error) {
-      const result = HandleError(error as Error);
+      const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }
 
   if (req.method === "POST") {
     try {
-      const body = req.body;
+      var interviewId = verifyAuthValue(authValue);
       let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
       let candidate = await Candidate.findOneAndUpdate(
-        { "interviews._id": id },
+        { "interviews._id": interviewId },
         {
           "interviews.$.startedUtc": body.startedUtc,
           "interviews.$.completedUtc": body.completedUtc,
@@ -70,7 +77,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       );
       return res.status(200).json(candidate._id);
     } catch (error) {
-      const result = HandleError(error as Error);
+      const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }

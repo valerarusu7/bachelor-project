@@ -5,7 +5,7 @@ import {
   ICandidateDocument,
   ICandidateInterviewDocument,
 } from "../../../types";
-import HandleError from "../../../helpers/ErrorHandler";
+import handleError from "../../../helpers/errorHandler";
 
 /**
  * @swagger
@@ -28,11 +28,11 @@ import HandleError from "../../../helpers/ErrorHandler";
  */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const body = req.body;
   await connectDB();
 
   if (req.method === "POST") {
     try {
-      const body = req.body;
       let candidate: ICandidateDocument;
       if (body.constructor !== Object) {
         candidate = new Candidate(JSON.parse(body));
@@ -74,7 +74,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
     } catch (error) {
-      const result = HandleError(error as Error);
+      const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }

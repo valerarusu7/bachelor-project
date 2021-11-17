@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
 import { ICompany, ICompanyDocument } from "../../../types";
-import HandleError from "../../../helpers/ErrorHandler";
+import handleError from "../../../helpers/errorHandler";
 
 /**
  * @swagger
@@ -21,12 +21,11 @@ import HandleError from "../../../helpers/ErrorHandler";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
-  const id: string = req.query.id as string;
+  const { id } = req.query;
+  const companyData: ICompany = req.body;
 
   if (req.method === "PUT") {
     try {
-      const companyData: ICompany = req.body;
-
       const company: ICompanyDocument = await Company.findByIdAndUpdate(
         id,
         companyData,
@@ -40,15 +39,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         company,
       });
     } catch (error) {
-      const result = HandleError(error as Error);
+      const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }
 
   if (req.method === "POST") {
     try {
-      const companyData: ICompany = req.body;
-
       const company: ICompanyDocument = await Company.findByIdAndUpdate(
         id,
         companyData,
@@ -62,7 +59,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         company,
       });
     } catch (error) {
-      const result = HandleError(error as Error);
+      const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }

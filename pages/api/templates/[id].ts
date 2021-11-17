@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Template from "../../../models/Template";
-import { ITemplateDocument, ITaskDocument } from "../../../types";
-import HandleError from "../../../helpers/ErrorHandler";
+import { ITemplateDocument } from "../../../types";
+import handleError from "../../../helpers/errorHandler";
 
 /**
  * @swagger
@@ -28,12 +28,12 @@ import HandleError from "../../../helpers/ErrorHandler";
  */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const id: string = req.query.id as string;
+  const { id } = req.query;
+  const body = req.body;
   await connectDB();
 
   if (req.method === "PUT") {
     try {
-      const body = req.body;
       let template: ITemplateDocument;
       if (body.constructor !== Object) {
         template = new Template(JSON.parse(body));
@@ -49,8 +49,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json({ success: true });
     } catch (error) {
-      const result = HandleError(error as Error);
-      console.log(result);
+      const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }
@@ -61,23 +60,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json({ success: true });
     } catch (error) {
-      const result = HandleError(error as Error);
-      return res.status(result.code).json({ error: result.error });
-    }
-  }
-
-  if (req.method === "GET") {
-    try {
-      const template = await Template.findById(id, {
-        tasks: { $slice: 1 },
-      })
-        .select("_id name description companyId")
-        .populate("companyId")
-        .lean();
-
-      return res.status(200).json(template);
-    } catch (error) {
-      const result = HandleError(error as Error);
+      const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }

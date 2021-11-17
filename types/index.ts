@@ -218,6 +218,10 @@ export interface IChoice {
   isCorrect: boolean;
 }
 
+export interface IInterviewToken {
+  interviewId: string;
+}
+
 //Interfaces for mongoose models
 
 export interface ICompanyDocument extends Document {
