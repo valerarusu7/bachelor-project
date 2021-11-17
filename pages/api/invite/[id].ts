@@ -7,7 +7,7 @@ import { ICandidateInterviewDocument, IInterviewToken } from "../../../types";
 import connectDB from "../../../utils/mongodb";
 import absoluteUrl from "next-absolute-url";
 
-const { JWT_PRIVATE_KEY } = process.env;
+const { JWT_INTERVIEW_PRIVATE_KEY } = process.env;
 
 /**
  * @swagger
@@ -34,7 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
         const token = jwt.sign(
           { interviewId: foundInterview._id } as IInterviewToken,
-          JWT_PRIVATE_KEY as string,
+          JWT_INTERVIEW_PRIVATE_KEY as string,
           { expiresIn: "7d" as string }
         );
         var { origin } = absoluteUrl(req);
