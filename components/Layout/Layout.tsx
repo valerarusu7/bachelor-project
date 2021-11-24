@@ -10,7 +10,7 @@ export interface LayoutProps {
 function Layout({ children, header }: LayoutProps) {
   return (
     <div className="light">
-      <div className="bg-gray-200 dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
+      <div className="bg-gray-100 dark:bg-gray-800 flex overflow-hidden relative h-screen transition duration-500">
         <Sidebar />
         <div className=" h-screen w-full transition duration-500">
           <div className="overflow-auto h-screen relative scrollbar-hide transition duration-500">
