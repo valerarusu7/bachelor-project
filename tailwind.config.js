@@ -18,6 +18,7 @@ module.exports = {
       orange: colors.orange,
       sky: colors.sky,
       darkGray: "#1d2129",
+      darkGrayLight: '#252b38',
       darkBlue: "#223c53",
     },
     extend: {},

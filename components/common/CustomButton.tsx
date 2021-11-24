@@ -16,7 +16,7 @@ function CustomButton({ color, children, onClick, disabled, customStyles }: ICus
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className={`${customStyles} bg-gradient-to-tr from-${color}-700 to-${color}-400 text-white pr-4 pl-4 pb-2 pt-2 rounded-lg font-semibold shadow-lg hover:opacity-80 ${
+      className={`${customStyles} bg-gradient-to-tr from-${color}-600 to-${color}-400 text-white pr-4 pl-4 pb-2 pt-2 rounded-lg font-semibold shadow-lg hover:opacity-80 ${
         disabled ? "opacity-50" : null
       }`}
       onClick={onClick}

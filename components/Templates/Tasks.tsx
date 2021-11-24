@@ -22,15 +22,9 @@ function Tasks({ setStateTasks }: ITasks) {
             pre: { opacity: 0 },
             visible: { opacity: 1 },
           }}
-          className="inline-block min-w-full overflow-hidden align-middle shadow-xl rounded-md mt-2 "
+          className="inline-block min-w-full overflow-hidden align-middle shadow-lg rounded-md mt-2 border border-gray-300"
         >
-          <Reorder.Group
-            axis="y"
-            as="table"
-            values={templateTasks}
-            onReorder={setStateTasks}
-            className="min-w-full"
-          >
+          <Reorder.Group axis="y" as="table" values={templateTasks} onReorder={setStateTasks} className="min-w-full">
             <thead className="bg-gray-200 uppercase text-sm rounded-t-lg w-full">
               <tr>
                 <th className="py-3 px-6 text-center">Order</th>

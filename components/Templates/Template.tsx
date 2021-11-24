@@ -68,6 +68,10 @@ function Template({ template }: ITemplateObject) {
             <p className="font-bold text-gray-700">{`Avg score: 80%`}</p>
           </div>
         </div>
+
+        <Link href={`/interview`}>
+          <button>preview</button>
+        </Link>
       </div>
     </Link>
   );
