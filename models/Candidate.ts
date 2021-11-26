@@ -1,5 +1,6 @@
 import { Schema, model, models } from "mongoose";
 import {
+  ICandidate,
   ICandidateDocument,
   ICandidateInterviewDocument,
   ICandidateAnswerDocument,
@@ -92,6 +93,25 @@ const CandidateSchema = new Schema<ICandidateDocument>({
   },
   interviews: [CandidateInterviewSchema],
 });
+
+CandidateSchema.statics.toClient = function (candidate: ICandidate) {
+  candidate._id = candidate._id.toString();
+  candidate.companyId = candidate.companyId.toString();
+  candidate.interviews.forEach((interview) => {
+    interview._id = interview._id.toString();
+    if (interview.startedUtc !== undefined) {
+      interview.startedUtc = interview.startedUtc.toString();
+    }
+    if (interview.completedUtc !== undefined) {
+      interview.completedUtc = interview.completedUtc.toString();
+    }
+    interview.answers.forEach((answer) => {
+      answer._id = answer._id.toString();
+      answer.taskId = answer.taskId.toString();
+    });
+  });
+  return candidate;
+};
 
 export default models.Candidate ||
   model<ICandidateDocument>("Candidate", CandidateSchema);

@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
-import { ICompany, ICompanyDocument } from "../../../types";
+import { IUserDocument, ICompanyDocument } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
+import User from "../../../models/User";
 
 /**
  * @swagger
@@ -21,20 +22,27 @@ import handleError from "../../../helpers/errorHandler";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
-  const { id } = req.query;
-  const companyData: ICompany = req.body;
+  const body = req.body;
 
-  if (req.method === "PUT") {
+  if (req.method === "POST") {
     try {
-      const company: ICompanyDocument = await Company.findByIdAndUpdate(
-        id,
-        companyData,
-        {
-          new: true,
-        }
-      );
+      let company: ICompanyDocument;
+      let user: IUserDocument;
+      if (body.constructor !== Object) {
+        const bodyData = JSON.parse(body);
+        company = new Company(bodyData.company);
+        user = new User(bodyData.user);
+      } else {
+        company = new Company(body.company);
+        user = new User(body.user);
+      }
+      user.companyId = company._id;
+      user.role = "admin";
 
-      return res.status(200).json(company);
+      await company.save();
+      await user.save();
+
+      return res.status(201).json({ success: true });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

@@ -1,11 +1,11 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/solid";
 
-import { ICandidateObject } from "../../../types";
+import { ICandidateProps } from "../../../types";
 import InfoItem from "../InfoItem";
 import Separator from "../../common/Separator";
 import { stringAvatar } from "../../../helpers/stringAvatar";
 
-function CandidateInfo({ candidate }: ICandidateObject) {
+function CandidateInfo({ candidate }: ICandidateProps) {
   return (
     <div className=" max-h-80 bg-white rounded-lg shadow-lg mr-4 p-2 flex flex-col border border-gray-300">
       <div className="flex h-28 w-full">
@@ -21,7 +21,7 @@ function CandidateInfo({ candidate }: ICandidateObject) {
           <div className="h-full">
             <StarIcon
               className={`${
-                candidate.favorite == true
+                candidate.interviews[0].favorite == true
                   ? "text-yellow-400 hover:text-gray-400"
                   : "text-gray-400 hover:text-yellow-400"
               } h-8 w-8 cursor-pointer hover:animate-pulse mb-2`}
@@ -36,9 +36,15 @@ function CandidateInfo({ candidate }: ICandidateObject) {
       <div className="grid grid-cols-3 justify-center items-center h-full ">
         <InfoItem label="Birthday" value={"24/11/1999 (21 years old)"} />
         <InfoItem label="Email" value={candidate.email} />
-        <InfoItem label="Position" value={candidate.position} />
-        <InfoItem label="Interview result" value={`${candidate.score}%`} />
-        <InfoItem label="Completion time" value={candidate.time} />
+        <InfoItem label="Position" value={candidate.interviews[0].position} />
+        <InfoItem
+          label="Interview result"
+          value={`${candidate.interviews[0].score}%`}
+        />
+        <InfoItem
+          label="Completion time"
+          value={candidate.interviews[0].time}
+        />
       </div>
     </div>
   );

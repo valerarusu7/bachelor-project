@@ -3,11 +3,11 @@ import handleError from "../../../helpers/errorHandler";
 import sendEmail from "../../../helpers/mailer";
 import jwt from "jsonwebtoken";
 import Candidate from "../../../models/Candidate";
-import { ICandidateInterviewDocument, IInterviewToken } from "../../../types";
+import { ICandidateInterviewDocument } from "../../../types";
 import connectDB from "../../../utils/mongodb";
 import absoluteUrl from "next-absolute-url";
 
-const { JWT_INTERVIEW_PRIVATE_KEY } = process.env;
+const { INTERVIEW_PRIVATE_KEY } = process.env;
 
 /**
  * @swagger
@@ -33,8 +33,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(404).json({ error: "No template found." });
         }
         const token = jwt.sign(
-          { interviewId: foundInterview._id } as IInterviewToken,
-          JWT_INTERVIEW_PRIVATE_KEY as string,
+          { interviewId: foundInterview._id as string },
+          INTERVIEW_PRIVATE_KEY as string,
           { expiresIn: "7d" as string }
         );
         var { origin } = absoluteUrl(req);

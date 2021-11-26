@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import {
   IPosition,
   ITemplate,
@@ -124,7 +124,24 @@ function TemplatePage({
 
 export default TemplatePage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  await connectDB();
+
+  const templates = await Template.find({}).select("_id").lean();
+
+  const paths = templates.map((template) => {
+    return {
+      params: { id: template._id.toString() },
+    };
+  });
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async (context) => {
   await connectDB();
 
   const { id } = context.params as IParams;
@@ -147,5 +164,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       positions: JSON.stringify(jobPositions),
       selectedPosition: JSON.stringify(selectedPosition),
     },
+    revalidate: 5,
   };
 };

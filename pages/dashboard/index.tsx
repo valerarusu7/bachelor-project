@@ -35,6 +35,7 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
   const candidatesData = JSON.parse(candidates);
 
   const [filteredCandidates, setFilteredCandidates] = useState(candidatesData);
+  console.log(filteredCandidates);
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     dispatch(setRegions(regions));

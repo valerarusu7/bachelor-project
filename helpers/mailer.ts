@@ -71,6 +71,7 @@ export default async function sendEmail(
     html: `
         <h3> TEST </h3>
         <p> Thank you for using our services </p>
+        <p> ${url} </p>
         `,
   };
 

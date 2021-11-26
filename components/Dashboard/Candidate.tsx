@@ -1,10 +1,10 @@
 import { BanIcon, StarIcon } from "@heroicons/react/solid";
 
-import { ICandidateObject } from "../../types";
+import { ICandidateProps } from "../../types";
 import Link from "next/link";
 import { stringAvatar } from "../../helpers/stringAvatar";
 
-function Candidate({ candidate, idx }: ICandidateObject) {
+function Candidate({ candidate, idx }: ICandidateProps) {
   return (
     <Link href={`dashboard/candidate/${candidate._id}`}>
       <tr

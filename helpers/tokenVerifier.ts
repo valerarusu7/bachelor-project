@@ -1,4 +1,4 @@
-import { IInterviewToken } from "../types";
+import { IInterviewTokenPayload } from "../types";
 import jwt from "jsonwebtoken";
 
 export default function verifyAuthValue(authValue: string | undefined) {
@@ -9,6 +9,6 @@ export default function verifyAuthValue(authValue: string | undefined) {
   const token = authValue.replace("Bearer ", "");
   var decodedToken = jwt.verify(token, JWT_INTERVIEW_PRIVATE_KEY as string);
 
-  const { interviewId } = decodedToken as IInterviewToken;
+  const { interviewId } = decodedToken as IInterviewTokenPayload;
   return interviewId;
 }

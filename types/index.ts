@@ -23,22 +23,35 @@ export interface IDashboardProps {
 }
 
 // Objects
+export interface ICandidateAnswer {
+  _id: string;
+  taskId: string;
+  answer: string;
+}
+
+export interface ICandidateInterview {
+  _id: string;
+  position: string;
+  region: string;
+  countryCode: string;
+  completed: boolean;
+  favorite: boolean;
+  time: string;
+  score: number;
+  startedUtc: string;
+  completedUtc: string;
+  answers: ICandidateAnswer[];
+  jobId: string;
+}
+
 export interface ICandidate {
   _id: string;
   firstName: string;
   lastName: string;
   email: string;
-  position: string;
-  region: string;
-  countryCode: string;
-  completed: boolean;
-  score: number;
-  time: string;
-  startedUtc: string;
-  completedUtc: string;
-  favorite: boolean;
   companyId: string;
   jobId: string;
+  interviews: ICandidateInterview[];
 }
 
 export interface IPosition {
@@ -85,12 +98,12 @@ export interface IRegions {
 }
 
 export interface ICandidateProps {
-  candidate: string;
-}
-
-export interface ICandidateObject {
   candidate: ICandidate;
   idx?: number;
+}
+
+export interface ICandidateInterviewProps {
+  candidateInterview: ICandidateInterview;
 }
 
 export interface ICandidatesProps {
@@ -218,8 +231,16 @@ export interface IChoice {
   isCorrect: boolean;
 }
 
-export interface IInterviewToken {
+export interface IInterviewTokenPayload {
   interviewId: string;
+}
+
+export interface IUserTokenPayload {
+  id: string;
+  email: string;
+  name: string;
+  companyId: string;
+  role: string;
 }
 
 //Interfaces for mongoose models
@@ -291,15 +312,19 @@ export interface ICandidateDocument extends Document {
   companyId: Types.ObjectId;
   jobId: string;
   interviews: ICandidateInterviewDocument[];
+  toClient(): ICandidate;
 }
 
 export interface IUserDocument extends Document {
   email: string;
   firstName: string;
   lastName: string;
+  password: string;
   position: string;
   department: string;
-  isAdmin: boolean;
+  role: string;
+  companyId: Types.ObjectId;
+  comparePassword(userPassword: string): Promise<boolean>;
 }
 
 export interface IMembers {
@@ -318,8 +343,7 @@ export interface IMembersProps {
 }
 
 export interface IMemberProps {
-  member
-  : {
+  member: {
     id: number;
     firstName: string;
     lastName: string;
@@ -328,3 +352,6 @@ export interface IMemberProps {
   };
 }
 
+export interface IUserRequest extends NextApiRequest {
+  user: string;
+}

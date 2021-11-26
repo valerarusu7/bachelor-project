@@ -11,10 +11,10 @@ import {
 import Separator from "../../common/Separator";
 import TimelineItem from "./TimelineItem";
 import { stringAvatar } from "../../../helpers/stringAvatar";
-import { ICandidateObject } from "../../../types";
+import { ICandidateProps } from "../../../types";
 import CustomButton from "../../common/CustomButton";
 
-function CandidateTimeline({ candidate }: ICandidateObject) {
+function CandidateTimeline({ candidate }: ICandidateProps) {
   return (
     <div className="flex justify-start ">
       <div className="flex flex-col w-full ">
