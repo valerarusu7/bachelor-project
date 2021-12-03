@@ -21,7 +21,7 @@ function CandidateInfo({ candidate }: ICandidateProps) {
           <div className="h-full">
             <StarIcon
               className={`${
-                candidate.interviews[0].favorite == true
+                candidate.favorite === true
                   ? "text-yellow-400 hover:text-gray-400"
                   : "text-gray-400 hover:text-yellow-400"
               } h-8 w-8 cursor-pointer hover:animate-pulse mb-2`}
