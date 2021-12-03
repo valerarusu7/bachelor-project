@@ -103,13 +103,17 @@ CandidateSchema.statics.toClientObject = function (candidate: ICandidate) {
     if (interview.startedUtc !== undefined) {
       interview.startedUtc = interview.startedUtc.toString();
     }
+
     if (interview.completedUtc !== undefined) {
       interview.completedUtc = interview.completedUtc.toString();
     }
-    interview.answers.forEach((answer) => {
-      answer._id = answer._id.toString();
-      answer.taskId = answer.taskId.toString();
-    });
+
+    if (interview.answers !== undefined) {
+      interview.answers.forEach((answer) => {
+        answer._id = answer._id.toString();
+        answer.taskId = answer.taskId.toString();
+      });
+    }
   });
   return candidate;
 };

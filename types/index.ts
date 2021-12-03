@@ -66,7 +66,6 @@ export interface IPosition {
   requestCompletedDate: string;
   location: string;
   profile: string;
-  isLinked: boolean;
   supervisoryOrganization: string;
   recruitingStartDate: string;
   companyId: string;
@@ -261,7 +260,6 @@ export interface IPositionDocument extends Document {
   requestCompletedDate: Date;
   location: string;
   profile: string;
-  isLinked: boolean;
   supervisoryOrganization: string;
   recruitingStartDate: Date;
   companyId: Types.ObjectId;
