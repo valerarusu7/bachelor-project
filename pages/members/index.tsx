@@ -1,7 +1,7 @@
-import Layout from "../components/Layout/Layout";
-import MembersList from "../components/Members/MembersList";
-import { members } from ".././members";
-import CustomButton from ".././components/common/CustomButton";
+import Layout from "../../components/Layout/Layout";
+import MembersList from "../../components/Members/MembersList";
+import { members } from "../../members";
+import CustomButton from "../../components/common/CustomButton";
 import Link from "next/link";
 
 function Members() {

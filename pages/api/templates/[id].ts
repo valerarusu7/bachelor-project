@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../utils/mongodb";
 import Template from "../../../models/Template";
 import { ITemplateDocument } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
+import withProtect from "../../../middleware/withProtect";
 
 /**
  * @swagger
@@ -27,10 +27,9 @@ import handleError from "../../../helpers/errorHandler";
  *        description: UUID string of the template to delete
  */
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
   const body = req.body;
-  await connectDB();
 
   if (req.method === "PUT") {
     try {
@@ -65,3 +64,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 };
+
+export default withProtect(handler, ["manager", "admin"]);

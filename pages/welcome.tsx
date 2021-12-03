@@ -1,7 +1,6 @@
 import Link from "next/link";
 import NavBar from "../components/Landing Page/navbar";
 import Canvas from "../components/Landing Page/canvas/canvas";
-import LandingLayout from "../components/Layout/LandingLayout";
 
 function Welcome() {
   return (

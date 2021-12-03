@@ -2,7 +2,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Template from "../../../models/Template";
 import Candidate from "../../../models/Candidate";
-import { ICandidateInterviewDocument, ITaskDocument } from "../../../types";
+import {
+  ICandidateInterviewDocument,
+  ITaskDocument,
+  ICandidateDocument,
+  ITemplateDocument,
+} from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import convertToTimeSpan from "../../../helpers/timeFormatter";
 import verifyAuthValue from "../../../helpers/tokenVerifier";
@@ -38,16 +43,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       var interviewId = verifyAuthValue(authValue);
       await Candidate.findOne({ "interviews._id": interviewId }).exec(
         async function (err, candidate) {
-          var foundInterview = candidate.interviews.find(
+          if (err) {
+            return res.status(404).json({ error: "No Candidate with the i" });
+          }
+
+          var foundInterview = (
+            candidate as ICandidateDocument
+          ).interviews.find(
             (interview: ICandidateInterviewDocument) =>
-              interview._id == interviewId
+              interview._id === interviewId
           );
-          if (foundInterview == undefined) {
+          if (!foundInterview) {
             return res.status(404).json({ error: "No template found." });
           }
+
           await Template.findOne({ jobId: foundInterview.jobId }).exec(
             function (err, template) {
-              var task = template.tasks.find(
+              if (err) {
+                return res.status(404).json({ error: "No template found." });
+              }
+              var task = (template as ITemplateDocument).tasks.find(
                 (item: ITaskDocument) =>
                   item.order == parseInt(order as string) + 1
               );
@@ -66,7 +81,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       var interviewId = verifyAuthValue(authValue);
       let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
-      let candidate = await Candidate.findOneAndUpdate(
+      await Candidate.findOneAndUpdate(
         { "interviews._id": interviewId },
         {
           "interviews.$.startedUtc": body.startedUtc,
@@ -75,7 +90,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           "interviews.$.answers": body.answers,
         }
       );
-      return res.status(200).json(candidate._id);
+      return res
+        .status(200)
+        .json({ success: "Interview successfully created." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

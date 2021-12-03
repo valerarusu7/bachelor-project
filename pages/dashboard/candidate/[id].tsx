@@ -51,16 +51,17 @@ export const getStaticProps: GetStaticProps = async (context) => {
   await connectDB();
   const { id } = context.params as IParams;
 
-  const candidate: ICandidateDocument = await Candidate.findOne(
+  const candidate: ICandidate = await Candidate.findOne(
     {
       "interviews._id": id,
     },
     "interviews.$"
   ).lean();
-  console.log(candidate);
-  var serializedCandidate = await Candidate.toClient(candidate);
+
   return {
-    props: { candidate: serializedCandidate },
+    props: {
+      candidate: Candidate.toClientObject(candidate),
+    },
     revalidate: 5,
   };
 };

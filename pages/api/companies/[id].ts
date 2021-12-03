@@ -3,6 +3,7 @@ import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
 import { ICompany, ICompanyDocument } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
+import withProtect from "../../../middleware/withProtect";
 
 /**
  * @swagger
@@ -19,7 +20,7 @@ import handleError from "../../../helpers/errorHandler";
  *      - in: body
  */
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
   const { id } = req.query;
   const companyData: ICompany = req.body;
@@ -41,3 +42,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 };
+
+export default withProtect(handler, ["manager", "admin"]);

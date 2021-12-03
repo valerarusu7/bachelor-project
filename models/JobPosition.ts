@@ -1,5 +1,5 @@
 import { Schema, model, models } from "mongoose";
-import { IPositionDocument } from "../types";
+import { IPosition, IPositionDocument, IPositionModel } from "../types";
 
 const JobPositionSchema = new Schema<IPositionDocument>({
   _id: String,
@@ -23,5 +23,17 @@ const JobPositionSchema = new Schema<IPositionDocument>({
   },
 });
 
-export default models.JobPosition ||
-  model<IPositionDocument>("JobPosition", JobPositionSchema);
+JobPositionSchema.statics.toClient = function (positions: IPosition[]) {
+  return positions.map((position) => {
+    // @ts-ignore
+    position._id = position._id.toString();
+    // @ts-ignore
+    position.recruitingStartDate = position.recruitingStartDate.toISOString();
+    position.location = position.location ? position.location : "";
+
+    return position;
+  });
+};
+
+export default (models.JobPosition as IPositionModel) ||
+  model<IPositionDocument, IPositionModel>("JobPosition", JobPositionSchema);

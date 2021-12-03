@@ -8,15 +8,15 @@ import { AsyncRequestHandler, IUserRequest, IUserTokenPayload } from "../types";
 
 const { ACCOUNT_ACCESS_PRIVATE_KEY } = process.env;
 
-const withProtect = (handler: AsyncRequestHandler) => {
+const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    const authValue = req.headers.authorization;
+    const { accessToken } = req.cookies;
 
-    if (!req.headers.authorization || !authValue) {
+    if (!req.cookies || !accessToken) {
       return res.status(401).json({ error: "Please login to get access." });
     }
 
-    const accessToken = authValue.replace("Bearer ", "");
+    console.log(accessToken);
 
     try {
       const decoded = jwt.verify(
@@ -24,10 +24,15 @@ const withProtect = (handler: AsyncRequestHandler) => {
         ACCOUNT_ACCESS_PRIVATE_KEY as string
       );
 
+      const { id, role } = decoded as IUserTokenPayload;
+      if (!roles.includes(role)) {
+        return res
+          .status(401)
+          .json({ error: "You don't have enough permission." });
+      }
+
       await connectDB();
-      const currentUser = await User.findById(
-        (decoded as IUserTokenPayload).id
-      ).lean();
+      const currentUser = await User.findById(id).lean();
       if (!currentUser) {
         return res.status(401).json({
           error: "The user belonging to this token no longer exists",

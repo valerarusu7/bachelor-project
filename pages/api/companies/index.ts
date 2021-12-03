@@ -36,11 +36,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         company = new Company(body.company);
         user = new User(body.user);
       }
+
       user.companyId = company._id;
       user.role = "admin";
 
-      await company.save();
-      await user.save();
+      await Promise.all([company.save(), user.save()]);
 
       return res.status(201).json({ success: true });
     } catch (error) {

@@ -4,15 +4,15 @@ import Layout from "../components/Layout/Layout";
 import NotificationsSettings from "../components/Settings/NotificationsSettings";
 import PasswordSettings from "../components/Settings/PasswordSettings";
 import UserSettings from "../components/Settings/UserSettings";
-import { ICompanySettingsProps, ISettingsProps, IUser } from "../types";
+import { ISettingsProps, IUser } from "../types";
 import Company from "../models/Company";
 import connectDB from "../utils/mongodb";
 
-function Settings({ settings }: ISettingsProps) {
+function Settings({ company, user }: ISettingsProps) {
   return (
     <Layout header="Settings">
-      <CompanySettings company={settings.company.company} />
-      <UserSettings user={settings.user.user} />
+      <CompanySettings company={company} />
+      <UserSettings user={user} />
       <PasswordSettings />
       <NotificationsSettings />
       <LanguageSettings />
@@ -26,22 +26,18 @@ export const getServerSideProps = async () => {
   await connectDB();
   const company = await Company.findOne({ name: "Stibo Accelerator" }).lean();
   company._id = company._id.toString();
-  const userData: IUser = {
-    user: {
-      firstName: "Valeriu",
-      lastName: "Rusu",
-      email: "valeriu.rusu111@gmail.com",
-      birthday: "1999-11-24",
-    },
+
+  const user: IUser = {
+    firstName: "Valeriu",
+    lastName: "Rusu",
+    email: "valeriu.rusu111@gmail.com",
+    birthday: "1999-11-24",
   };
-  const companyData: ICompanySettingsProps = { company: company };
 
   return {
     props: {
-      settings: {
-        user: userData,
-        company: companyData,
-      },
+      user: user,
+      company: company,
     },
   };
 };

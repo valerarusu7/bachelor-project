@@ -26,7 +26,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const user: IUserDocument = await User.findOne({
       email: body.email,
-    }).select("firstName lastName password companyId");
+    });
 
     if (!user || !(await user.comparePassword(body.password))) {
       return res.status(401).json({ error: "Email or password is incorrect." });
@@ -50,18 +50,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       { expiresIn: "3d" as string }
     );
 
-    res.setHeader(
-      "Set-Cookie",
+    res.setHeader("Set-Cookie", [
+      cookie.serialize("accessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== "development",
+        maxAge: 60 * 10,
+        sameSite: "strict",
+        path: "/api/",
+      }),
       cookie.serialize("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== "development",
         maxAge: 60 * 60 * 24 * 3,
         sameSite: "strict",
         path: "/api/",
-      })
-    );
+      }),
+    ]);
 
-    return res.status(200).json({ accessToken: accessToken });
+    return res.status(200).json({ success: "Successfully logged in." });
   } catch (error) {
     const result = handleError(error as Error);
     return res.status(result.code).json({ error: result.error });

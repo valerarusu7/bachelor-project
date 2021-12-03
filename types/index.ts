@@ -1,4 +1,4 @@
-import { Document, Types } from "mongoose";
+import { Document, Types, Model } from "mongoose";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ParsedUrlQuery } from "querystring";
 
@@ -15,9 +15,13 @@ export type AsyncRequestHandler = (
   res: NextApiResponse
 ) => Promise<any>;
 
+export interface IServerProps {
+  req: NextApiRequest;
+}
+
 // Pages
 export interface IDashboardProps {
-  candidates: string;
+  candidates: ICandidate[];
   positions: IPositions[];
   regions: IRegions[];
 }
@@ -75,7 +79,7 @@ export interface IPositions {
 }
 
 export interface IPositionsProps {
-  positions: string;
+  positions: IPosition[];
 }
 
 export interface IPositionsObject {
@@ -121,10 +125,8 @@ export interface ICompanySettingsProps {
 }
 
 export interface ISettingsProps {
-  settings: {
-    user: IUser;
-    company: ICompanySettingsProps;
-  };
+  user: IUser;
+  company: ICompany;
 }
 
 export interface ICompanyFormValues {
@@ -138,12 +140,14 @@ export interface IPasswordFormValues {
 }
 
 export interface IUser {
-  user: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    birthday?: string;
-  };
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  birthday?: string;
+}
+
+export interface IUserProps {
+  user: IUser;
 }
 
 export interface IUserFormValues {
@@ -168,13 +172,13 @@ export interface ITemplate {
 }
 
 export interface ITemplateProps {
-  template: string;
-  positions: string;
-  selectedPosition: string;
+  template: ITemplate;
+  positions: IPosition[];
+  selectedPosition: IPosition;
 }
 
 export interface ITemplatesProps {
-  templates: string;
+  templates: ITemplate[];
 }
 
 export interface ITemplateObject {
@@ -264,6 +268,10 @@ export interface IPositionDocument extends Document {
   companyId: Types.ObjectId;
 }
 
+export interface IPositionModel extends Model<IPositionDocument> {
+  toClient(positions: IPosition[]): IPosition[];
+}
+
 export interface ITemplateDocument extends Document {
   name: string;
   description: string;
@@ -271,6 +279,11 @@ export interface ITemplateDocument extends Document {
   tasks: ITaskDocument[];
   companyId: Types.ObjectId;
   jobId: string;
+}
+
+export interface ITemplateModel extends Model<ITemplateDocument> {
+  toClientObject(template: ITemplate): ITemplate;
+  toClientArray(templates: ITemplate[]): ITemplate[];
 }
 
 export interface ITaskDocument extends Document {
@@ -312,7 +325,11 @@ export interface ICandidateDocument extends Document {
   companyId: Types.ObjectId;
   jobId: string;
   interviews: ICandidateInterviewDocument[];
-  toClient(): ICandidate;
+}
+
+export interface ICandidateModel extends Model<ICandidateDocument> {
+  toClientObject(candidate: ICandidate): ICandidate;
+  toClientArray(candidates: ICandidate[]): ICandidate[];
 }
 
 export interface IUserDocument extends Document {

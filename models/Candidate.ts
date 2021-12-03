@@ -4,6 +4,7 @@ import {
   ICandidateDocument,
   ICandidateInterviewDocument,
   ICandidateAnswerDocument,
+  ICandidateModel,
 } from "../types";
 import "./JobPosition";
 
@@ -94,7 +95,7 @@ const CandidateSchema = new Schema<ICandidateDocument>({
   interviews: [CandidateInterviewSchema],
 });
 
-CandidateSchema.statics.toClient = function (candidate: ICandidate) {
+CandidateSchema.statics.toClientObject = function (candidate: ICandidate) {
   candidate._id = candidate._id.toString();
   candidate.companyId = candidate.companyId.toString();
   candidate.interviews.forEach((interview) => {
@@ -113,5 +114,11 @@ CandidateSchema.statics.toClient = function (candidate: ICandidate) {
   return candidate;
 };
 
-export default models.Candidate ||
-  model<ICandidateDocument>("Candidate", CandidateSchema);
+CandidateSchema.statics.toClientArray = function (candidates: ICandidate[]) {
+  return candidates.map((candidate) =>
+    (this as ICandidateModel).toClientObject(candidate)
+  );
+};
+
+export default (models.Candidate as ICandidateModel) ||
+  model<ICandidateDocument, ICandidateModel>("Candidate", CandidateSchema);

@@ -1,4 +1,11 @@
-import { IChoiceDocument, ITaskDocument, ITemplateDocument } from "../types";
+import {
+  IChoiceDocument,
+  ITask,
+  ITaskDocument,
+  ITemplate,
+  ITemplateDocument,
+  ITemplateModel,
+} from "../types";
 import { Schema, model, models } from "mongoose";
 import "./Company";
 
@@ -71,5 +78,39 @@ const TemplateSchema = new Schema<ITemplateDocument>(
   }
 );
 
-export default models.Template ||
-  model<ITemplateDocument>("Template", TemplateSchema);
+TemplateSchema.statics.toClientObject = function (template: ITemplate) {
+  // @ts-ignore
+  template._id = template._id.toString();
+  template.companyId = template.companyId.toString();
+  // @ts-ignore
+  template.createdAt = template.createdAt.toISOString();
+  (template.tasks as ITask[]).forEach((task) => {
+    // @ts-ignore
+    task._id = task._id.toString();
+  });
+
+  return template;
+};
+
+TemplateSchema.statics.toClientArray = function (templates: ITemplate[]) {
+  return templates.map((template) => {
+    // @ts-ignore
+    template._id = template._id.toString();
+    // @ts-ignore
+    template.createdAt = template.createdAt.toISOString();
+    template.companyId = template.companyId.toString();
+
+    const tasks = template.tasks as ITask[];
+    const taskTypes = tasks.map((task: ITask) => task.taskType);
+    template["multiple"] = taskTypes.includes("multiple");
+    template["email"] = taskTypes.includes("email");
+    template["single"] = taskTypes.includes("single");
+    template["code"] = taskTypes.includes("code");
+    template["tasks"] = taskTypes.length;
+
+    return template;
+  });
+};
+
+export default (models.Template as ITemplateModel) ||
+  model<ITemplateDocument, ITemplateModel>("Template", TemplateSchema);

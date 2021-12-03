@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import absoluteUrl from "next-absolute-url";
 import { IUserTokenPayload } from "../../../types";
 import Company from "../../../models/Company";
+import withProtect from "../../../middleware/withProtect";
 
 const { ACCOUNT_ACCESS_PRIVATE_KEY, ACCOUNT_PRIVATE_KEY } = process.env;
 
@@ -15,7 +16,7 @@ const { ACCOUNT_ACCESS_PRIVATE_KEY, ACCOUNT_PRIVATE_KEY } = process.env;
  *     description: Create a new template
  */
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Only POST requests are allowed." });
   }
@@ -55,3 +56,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(result.code).json({ error: result.error });
   }
 };
+
+export default withProtect(handler, ["admin"]);

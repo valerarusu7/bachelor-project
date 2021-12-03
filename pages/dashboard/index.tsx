@@ -32,10 +32,7 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
   } = useAppSelector(selectDashboard);
   const dispatch = useAppDispatch();
 
-  const candidatesData = JSON.parse(candidates);
-
-  const [filteredCandidates, setFilteredCandidates] = useState(candidatesData);
-  console.log(filteredCandidates);
+  const [filteredCandidates, setFilteredCandidates] = useState(candidates);
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     dispatch(setRegions(regions));
@@ -49,7 +46,7 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
     setFilteredCandidates(
       filterByScore(
         filterCandidates(
-          candidatesData,
+          candidates,
           dashboardPosition,
           dashboardRegion,
           dashboardFilterAll,
@@ -98,6 +95,7 @@ export default DashboardPage;
 
 export const getServerSideProps = async () => {
   await connectDB();
+
   const candidates: ICandidate[] = await Candidate.find({}).lean();
 
   const positionData: IPositions[] | undefined = [
@@ -119,7 +117,7 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      candidates: JSON.stringify(candidates),
+      candidates: Candidate.toClientArray(candidates),
       positions: positionData,
       regions: regionData,
     },

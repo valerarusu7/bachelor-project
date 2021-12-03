@@ -20,8 +20,6 @@ import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
 
 function Create({ positions }: IPositionsProps) {
-  const positionsData: IPosition[] = JSON.parse(positions);
-
   const dispatch = useAppDispatch();
   const { templateTasks, showModal } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
@@ -72,7 +70,7 @@ function Create({ positions }: IPositionsProps) {
         <TemplateDetails
           onChangeName={(e) => setTemplateName(e.target.value)}
           selectPosition={(e: any) => setSelectedPosition(e)}
-          positions={positionsData}
+          positions={positions}
           selectedPosition={selectedPosition}
           onChangeDescription={(e) => setTemplateDescription(e.target.value)}
           templateDescription={templateDescription}
@@ -103,7 +101,7 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      positions: JSON.stringify(jobPositions),
+      positions: JobPosition.toClient(jobPositions),
     },
   };
 };

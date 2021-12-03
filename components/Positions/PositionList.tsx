@@ -19,7 +19,6 @@ function PositionList({ positions }: IPositionsObject) {
           ))}
         </tbody>
       </table>
-      {console.log(positions)}
     </div>
   );
 }

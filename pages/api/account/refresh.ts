@@ -1,8 +1,9 @@
 import { API_URL } from "../../../config";
 import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
+import withProtect from "../../../middleware/withProtect";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     const cookies = cookie.parse(req.headers.cookie ?? "");
     const refresh = cookies.refresh;
@@ -65,3 +66,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: `Method ${req.method} not allowed` });
   }
 };
+
+export default withProtect(handler, ["viewer", "manager", "admin"]);

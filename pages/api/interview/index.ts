@@ -1,0 +1,52 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import handleError from "../../../helpers/errorHandler";
+import { ICandidateInterviewDocument } from "../../../types";
+import connectDB from "../../../utils/mongodb";
+import Candidate from "../../../models/Candidate";
+import verifyAuthValue from "../../../helpers/tokenVerifier";
+import Template from "../../../models/Template";
+
+/**
+ * @swagger
+ * /api/templates:
+ *   post:
+ *     description: Create a new template
+ */
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const authValue = req.headers.authorization;
+  await connectDB();
+
+  if (req.method === "GET") {
+    try {
+      var interviewId = verifyAuthValue(authValue);
+
+      var candidate = await Candidate.findOne({
+        "interviews._id": interviewId,
+      }).lean();
+
+      if (!candidate) {
+        return res.status(404).json({ error: "No interview found." });
+      }
+
+      var foundInterview = candidate.interviews.find(
+        (interview: ICandidateInterviewDocument) => interview._id == interviewId
+      );
+
+      const template = await Template.findOne(
+        { jobId: foundInterview.jobId },
+        {
+          tasks: { $slice: 1 },
+        }
+      )
+        .select("_id name description companyId")
+        .populate("companyId")
+        .lean();
+
+      return res.status(200).json(template);
+    } catch (error) {
+      const result = handleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
+    }
+  }
+};

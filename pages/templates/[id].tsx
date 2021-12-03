@@ -1,12 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
+import { IPosition, ITemplate, ITemplateProps, IParams } from "../../types";
 import {
-  IPosition,
-  ITemplate,
-  ITemplateDocument,
-  ITemplateProps,
-  IParams,
-} from "../../types";
-import template, {
   resetTask,
   selectTemplate,
   setEdit,
@@ -20,7 +14,6 @@ import AddTask from "../../components/Templates/AddTask";
 import CustomButton from "../../components/common/CustomButton";
 import JobPosition from "../../models/JobPosition";
 import Layout from "../../components/Layout/Layout";
-import { ParsedUrlQuery } from "querystring";
 import TaskModal from "../../components/Templates/TaskModal";
 import Tasks from "../../components/Templates/Tasks";
 import Template from "../../models/Template";
@@ -32,24 +25,20 @@ function TemplatePage({
   positions,
   selectedPosition,
 }: ITemplateProps) {
-  const templateData: ITemplate = JSON.parse(template);
-  const positionsData: IPosition[] = JSON.parse(positions);
-  const selectedPositionData: IPosition = JSON.parse(selectedPosition);
-
   const dispatch = useAppDispatch();
   const { templateTasks, showModal } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
-  const [position, setSelectedPosition] = useState(selectedPositionData);
-  const [templateName, setTemplateName] = useState(templateData.name);
+  const [position, setSelectedPosition] = useState(selectedPosition);
+  const [templateName, setTemplateName] = useState(template.name);
   const [templateDescription, setTemplateDescription] = useState(
-    templateData.description
+    template.description
   );
   useEffect(() => {
     dispatch(setTasks(tasks));
   }, [tasks]);
 
   useEffect(() => {
-    dispatch(setTasks(templateData.tasks));
+    dispatch(setTasks(template.tasks));
   }, []);
 
   function closeModal() {
@@ -59,10 +48,10 @@ function TemplatePage({
   }
 
   function updateTemplate() {
-    fetch(`/api/templates/${templateData._id}`, {
+    fetch(`/api/templates/${template._id}`, {
       method: "PUT",
       body: JSON.stringify({
-        ...templateData,
+        ...template,
         name: templateName,
         description: templateDescription,
         jobId: position._id,
@@ -78,7 +67,7 @@ function TemplatePage({
   }
 
   function deleteTemplate() {
-    fetch(`/api/templates/${templateData._id}`, {
+    fetch(`/api/templates/${template._id}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -90,12 +79,12 @@ function TemplatePage({
   }
 
   return (
-    <Layout header={templateData.name}>
+    <Layout header={template.name}>
       <div className="m-2">
         <TemplateDetails
           onChangeName={(e) => setTemplateName(e.target.value)}
           selectPosition={(e: any) => setSelectedPosition(e)}
-          positions={positionsData}
+          positions={positions}
           selectedPosition={position}
           onChangeDescription={(e) => setTemplateDescription(e.target.value)}
           templateDescription={templateDescription}
@@ -146,23 +135,25 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const { id } = context.params as IParams;
 
-  const template: ITemplateDocument = await Template.findById(id).select(
-    "_id name description tasks companyId jobId createdAt"
+  // @ts-ignore
+  const [template, jobPositions]: [ITemplate, IPosition[]] = await Promise.all([
+    Template.findById(id)
+      .select("_id name description tasks companyId jobId createdAt")
+      .lean(),
+    JobPosition.find({})
+      .select("_id name location type recruitingStartDate")
+      .lean(),
+  ]);
+
+  const selectedPosition = jobPositions.find(
+    (jobPosition) => jobPosition._id === template.jobId
   );
-
-  const jobPositions: IPosition[] = await JobPosition.find({})
-    .select("_id name location type recruitingStartDate")
-    .lean();
-
-  const selectedPosition: IPosition = await JobPosition.findById(
-    template.jobId
-  ).lean();
 
   return {
     props: {
-      template: JSON.stringify(template),
-      positions: JSON.stringify(jobPositions),
-      selectedPosition: JSON.stringify(selectedPosition),
+      template: Template.toClientObject(template),
+      positions: JobPosition.toClient(jobPositions),
+      selectedPosition: selectedPosition,
     },
     revalidate: 5,
   };

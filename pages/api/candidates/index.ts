@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../utils/mongodb";
 import Candidate from "../../../models/Candidate";
 import {
   ICandidateDocument,
   ICandidateInterviewDocument,
 } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
+import withProtect from "../../../middleware/withProtect";
 
 /**
  * @swagger
@@ -27,9 +27,8 @@ import handleError from "../../../helpers/errorHandler";
  *          description: Internal error
  */
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const body = req.body;
-  await connectDB();
 
   if (req.method === "POST") {
     try {
@@ -40,42 +39,32 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         candidate = new Candidate(body);
       }
 
-      Candidate.countDocuments(
-        { email: body.email },
-        async function (err, count) {
-          if (count === 1) {
-            var updatedCandidate = await Candidate.findOne({
-              email: body.email,
-            });
-            body.interviews.forEach(
-              (interview: ICandidateInterviewDocument) => {
-                if (
-                  !updatedCandidate.interviews
-                    .map(
-                      (interview: ICandidateInterviewDocument) =>
-                        interview.jobId
-                    )
-                    .includes(interview.jobId)
-                ) {
-                  updatedCandidate.interviews.push(interview);
-                }
-              }
-            );
-            updatedCandidate.save();
-            return res
-              .status(201)
-              .json({ templateId: updatedCandidate._id.toString() });
-          } else {
-            const savedCandidate = await candidate.save();
-            return res
-              .status(201)
-              .json({ templateId: savedCandidate._id.toString() });
+      var foundCandidate: ICandidateDocument | null = await Candidate.findOne({
+        email: body.email,
+      });
+
+      if (!foundCandidate) {
+        await candidate.save();
+      } else {
+        body.interviews.forEach((interview: ICandidateInterviewDocument) => {
+          if (
+            !(foundCandidate as ICandidateDocument).interviews
+              .map((interview: ICandidateInterviewDocument) => interview.jobId)
+              .includes(interview.jobId)
+          ) {
+            (foundCandidate as ICandidateDocument).interviews.push(interview);
           }
-        }
-      );
+        });
+
+        await foundCandidate.save();
+      }
+
+      return res.status(201).json({ success: "Candidate successfully added." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }
 };
+
+export default withProtect(handler, ["manager", "admin"]);
