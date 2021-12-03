@@ -13,7 +13,7 @@ import Template from "../../../models/Template";
  *     description: Create a new template
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   // const authValue = req.headers.authorization;
   const body = req.body;
   await connectDB();
