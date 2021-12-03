@@ -1,10 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import {
-  ICandidate,
-  ICandidateDocument,
-  ICandidateProps,
-  IParams,
-} from "../../../types";
+import { ICandidate, ICandidateProps, IParams } from "../../../types";
 
 import Candidate from "../../../models/Candidate";
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
@@ -33,13 +28,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
   await connectDB();
   const candidates: ICandidate[] = await Candidate.find({}).lean();
 
-  const paths = candidates
-    .flatMap((candidate) => candidate.interviews)
-    .map((candidateInterview) => {
-      return {
-        params: { id: candidateInterview._id.toString() },
-      };
-    });
+  const paths = candidates.map((candidate) => {
+    return {
+      params: { id: candidate._id.toString() },
+    };
+  });
 
   return {
     paths,
@@ -51,12 +44,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   await connectDB();
   const { id } = context.params as IParams;
 
-  const candidate: ICandidate = await Candidate.findOne(
-    {
-      "interviews._id": id,
-    },
-    "interviews.$"
-  ).lean();
+  const candidate: ICandidate = await Candidate.findById(id).lean();
 
   return {
     props: {

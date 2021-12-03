@@ -132,15 +132,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  if (!protect(context.req.cookies["accessToken"]).status) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/auth/login",
-      },
-    };
-  }
-
   await connectDB();
 
   const { id } = context.params as IParams;

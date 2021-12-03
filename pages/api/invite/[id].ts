@@ -3,7 +3,6 @@ import handleError from "../../../helpers/errorHandler";
 import sendEmail from "../../../helpers/mailer";
 import jwt from "jsonwebtoken";
 import Candidate from "../../../models/Candidate";
-import { ICandidateInterviewDocument } from "../../../types";
 import absoluteUrl from "next-absolute-url";
 import withProtect from "../../../middleware/withProtect";
 
@@ -21,31 +20,32 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     try {
-      await Candidate.findOne({ "interviews._id": id }).exec(async function (
-        err,
-        candidate
-      ) {
-        if (err) {
-          return res.status(404);
-        }
+      let candidate = await Candidate.findOne({ "interviews._id": id })
+        .populate("companyId")
+        .lean();
 
-        var foundInterview = candidate.interviews.find(
-          (interview: ICandidateInterviewDocument) => interview._id == id
-        );
-        if (!foundInterview) {
-          return res.status(404).json({ error: "No template found." });
-        }
-        
-        const token = jwt.sign(
-          { interviewId: foundInterview._id as string },
-          INTERVIEW_PRIVATE_KEY as string,
-          { expiresIn: "7d" as string }
-        );
+      if (!candidate) {
+        return res.status(404).json({ error: "Cannot find candidate." });
+      }
 
-        var { origin } = absoluteUrl(req);
-        var url = `${origin}/interview/${token}`;
-        await sendEmail(candidate.companyId.name, candidate.email, url);
-      });
+      let foundInterview = candidate.interviews.find(
+        (interview) => interview._id === id
+      );
+      if (!foundInterview) {
+        return res.status(404).json({ error: "No template found." });
+      }
+
+      const token = jwt.sign(
+        { interviewId: foundInterview._id as string },
+        INTERVIEW_PRIVATE_KEY as string,
+        { expiresIn: "7d" as string }
+      );
+
+      var { origin } = absoluteUrl(req);
+      var url = `${origin}/interview/${token}`;
+      // @ts-ignore
+      await sendEmail(candidate.companyId.name, candidate.email, url);
+
       return res.status(201).json({ success: true });
     } catch (error) {
       const result = handleError(error as Error);

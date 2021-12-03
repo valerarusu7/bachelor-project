@@ -34,13 +34,22 @@ function Candidate({ candidate, idx }: ICandidateProps) {
             {/* <span>
               <Flags.US title="United States" />
             </span> */}
-            <span className="font-medium">{candidate.region}</span>
+            <span className="font-medium">
+              {candidate.interviews.map((interview, index) =>
+                index ? ", " : "" + interview.region
+              )}
+            </span>
           </div>
         </td>
 
         <td className="py-3 px-6 text-left">
           <div className=" flex items-center">
-            <p className="font-medium ">{candidate.position}</p>
+            <p className="font-medium ">
+              {candidate.interviews.map(
+                // @ts-ignore
+                (interview, index) => (index ? ", " : "" + interview.jobId.name)
+              )}
+            </p>
           </div>
         </td>
         {/* <td className="py-3 px-3 text-center ">

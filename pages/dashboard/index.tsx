@@ -96,7 +96,12 @@ export default DashboardPage;
 export const getServerSideProps = async () => {
   await connectDB();
 
-  const candidates: ICandidate[] = await Candidate.find({}).lean();
+  const candidates: ICandidate[] = await Candidate.find({})
+    .populate({
+      path: "interviews.jobId",
+      select: "name",
+    })
+    .lean();
 
   const positionData: IPositions[] | undefined = [
     { name: "All positions" },
