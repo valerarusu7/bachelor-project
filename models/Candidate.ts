@@ -40,10 +40,6 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
     type: Boolean,
     default: false,
   },
-  favorite: {
-    type: Boolean,
-    default: false,
-  },
   time: {
     type: String,
     default: "",
@@ -86,6 +82,10 @@ const CandidateSchema = new Schema<ICandidateDocument>({
     type: String,
     required: true,
     unique: true,
+  },
+  favorite: {
+    type: Boolean,
+    default: false,
   },
   companyId: {
     type: Schema.Types.ObjectId,

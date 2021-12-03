@@ -39,7 +39,6 @@ export interface ICandidateInterview {
   region: string;
   countryCode: string;
   completed: boolean;
-  favorite: boolean;
   time: string;
   score: number;
   startedUtc: string;
@@ -54,7 +53,7 @@ export interface ICandidate {
   lastName: string;
   email: string;
   companyId: string;
-  jobId: string;
+  favorite: boolean;
   interviews: ICandidateInterview[];
 }
 
@@ -309,7 +308,6 @@ export interface ICandidateInterviewDocument extends Document {
   region: string;
   countryCode: string;
   completed: boolean;
-  favorite: boolean;
   time: string;
   score: number;
   startedUtc: Date;
@@ -323,7 +321,7 @@ export interface ICandidateDocument extends Document {
   lastName: string;
   email: string;
   companyId: Types.ObjectId;
-  jobId: string;
+  favorite: boolean;
   interviews: ICandidateInterviewDocument[];
 }
 
