@@ -6,6 +6,8 @@ import {
 } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import withProtect from "../../../middleware/withProtect";
+import Template from "../../../models/Template";
+import connectDB from "../../../utils/mongodb";
 
 /**
  * @swagger
@@ -27,8 +29,40 @@ import withProtect from "../../../middleware/withProtect";
  *          description: Internal error
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const body = req.body;
+  await connectDB();
+
+  if (req.method === "GET") {
+    try {
+      const { templateId } = req.query;
+      if (!templateId) {
+        return res
+          .status(400)
+          .json({ error: "Query parameter template id is required." });
+      }
+
+      let template = await Template.findById(templateId).select("jobId").lean();
+      if (!template) {
+        return res
+          .status(404)
+          .json({ error: "Cannot find template with given template id." });
+      }
+
+      console.log(template);
+
+      const candidates = await Candidate.find({
+        interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
+      })
+        .select("firstName lastName email")
+        .lean();
+
+      return res.status(200).json(candidates);
+    } catch (error) {
+      const result = handleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
+    }
+  }
 
   if (req.method === "POST") {
     try {
@@ -66,5 +100,3 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 };
-
-export default withProtect(handler, ["manager", "admin"]);

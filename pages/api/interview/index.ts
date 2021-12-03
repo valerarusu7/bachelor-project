@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
-import { ICandidateInterviewDocument } from "../../../types";
 import connectDB from "../../../utils/mongodb";
 import Candidate from "../../../models/Candidate";
 import verifyAuthValue from "../../../helpers/tokenVerifier";
