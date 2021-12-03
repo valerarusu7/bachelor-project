@@ -1,10 +1,11 @@
-import NavBar from "../components/Landing Page/navbar";
-import Canvas from "../components/Landing Page/canvas/canvas";
-import FormInput from "../components/Landing Page/FormInput";
+import NavBar from "../../components/Landing Page/navbar";
+import Canvas from "../../components/Landing Page/canvas/canvas";
+import FormInput from "../../components/Landing Page/FormInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 
-import React, { useState } from "react";
+import React from "react";
+import { useRouter } from "next/router";
 import * as Yup from "yup";
 
 type UserSubmitForm = {
@@ -16,9 +17,10 @@ const Login: React.FC = () => {
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required").email("Email is invalid"),
   });
-  const [inputs, setInputs] = React.useState({});
+  const router = useRouter();
 
   const {
+    register,
     handleSubmit,
     reset,
     formState: { errors },
@@ -27,7 +29,25 @@ const Login: React.FC = () => {
   });
 
   const onSubmit = (data: UserSubmitForm) => {
-    console.log(JSON.stringify(data, null, 2));
+    fetch("/api/account/login", {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+      })
+      .then((response) => {
+        router.push("/positions");
+      })
+      .catch((error) => {
+        //Handle error
+      });
   };
 
   return (
@@ -47,11 +67,10 @@ const Login: React.FC = () => {
               type="text"
               id="email"
               placeholder="Enter Email"
-              // errors={errors}
               label="Email"
               className={`rounded-md flex-grow border border-gray-400 focus:border-blue-400 mr-4 `}
               // onChange={(e) => onChangeEmail(e)}
-              // {...register("email")}
+              {...register("email")}
             />
             <div className="text-justify font-medium tracking-wide text-red-500 text-xs">
               {errors.email?.message}
@@ -62,6 +81,7 @@ const Login: React.FC = () => {
                 id="password"
                 placeholder="Enter Password"
                 label="Password"
+                {...register("password")}
               />
             </div>
           </div>

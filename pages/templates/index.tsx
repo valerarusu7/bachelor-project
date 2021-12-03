@@ -5,6 +5,7 @@ import Link from "next/link";
 import Template from "../../components/Templates/Template";
 import connectDB from "../../utils/mongodb";
 import TemplateModel from "../../models/Template";
+import protect from "../../helpers/protect";
 
 function Templates({ templates }: ITemplatesProps) {
   return (
@@ -26,9 +27,7 @@ function Templates({ templates }: ITemplatesProps) {
 export default Templates;
 
 export const getServerSideProps = async ({ req }: IServerProps) => {
-  await connectDB();
-  const accessToken = req.cookies["accessToken"];
-  if (!accessToken) {
+  if (!protect(req.cookies["accessToken"]).status) {
     return {
       redirect: {
         permanent: false,
@@ -36,6 +35,8 @@ export const getServerSideProps = async ({ req }: IServerProps) => {
       },
     };
   }
+
+  await connectDB();
 
   const templates: ITemplate[] = await TemplateModel.find({})
     .select("_id name description tasks companyId jobId createdAt")

@@ -14,15 +14,16 @@ import Template from "../../../models/Template";
  */
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const authValue = req.headers.authorization;
+  // const authValue = req.headers.authorization;
+  const body = req.body;
   await connectDB();
 
   if (req.method === "GET") {
     try {
-      var interviewId = verifyAuthValue(authValue);
+      // var interviewId = verifyAuthValue(authValue);
 
       var candidate = await Candidate.findOne({
-        "interviews._id": interviewId,
+        "interviews._id": body.interviewId,
       }).lean();
 
       if (!candidate) {
@@ -30,8 +31,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       var foundInterview = candidate.interviews.find(
-        (interview: ICandidateInterviewDocument) => interview._id == interviewId
+        (interview) => interview._id == body.interviewId
       );
+
+      if (!foundInterview) {
+        return res.status(404).json({ error: "No interview found." });
+      }
 
       const template = await Template.findOne(
         { jobId: foundInterview.jobId },

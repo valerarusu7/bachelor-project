@@ -1,10 +1,10 @@
-import FormInput from "../components/Landing Page/FormInput";
+import FormInput from "../../components/Landing Page/FormInput";
 // import { register as registerCompanyUser } from "../store/reducers/authSlice";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup.umd";
-import { registerSchema } from "../helpers/formSchemas";
-import PasswordCheckItem from "../components/Landing Page/PasswordtCheckItem";
+import { registerSchema } from "../../helpers/formSchemas";
+import PasswordCheckItem from "../../components/Landing Page/PasswordtCheckItem";
 import { BsCheckCircleFill } from "react-icons/bs";
 
 function BecomeACustomer() {
@@ -24,7 +24,15 @@ function BecomeACustomer() {
   const password = watch("password", "");
   const re_password = watch("re_password", "");
 
-  const onSubmit = async ({ company_name, company_website, first_name, last_name, email, password, re_password }) => {
+  const onSubmit = async ({
+    company_name,
+    company_website,
+    first_name,
+    last_name,
+    email,
+    password,
+    re_password,
+  }) => {
     // if (dispatch && dispatch !== null && dispatch !== undefined) {
     //   if (registerSchema.isValid({ company_name, company_website, first_name, last_name, email, password, re_password })) {
     //     dispatch(registerCompanyUser(company_name, company_website, first_name, last_name, email, password, re_password, true));
@@ -115,8 +123,9 @@ function BecomeACustomer() {
                 />
               </div>
               <div>
-                {/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-+_!@#$%^&*., ?])(?=.{8,})/.test(password) &&
-                password === re_password ? (
+                {/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-+_!@#$%^&*., ?])(?=.{8,})/.test(
+                  password
+                ) && password === re_password ? (
                   <div className="flex items-center text-green-500 font-semibold">
                     <BsCheckCircleFill className="h-4 w-4 mr-1" />
                     <p>Password requirements met</p>
@@ -163,7 +172,10 @@ function BecomeACustomer() {
           {false ? (
             "Loading..."
           ) : (
-            <button type="submit" className="bg-blue-300 w-32 cursor-pointer rounded-lg shadow-md p-1 font-semibold">
+            <button
+              type="submit"
+              className="bg-blue-300 w-32 cursor-pointer rounded-lg shadow-md p-1 font-semibold"
+            >
               Register
             </button>
           )}

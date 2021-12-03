@@ -17,7 +17,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const body = req.body;
 
-  if (!body || !body.email || !body.password) {
+  let account;
+  if (body.constructor !== Object) {
+    account = JSON.parse(body);
+  } else {
+    account = body;
+  }
+
+  if (!account || !account.email || !account.password) {
     return res
       .status(400)
       .json({ error: "Email and password cannot be empty." });
@@ -25,10 +32,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const user: IUserDocument = await User.findOne({
-      email: body.email,
+      email: account.email,
     });
 
-    if (!user || !(await user.comparePassword(body.password))) {
+    if (!user || !(await user.comparePassword(account.password))) {
       return res.status(401).json({ error: "Email or password is incorrect." });
     }
 
@@ -56,16 +63,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         secure: process.env.NODE_ENV !== "development",
         maxAge: 60 * 10,
         sameSite: "strict",
-        path: "/api/",
+        path: "/",
       }),
       cookie.serialize("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== "development",
         maxAge: 60 * 60 * 24 * 3,
         sameSite: "strict",
-        path: "/api/",
+        path: "/",
       }),
     ]);
+
+    console.log("access " + accessToken);
+    console.log("refresh " + refreshToken);
 
     return res.status(200).json({ success: "Successfully logged in." });
   } catch (error) {

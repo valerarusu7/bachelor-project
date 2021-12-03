@@ -1,4 +1,9 @@
-import { IPosition, ITemplate, IPositionsProps } from "../../types";
+import {
+  IPosition,
+  ITemplate,
+  IPositionsProps,
+  IServerProps,
+} from "../../types";
 import {
   resetTask,
   resetTemplateState,
@@ -18,6 +23,7 @@ import TaskModal from "../../components/Templates/TaskModal";
 import Tasks from "../../components/Templates/Tasks";
 import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
+import protect from "../../helpers/protect";
 
 function Create({ positions }: IPositionsProps) {
   const dispatch = useAppDispatch();
@@ -92,8 +98,17 @@ function Create({ positions }: IPositionsProps) {
 
 export default Create;
 
-export const getServerSideProps = async () => {
-  connectDB();
+export const getServerSideProps = async ({ req }: IServerProps) => {
+  if (!protect(req.cookies["accessToken"]).status) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/auth/login",
+      },
+    };
+  }
+
+  await connectDB();
 
   const jobPositions: IPosition[] = await JobPosition.find({})
     .select("_id name location type recruitingStartDate")

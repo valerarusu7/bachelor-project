@@ -16,8 +16,6 @@ const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
       return res.status(401).json({ error: "Please login to get access." });
     }
 
-    console.log(accessToken);
-
     try {
       const decoded = jwt.verify(
         accessToken,

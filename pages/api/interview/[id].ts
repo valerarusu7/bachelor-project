@@ -33,15 +33,15 @@ import verifyAuthValue from "../../../helpers/tokenVerifier";
  */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const authValue = req.headers.authorization;
+  // const authValue = req.headers.authorization;
   const { order } = req.query;
   const body = req.body;
   await connectDB();
 
   if (req.method === "GET") {
     try {
-      var interviewId = verifyAuthValue(authValue);
-      await Candidate.findOne({ "interviews._id": interviewId }).exec(
+      // var interviewId = verifyAuthValue(authValue);
+      await Candidate.findOne({ "interviews._id": body.interviewId }).exec(
         async function (err, candidate) {
           if (err) {
             return res.status(404).json({ error: "No Candidate with the i" });
@@ -51,7 +51,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             candidate as ICandidateDocument
           ).interviews.find(
             (interview: ICandidateInterviewDocument) =>
-              interview._id === interviewId
+              interview._id === body.interviewId
           );
           if (!foundInterview) {
             return res.status(404).json({ error: "No template found." });
@@ -79,10 +79,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     try {
-      var interviewId = verifyAuthValue(authValue);
+      // var interviewId = verifyAuthValue(authValue);
       let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
       await Candidate.findOneAndUpdate(
-        { "interviews._id": interviewId },
+        { "interviews._id": body.interviewId },
         {
           "interviews.$.startedUtc": body.startedUtc,
           "interviews.$.completedUtc": body.completedUtc,
