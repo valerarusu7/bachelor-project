@@ -81,9 +81,18 @@ const TemplateSchema = new Schema<ITemplateDocument>(
 TemplateSchema.statics.toClientObject = function (template: ITemplate) {
   // @ts-ignore
   template._id = template._id.toString();
-  template.companyId = template.companyId.toString();
-  // @ts-ignore
-  template.createdAt = template.createdAt.toISOString();
+  if (template.companyId.constructor === Object) {
+    // @ts-ignore
+    template.companyId = template.companyId._id.toString();
+  } else {
+    template.companyId = template.companyId.toString();
+  }
+
+  if (template.createdAt !== undefined) {
+    // @ts-ignore
+    template.createdAt = template.createdAt.toISOString();
+  }
+
   (template.tasks as ITask[]).forEach((task) => {
     // @ts-ignore
     task._id = task._id.toString();

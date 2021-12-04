@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { QuestionMarkCircleIcon, DotsCircleHorizontalIcon, CheckCircleIcon } from "@heroicons/react/solid";
+import {
+  QuestionMarkCircleIcon,
+  DotsCircleHorizontalIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/solid";
 import { MailIcon, ClipboardListIcon } from "@heroicons/react/outline";
 
 import { BiSelectMultiple } from "react-icons/bi";
@@ -8,9 +12,28 @@ import { MdEmail } from "react-icons/md";
 import { BsQuestion } from "react-icons/bs";
 import { Badge } from "@mui/material";
 import CustomButton from "../../components/common/CustomButton";
+import connectDB from "../../utils/mongodb";
+import jwt from "jsonwebtoken";
+import Candidate from "../../models/Candidate";
+import Template from "../../models/Template";
+import { ITemplate, IInterviewProps } from "../../types";
+import { GetServerSidePropsContext } from "next";
 
-function Interview({ children }: any) {
-  const [tasks, setTasks] = useState<any>([{ completed: true, taskType: "single" }, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
+function Interview({ companyName, template }: IInterviewProps) {
+  console.log(companyName);
+  console.log(template);
+  const [tasks, setTasks] = useState<any>([
+    { completed: true, taskType: "single" },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+  ]);
   const [emailCount, setEmailCount] = useState(0);
   const [taskCount, setTaskCount] = useState(0);
 
@@ -51,7 +74,11 @@ function Interview({ children }: any) {
             {tasks.map((task: any, idx: number) => (
               <div
                 className={`${idx % 2 ? "bg-gray-50" : "bg-gray-100"} ${
-                  !task.completed ? "opacity-30" : task.completed ? "opacity-70" : "opacity-100"
+                  !task.completed
+                    ? "opacity-30"
+                    : task.completed
+                    ? "opacity-70"
+                    : "opacity-100"
                 } flex items-center p-2 justify-evenly w-full border-b border-gray-200 cursor-pointer hover:bg-gray-200`}
               >
                 <div>
@@ -81,7 +108,9 @@ function Interview({ children }: any) {
                       <MdEmail className="h-6 w-6 text-white" />
                     </div>
                   ) : null}
-                  {!task.completed ? <DotsCircleHorizontalIcon className="h-8 w-8 text-gray-400" /> : null}
+                  {!task.completed ? (
+                    <DotsCircleHorizontalIcon className="h-8 w-8 text-gray-400" />
+                  ) : null}
                 </div>
               </div>
             ))}
@@ -91,8 +120,14 @@ function Interview({ children }: any) {
           <div className="mt-28 mb-28 mr-10 p-10 ">
             <div className="border border-gray-200 bg-white rounded-md p-4 shadow-lg">
               <div>
-                <p className="text-xl font-semibold mb-2">What are the key requirements for becoming a Data Analyst?</p>
-                <textarea className="mt-1 w-full resize-none rounded-lg" rows={5} placeholder="Answer here"></textarea>
+                <p className="text-xl font-semibold mb-2">
+                  What are the key requirements for becoming a Data Analyst?
+                </p>
+                <textarea
+                  className="mt-1 w-full resize-none rounded-lg"
+                  rows={5}
+                  placeholder="Answer here"
+                ></textarea>
                 <div className="flex justify-end mt-2">
                   <CustomButton color="blue">
                     <p>Next</p>
@@ -109,6 +144,82 @@ function Interview({ children }: any) {
 
 export default Interview;
 
-export async function getServerSideProps() {
-  //magic
-}
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  await connectDB();
+  const { INTERVIEW_PRIVATE_KEY } = process.env;
+
+  // @ts-ignore
+  const { token } = context.params;
+
+  try {
+    const decoded = jwt.verify(token, INTERVIEW_PRIVATE_KEY as string);
+    // @ts-ignore
+    if (!decoded.interviewId) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/_error",
+        },
+      };
+    }
+
+    let candidate = await Candidate.findOne({
+      // @ts-ignore
+      "interviews._id": decoded.interviewId,
+    })
+      .select("interviews")
+      .lean();
+
+    if (!candidate) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/_error",
+        },
+      };
+    }
+
+    var foundInterview = candidate.interviews.find(
+      // @ts-ignore
+      (interview) => interview._id == decoded.interviewId
+    );
+
+    if (!foundInterview) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/_error",
+        },
+      };
+    }
+
+    const template: ITemplate = await Template.findOne(
+      { jobId: foundInterview.jobId },
+      {
+        tasks: { $slice: 1 },
+      }
+    )
+      .select("_id name description companyId")
+      .populate("companyId")
+      .lean();
+
+    // @ts-ignore
+    const company = template.companyId.name;
+
+    return {
+      props: {
+        companyName: company,
+        template: Template.toClientObject(template),
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/_error",
+      },
+    };
+  }
+};

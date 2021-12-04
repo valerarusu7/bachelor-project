@@ -186,6 +186,11 @@ export interface ITemplate {
   tasks: ITask[] | number;
 }
 
+export interface IInterviewProps {
+  companyName: string;
+  template: ITemplate;
+}
+
 export interface ITemplateProps {
   template: ITemplate;
   positions: IPosition[];

@@ -58,7 +58,6 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
   jobId: {
     type: String,
     required: true,
-    unique: true,
     ref: "JobPosition",
   },
 });
