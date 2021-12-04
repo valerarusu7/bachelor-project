@@ -4,9 +4,7 @@ import sendEmail from "../../../helpers/mailer";
 import jwt from "jsonwebtoken";
 import Candidate from "../../../models/Candidate";
 import absoluteUrl from "next-absolute-url";
-import withProtect from "../../../middleware/withProtect";
 import Template from "../../../models/Template";
-import { ITemplate } from "../../../types";
 import connectDB from "../../../utils/mongodb";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;

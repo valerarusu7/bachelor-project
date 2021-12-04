@@ -47,7 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       var { origin } = absoluteUrl(req);
       var url = `${origin}/auth/${token}`;
 
-      await sendEmail(company.name, email, url);
+      // await sendEmail(company.name, email, url);
     });
 
     return res.status(201).json({ success: true });
