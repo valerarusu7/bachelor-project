@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  QuestionMarkCircleIcon,
-  DotsCircleHorizontalIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/solid";
+import { QuestionMarkCircleIcon, DotsCircleHorizontalIcon, CheckCircleIcon } from "@heroicons/react/solid";
 import { MailIcon, ClipboardListIcon } from "@heroicons/react/outline";
 
 import { BiSelectMultiple } from "react-icons/bi";
@@ -14,18 +10,7 @@ import { Badge } from "@mui/material";
 import CustomButton from "../../components/common/CustomButton";
 
 function Interview({ children }: any) {
-  const [tasks, setTasks] = useState<any>([
-    { completed: true, taskType: "single" },
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-  ]);
+  const [tasks, setTasks] = useState<any>([{ completed: true, taskType: "single" }, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
   const [emailCount, setEmailCount] = useState(0);
   const [taskCount, setTaskCount] = useState(0);
 
@@ -66,11 +51,7 @@ function Interview({ children }: any) {
             {tasks.map((task: any, idx: number) => (
               <div
                 className={`${idx % 2 ? "bg-gray-50" : "bg-gray-100"} ${
-                  !task.completed
-                    ? "opacity-30"
-                    : task.completed
-                    ? "opacity-70"
-                    : "opacity-100"
+                  !task.completed ? "opacity-30" : task.completed ? "opacity-70" : "opacity-100"
                 } flex items-center p-2 justify-evenly w-full border-b border-gray-200 cursor-pointer hover:bg-gray-200`}
               >
                 <div>
@@ -100,9 +81,7 @@ function Interview({ children }: any) {
                       <MdEmail className="h-6 w-6 text-white" />
                     </div>
                   ) : null}
-                  {!task.completed ? (
-                    <DotsCircleHorizontalIcon className="h-8 w-8 text-gray-400" />
-                  ) : null}
+                  {!task.completed ? <DotsCircleHorizontalIcon className="h-8 w-8 text-gray-400" /> : null}
                 </div>
               </div>
             ))}
@@ -112,14 +91,8 @@ function Interview({ children }: any) {
           <div className="mt-28 mb-28 mr-10 p-10 ">
             <div className="border border-gray-200 bg-white rounded-md p-4 shadow-lg">
               <div>
-                <p className="text-xl font-semibold mb-2">
-                  What are the key requirements for becoming a Data Analyst?
-                </p>
-                <textarea
-                  className="mt-1 w-full resize-none rounded-lg"
-                  rows={5}
-                  placeholder="Answer here"
-                ></textarea>
+                <p className="text-xl font-semibold mb-2">What are the key requirements for becoming a Data Analyst?</p>
+                <textarea className="mt-1 w-full resize-none rounded-lg" rows={5} placeholder="Answer here"></textarea>
                 <div className="flex justify-end mt-2">
                   <CustomButton color="blue">
                     <p>Next</p>
@@ -135,3 +108,7 @@ function Interview({ children }: any) {
 }
 
 export default Interview;
+
+export async function getServerSideProps() {
+  //magic
+}
