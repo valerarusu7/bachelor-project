@@ -138,14 +138,31 @@ export interface IPasswordFormValues {
 }
 
 export interface IUser {
+  _id: string;
   firstName?: string;
   lastName?: string;
   email?: string;
   birthday?: string;
+  role: string;
+  companyId: string;
+}
+
+export interface IRoles {
+  id: number;
+  role: string;
+}
+
+export interface IUsersProps {
+  users: IUser[];
+}
+
+export interface IUserObject {
+  user: IUser;
 }
 
 export interface IUserProps {
   user: IUser;
+  idx: number;
 }
 
 export interface IUserFormValues {
@@ -266,7 +283,7 @@ export interface IPositionDocument extends Document {
 }
 
 export interface IPositionModel extends Model<IPositionDocument> {
-  toClient(positions: IPosition[]): IPosition[];
+  toClientArray(positions: IPosition[]): IPosition[];
 }
 
 export interface ITemplateDocument extends Document {
@@ -332,6 +349,7 @@ export interface IUserDocument extends Document {
   email: string;
   firstName: string;
   lastName: string;
+  birthday: Date;
   password: string;
   position: string;
   department: string;
@@ -340,29 +358,9 @@ export interface IUserDocument extends Document {
   comparePassword(userPassword: string): Promise<boolean>;
 }
 
-export interface IMembers {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-}
-export interface IRoles {
-  id: number;
-  role: string;
-}
-export interface IMembersProps {
-  members: IMembers[];
-}
-
-export interface IMemberProps {
-  member: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: string;
-  };
+export interface IUserModel extends Model<IUserDocument> {
+  toClientObject(user: IUser): IUser;
+  toClientArray(users: IUser[]): IUser[];
 }
 
 export interface IUserRequest extends NextApiRequest {

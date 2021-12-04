@@ -4,9 +4,10 @@ import Layout from "../components/Layout/Layout";
 import NotificationsSettings from "../components/Settings/NotificationsSettings";
 import PasswordSettings from "../components/Settings/PasswordSettings";
 import UserSettings from "../components/Settings/UserSettings";
-import { ISettingsProps, IUser } from "../types";
+import { ICompany, ISettingsProps, IUser } from "../types";
 import Company from "../models/Company";
 import connectDB from "../utils/mongodb";
+import User from "../models/User";
 
 function Settings({ company, user }: ISettingsProps) {
   return (
@@ -24,19 +25,22 @@ export default Settings;
 
 export const getServerSideProps = async () => {
   await connectDB();
-  const company = await Company.findOne({ name: "Stibo Accelerator" }).lean();
-  company._id = company._id.toString();
 
-  const user: IUser = {
-    firstName: "Valeriu",
-    lastName: "Rusu",
-    email: "valeriu.rusu111@gmail.com",
-    birthday: "1999-11-24",
-  };
+  // @ts-ignore
+  const [user, company]: [IUser, ICompany] = await Promise.all([
+    User.findOne({ email: "david.le@test.com" })
+      .select("email firstName lastName birthday")
+      .lean(),
+    Company.findOne({ name: "Stibo Accelerator" }).lean(),
+  ]);
+
+  if (company && company._id) {
+    company._id = company._id.toString();
+  }
 
   return {
     props: {
-      user: user,
+      user: User.toClientObject(user),
       company: company,
     },
   };

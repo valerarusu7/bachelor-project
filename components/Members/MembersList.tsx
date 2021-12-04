@@ -1,9 +1,7 @@
+import { IUsersProps } from "../../types";
 import Member from "./Member";
-import { IMembersProps } from "../../types";
 
-
-
-function MembersList({ members }: IMembersProps) {
+function MembersList({ users }: IUsersProps) {
   return (
     <div>
       <div className="inline-block min-w-full  overflow-hidden align-middle shadow-lg rounded-lg mt-2 border-r-2 border-l-2 border-gray-200">
@@ -15,11 +13,13 @@ function MembersList({ members }: IMembersProps) {
               <th className="py-3 px-6 text-left">Role</th>
             </tr>
           </thead>
-          {<tbody className="text-gray-600">
-            {members.map((member) => (
-              <Member member={member} key={member.id} />
-            ))}
-          </tbody> }
+          {
+            <tbody className="text-gray-600">
+              {users.map((user, idx) => (
+                <Member user={user} idx={idx} key={idx} />
+              ))}
+            </tbody>
+          }
         </table>
       </div>
     </div>

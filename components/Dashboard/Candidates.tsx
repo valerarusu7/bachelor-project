@@ -10,8 +10,8 @@ function Candidates({ candidates }: ICandidatesProps) {
             <tr>
               <th className="py-2 px-3 text-left font-semibold">Candidate</th>
               <th className="py-2 px-3 text-left font-semibold">Email</th>
-              <th className="py-2 px-3 text-left font-semibold">Region</th>
-              <th className="py-3 px-6 text-left font-semibold">Position</th>
+              <th className="py-2 px-3 text-left font-semibold">Regions</th>
+              <th className="py-3 px-6 text-left font-semibold">Positions</th>
               <th className="py-2 px-3 text-center font-semibold">Favorite</th>
 
               {/* <th className="py-2 px-3 text-center font-semibold">Status</th>

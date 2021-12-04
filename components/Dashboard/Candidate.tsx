@@ -35,8 +35,8 @@ function Candidate({ candidate, idx }: ICandidateProps) {
               <Flags.US title="United States" />
             </span> */}
             <span className="font-medium">
-              {candidate.interviews.map((interview, index) =>
-                index ? ", " : "" + interview.region
+              {candidate.interviews.map(
+                (interview, index) => (index ? ", " : "") + interview.region
               )}
             </span>
           </div>
@@ -47,7 +47,7 @@ function Candidate({ candidate, idx }: ICandidateProps) {
             <p className="font-medium ">
               {candidate.interviews.map(
                 // @ts-ignore
-                (interview, index) => (index ? ", " : "" + interview.jobId.name)
+                (interview, index) => (index ? ", " : "") + interview.jobId.name
               )}
             </p>
           </div>

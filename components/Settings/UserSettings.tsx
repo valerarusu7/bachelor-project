@@ -3,9 +3,9 @@ import Separator from "../common/Separator";
 import SettingsInput from "./SettingsInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
-import { IUserProps, IUserFormValues } from "../../types";
+import { IUserFormValues, IUserObject } from "../../types";
 
-function UserSettings({ user }: IUserProps) {
+function UserSettings({ user }: IUserObject) {
   const [edit, setEdit] = useState(false);
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);

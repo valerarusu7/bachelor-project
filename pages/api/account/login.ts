@@ -1,7 +1,6 @@
 import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import User from "../../../models/User";
-import { IUserDocument } from "../../../types";
 import jwt from "jsonwebtoken";
 import handleError from "../../../helpers/errorHandler";
 import connectDB from "../../../utils/mongodb";
@@ -31,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const user: IUserDocument = await User.findOne({
+    const user = await User.findOne({
       email: account.email,
     });
 
@@ -73,9 +72,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         path: "/",
       }),
     ]);
-
-    console.log("access " + accessToken);
-    console.log("refresh " + refreshToken);
 
     return res.status(200).json({ success: "Successfully logged in." });
   } catch (error) {

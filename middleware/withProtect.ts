@@ -37,7 +37,8 @@ const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
         });
       }
 
-      (req as IUserRequest).user = currentUser;
+      // @ts-ignore
+      req.user = currentUser;
 
       return handler(req, res);
     } catch (error) {

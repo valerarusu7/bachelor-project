@@ -1,10 +1,13 @@
 import Layout from "../../components/Layout/Layout";
 import MembersList from "../../components/Members/MembersList";
-import { members } from "../../members";
 import CustomButton from "../../components/common/CustomButton";
 import Link from "next/link";
+import connectDB from "../../utils/mongodb";
+import User from "../../models/User";
+import { IUsersProps, IUser } from "../../types";
 
-function Members() {
+function Members({ users }: IUsersProps) {
+  console.log("LOOL " + users);
   return (
     <Layout header="Members">
       <div className="w-full flex justify-end items-center pb-2">
@@ -13,7 +16,7 @@ function Members() {
         </Link>
       </div>
       <div>
-        <MembersList members={members}></MembersList>
+        <MembersList users={users}></MembersList>
       </div>
     </Layout>
   );
@@ -21,10 +24,18 @@ function Members() {
 
 export default Members;
 
-export const getServerSideProps = async () => {
+export const getStaticProps = async () => {
+  await connectDB();
+
+  const users: IUser[] = await User.find({})
+    .select("email firstName lastName role")
+    .lean();
+  let lol = User.toClientArray(users);
+
   return {
     props: {
-      members: members,
+      users: lol,
     },
+    revalidate: 600,
   };
 };

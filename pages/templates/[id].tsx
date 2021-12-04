@@ -153,7 +153,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
       template: Template.toClientObject(template),
-      positions: JobPosition.toClient(jobPositions),
+      positions: JobPosition.toClientArray(jobPositions),
       selectedPosition: selectedPosition,
     },
     revalidate: 5,

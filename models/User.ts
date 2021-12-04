@@ -1,4 +1,4 @@
-import { IUserDocument } from "../types";
+import { IUser, IUserDocument, IUserModel } from "../types";
 import { Schema, model, models } from "mongoose";
 import bcryptjs from "bcryptjs";
 
@@ -23,6 +23,7 @@ const UserSchema = new Schema<IUserDocument>({
     required: [true, "Last name cannot be empty."],
     maxlength: [64, "Last name cannot be more than 64 characters."],
   },
+  birthday: Date,
   password: {
     type: String,
     required: [true, "Password cannot be empty."],
@@ -62,4 +63,18 @@ UserSchema.methods.comparePassword = async function (
     .catch((error: Error) => false);
 };
 
-export default models.User || model<IUserDocument>("User", UserSchema);
+UserSchema.statics.toClientObject = function (user: IUser) {
+  user._id = user._id.toString();
+  if (user.birthday) {
+    user.birthday = user.birthday.toString();
+  }
+
+  return user;
+};
+
+UserSchema.statics.toClientArray = function (users: IUser[]) {
+  return users.map((user) => (this as IUserModel).toClientObject(user));
+};
+
+export default (models.User as IUserModel) ||
+  model<IUserDocument, IUserModel>("User", UserSchema);

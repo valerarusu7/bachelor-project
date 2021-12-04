@@ -27,6 +27,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const user = await User.findOne({ email: email })
       .populate("companyId")
       .lean();
+
+    if (!user) {
+      return res.status(404).json({ error: "Cannot find the user." });
+    }
+
     const token = jwt.sign(
       { email: email },
       ACCOUNT_RESET_PRIVATE_KEY as string,
@@ -35,6 +40,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     var { origin } = absoluteUrl(req);
     var url = `${origin}/auth/reset/${token}`;
 
+    // @ts-ignore
     await sendEmail(user.companyId.name, email as string, url);
 
     return res.status(201).json({ success: true });

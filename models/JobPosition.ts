@@ -19,7 +19,7 @@ const JobPositionSchema = new Schema<IPositionDocument>({
   },
 });
 
-JobPositionSchema.statics.toClient = function (positions: IPosition[]) {
+JobPositionSchema.statics.toClientArray = function (positions: IPosition[]) {
   return positions.map((position) => {
     // @ts-ignore
     position._id = position._id.toString();

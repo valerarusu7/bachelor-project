@@ -43,7 +43,7 @@ const Login: React.FC = () => {
         }
       })
       .then((response) => {
-        router.push("/positions");
+        router.push("/dashboard");
       })
       .catch((error) => {
         //Handle error

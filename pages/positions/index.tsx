@@ -33,7 +33,7 @@ export const getServerSideProps = async ({ req }: IServerProps) => {
 
   return {
     props: {
-      positions: JobPosition.toClient(jobPositions),
+      positions: JobPosition.toClientArray(jobPositions),
     },
   };
 };
