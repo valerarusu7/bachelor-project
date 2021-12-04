@@ -3,23 +3,28 @@ import { Dialog, Transition } from "@headlessui/react";
 import { motion } from "framer-motion";
 import { stringAvatar } from "../../helpers/stringAvatar";
 import CustomButton from "../common/CustomButton";
+import { useAppSelector } from "../../store/hooks";
+import { selectTemplate, setInvitedCandidates, setSearch } from "../../store/reducers/template";
+import { useDispatch } from "react-redux";
+import { ICandidate } from "../../types";
 
 export interface InviteCandidatesProps {
   isOpen: boolean;
   onClose: any;
-  candidates: any;
+  candidates: ICandidate[];
   inviteCandidates: any;
 }
 
 function InviteCandidate({ isOpen, onClose, candidates, inviteCandidates }: InviteCandidatesProps) {
   const cancelButtonRef = useRef(null);
-  const [search, setSearch] = useState("");
-  const [filteredCandidates, setFilteredCandidates] = useState([]);
-  const [invitedCandidates, setInvitedCandidates] = useState<any>([]);
+  const dispatch = useDispatch();
+  const { search, invitedCandidates } = useAppSelector(selectTemplate);
+
+  const [filteredCandidates, setFilteredCandidates] = useState<ICandidate[]>([]);
 
   useEffect(() => {
     if (search.length > 1) {
-      let array = candidates.filter((candidate: any) => !invitedCandidates.includes(candidate));
+      let array: ICandidate[] = candidates.filter((candidate: any) => !invitedCandidates.includes(candidate));
 
       setFilteredCandidates(
         array.filter(
@@ -34,8 +39,8 @@ function InviteCandidate({ isOpen, onClose, candidates, inviteCandidates }: Invi
   function addCandidate(candidate: any) {
     let newCandidates = [...invitedCandidates];
     newCandidates.push(candidate);
-    setSearch("");
-    setInvitedCandidates(newCandidates);
+    dispatch(setSearch(""));
+    dispatch(setInvitedCandidates(newCandidates));
   }
 
   function removeCandidate(candidate: any) {
@@ -44,7 +49,7 @@ function InviteCandidate({ isOpen, onClose, candidates, inviteCandidates }: Invi
     if (index > -1) {
       newCandidates.splice(index, 1);
     }
-    setInvitedCandidates(newCandidates);
+    dispatch(setInvitedCandidates(newCandidates));
   }
 
   return (
@@ -84,7 +89,7 @@ function InviteCandidate({ isOpen, onClose, candidates, inviteCandidates }: Invi
                     className="focus:ring-blue-500 focus:border-blue-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300"
                     placeholder="Search for a candidate"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => dispatch(setSearch(e.target.value))}
                   />
                   {search.length > 1 ? (
                     <div className="text-gray-700">
@@ -93,6 +98,7 @@ function InviteCandidate({ isOpen, onClose, candidates, inviteCandidates }: Invi
                           <div>
                             {filteredCandidates.map((candidate: any) => (
                               <div
+                                key={candidate._id}
                                 className="flex items-center justify-between border-b border-gray-300 p-1 pb-2 pt-2 hover:bg-gray-200 cursor-pointer"
                                 onClick={() => addCandidate(candidate)}
                               >
@@ -115,7 +121,7 @@ function InviteCandidate({ isOpen, onClose, candidates, inviteCandidates }: Invi
                 <div className="mt-8 space-y-2">
                   {invitedCandidates.length > 0 ? (
                     invitedCandidates.map((invitedCandidate: any) => (
-                      <div className="flex items-center justify-between border-b border-gray-300 pb-2 ">
+                      <div className="flex items-center justify-between border-b border-gray-300 pb-2 " key={invitedCandidate._id}>
                         <div className="flex">
                           <div className="bg-gradient-to-tr from-blue-600 to-blue-300 text-white w-10 h-10 rounded-full p-2 flex items-center justify-center">
                             <p className="font-semibold text-md">

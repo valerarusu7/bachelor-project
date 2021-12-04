@@ -1,4 +1,4 @@
-import { IChoice, ITask } from "./../../types/index";
+import { ICandidate, IChoice, ITask } from "./../../types/index";
 
 import { HYDRATE } from "next-redux-wrapper";
 import { RootState } from "../store";
@@ -11,6 +11,9 @@ export type TemplateState = {
   showModal: boolean;
   templateChoices: IChoice[];
   edit: boolean;
+  search: string;
+  invitedCandidates: ICandidate[];
+  showInviteModal: boolean;
 };
 
 const initialState: TemplateState = {
@@ -22,6 +25,9 @@ const initialState: TemplateState = {
     { value: "", isCorrect: false },
   ],
   edit: false,
+  search: "",
+  invitedCandidates: [],
+  showInviteModal: false,
 };
 
 export const templateSlice = createSlice({
@@ -108,6 +114,15 @@ export const templateSlice = createSlice({
     resetTemplateState() {
       return initialState;
     },
+    setSearch(state, action) {
+      state.search = action.payload;
+    },
+    setInvitedCandidates(state, action) {
+      state.invitedCandidates = action.payload;
+    },
+    setShowInvite(state, action) {
+      state.showInviteModal = action.payload;
+    },
   },
 
   extraReducers: {
@@ -139,5 +154,8 @@ export const {
   removeChoice,
   resetTask,
   resetTemplateState,
+  setSearch,
+  setInvitedCandidates,
+  setShowInvite,
 } = templateSlice.actions;
 export default templateSlice.reducer;

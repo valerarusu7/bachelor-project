@@ -1,6 +1,15 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import { IPosition, ITemplate, ITemplateProps, IParams, ICandidate } from "../../types";
-import { resetTask, selectTemplate, setEdit, setShow, setTasks } from "../../store/reducers/template";
+import {
+  resetTask,
+  selectTemplate,
+  setEdit,
+  setInvitedCandidates,
+  setSearch,
+  setShow,
+  setShowInvite,
+  setTasks,
+} from "../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useEffect, useState } from "react";
 
@@ -13,18 +22,16 @@ import Tasks from "../../components/Templates/Tasks";
 import Template from "../../models/Template";
 import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
-import protect from "../../helpers/protect";
 import InviteCandidate from "../../components/Templates/InviteCandidate";
 import Candidate from "../../models/Candidate";
 
 function TemplatePage({ template, positions, selectedPosition, candidates }: ITemplateProps) {
   const dispatch = useAppDispatch();
-  const { templateTasks, showModal } = useAppSelector(selectTemplate);
+  const { templateTasks, showModal, invitedCandidates, showInviteModal } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
   const [position, setSelectedPosition] = useState(selectedPosition);
   const [templateName, setTemplateName] = useState(template.name);
   const [templateDescription, setTemplateDescription] = useState(template.description);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     dispatch(setTasks(tasks));
@@ -38,6 +45,12 @@ function TemplatePage({ template, positions, selectedPosition, candidates }: ITe
     dispatch(resetTask());
     dispatch(setShow(false));
     dispatch(setEdit(false));
+  }
+
+  function closeInviteModal() {
+    dispatch(setShowInvite(false));
+    dispatch(setSearch(""));
+    dispatch(setInvitedCandidates([]));
   }
 
   function updateTemplate() {
@@ -72,7 +85,10 @@ function TemplatePage({ template, positions, selectedPosition, candidates }: ITe
   }
 
   function invite() {
-    let emails = ["ledaodavid@gmail.com"];
+    let emails: string[] = [];
+    invitedCandidates.map((candidate) => {
+      emails.push(candidate.email);
+    });
     fetch(`/api/invite/${template._id}`, {
       method: "POST",
       body: JSON.stringify({ emails: emails }),
@@ -100,13 +116,18 @@ function TemplatePage({ template, positions, selectedPosition, candidates }: ITe
       </div>
       <Tasks setStateTasks={setStateTasks} />
       <AddTask />
-      <InviteCandidate isOpen={isOpen} onClose={() => setIsOpen(false)} candidates={candidates} inviteCandidates={() => invite()} />
+      <InviteCandidate
+        isOpen={showInviteModal}
+        onClose={() => closeInviteModal()}
+        candidates={candidates}
+        inviteCandidates={() => invite()}
+      />
       <TaskModal isOpen={showModal} closeModal={() => closeModal()} />
       <div className="mt-4 space-x-2 flex justify-end items-center">
         <CustomButton color="red" onClick={() => deleteTemplate()}>
           <p>Delete</p>
         </CustomButton>
-        <CustomButton color="blue" onClick={() => setIsOpen(true)}>
+        <CustomButton color="blue" onClick={() => dispatch(setShowInvite(true))}>
           <p>Invite candidates</p>
         </CustomButton>
         <CustomButton color="green" onClick={() => updateTemplate()}>
