@@ -47,9 +47,7 @@ export const templateSlice = createSlice({
       });
     },
     removeTask(state, action) {
-      state.templateTasks = state.templateTasks.filter(
-        (item) => item.order !== action.payload
-      );
+      state.templateTasks = state.templateTasks.filter((item) => item.order !== action.payload);
     },
     setTaskType(state, action) {
       state.templateTaskType = action.payload;
@@ -63,10 +61,7 @@ export const templateSlice = createSlice({
     },
     addChoice(state) {
       if (state.templateChoices.length <= 4) {
-        state.templateChoices = [
-          ...state.templateChoices,
-          { value: "", isCorrect: false },
-        ];
+        state.templateChoices = [...state.templateChoices, { value: "", isCorrect: false }];
       }
     },
     editChoice(state, action) {
@@ -92,10 +87,7 @@ export const templateSlice = createSlice({
       }
     },
     addTaskChoice(state) {
-      if (
-        state.templateTask.choices !== undefined &&
-        state.templateTask.choices.length <= 4
-      ) {
+      if (state.templateTask.choices !== undefined && state.templateTask.choices.length <= 4) {
         state.templateTask.choices = [
           ...state.templateTask.choices,
           {
@@ -107,9 +99,7 @@ export const templateSlice = createSlice({
       }
     },
     removeChoice(state, action) {
-      state.templateChoices = state.templateChoices.filter(
-        (item) => item._id !== action.payload
-      );
+      state.templateChoices = state.templateChoices.filter((item) => item._id !== action.payload);
     },
     resetTask(state) {
       state.templateChoices = initialState.templateChoices;
