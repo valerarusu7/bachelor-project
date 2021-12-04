@@ -25,7 +25,7 @@ const createTransporter = async () => {
   const accessToken = await new Promise((resolve, reject) => {
     oauth2Client.getAccessToken((err, token) => {
       if (err) {
-        reject();
+        reject("Failed to create access token.");
       }
       resolve(token);
     });
@@ -58,6 +58,7 @@ function verifyTransporter(
 
 export default async function sendEmail(
   companyName: string,
+  positionName: string,
   recipient: string,
   url: string
 ) {
@@ -70,7 +71,7 @@ export default async function sendEmail(
     subject: `${companyName} interview invitation`,
     html: `
         <h3> TEST </h3>
-        <p> Thank you for using our services </p>
+        <p> Interview for ${positionName}:</p>
         <p> ${url} </p>
         `,
   };
