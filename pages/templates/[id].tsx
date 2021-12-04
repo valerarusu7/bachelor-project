@@ -1,5 +1,11 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import { IPosition, ITemplate, ITemplateProps, IParams } from "../../types";
+import {
+  IPosition,
+  ITemplate,
+  ITemplateProps,
+  IParams,
+  ICandidate,
+} from "../../types";
 import {
   resetTask,
   selectTemplate,
@@ -19,13 +25,15 @@ import Tasks from "../../components/Templates/Tasks";
 import Template from "../../models/Template";
 import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
-import protect from "../../helpers/protect";
+import Candidate from "../../models/Candidate";
 
 function TemplatePage({
   template,
   positions,
   selectedPosition,
+  candidates,
 }: ITemplateProps) {
+  console.log(candidates);
   const dispatch = useAppDispatch();
   const { templateTasks, showModal } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
@@ -146,6 +154,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
       .lean(),
   ]);
 
+  const candidates: ICandidate[] = await Candidate.find({
+    interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
+  })
+    .select("firstName lastName email")
+    .lean();
+
   const selectedPosition = jobPositions.find(
     (jobPosition) => jobPosition._id === template.jobId
   );
@@ -155,6 +169,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       template: Template.toClientObject(template),
       positions: JobPosition.toClientArray(jobPositions),
       selectedPosition: selectedPosition,
+      candidates: Candidate.toClientArray(candidates),
     },
     revalidate: 5,
   };

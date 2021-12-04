@@ -97,24 +97,30 @@ const CandidateSchema = new Schema<ICandidateDocument>({
 
 CandidateSchema.statics.toClientObject = function (candidate: ICandidate) {
   candidate._id = candidate._id.toString();
-  candidate.companyId = candidate.companyId.toString();
-  candidate.interviews.forEach((interview) => {
-    interview._id = interview._id.toString();
-    if (interview.startedUtc !== undefined) {
-      interview.startedUtc = interview.startedUtc.toString();
-    }
+  if (candidate.companyId !== undefined) {
+    candidate.companyId = candidate.companyId.toString();
+  }
 
-    if (interview.completedUtc !== undefined) {
-      interview.completedUtc = interview.completedUtc.toString();
-    }
+  if (candidate.interviews !== undefined) {
+    candidate.interviews.forEach((interview) => {
+      interview._id = interview._id.toString();
+      if (interview.startedUtc !== undefined) {
+        interview.startedUtc = interview.startedUtc.toString();
+      }
 
-    if (interview.answers !== undefined) {
-      interview.answers.forEach((answer) => {
-        answer._id = answer._id.toString();
-        answer.taskId = answer.taskId.toString();
-      });
-    }
-  });
+      if (interview.completedUtc !== undefined) {
+        interview.completedUtc = interview.completedUtc.toString();
+      }
+
+      if (interview.answers !== undefined) {
+        interview.answers.forEach((answer) => {
+          answer._id = answer._id.toString();
+          answer.taskId = answer.taskId.toString();
+        });
+      }
+    });
+  }
+
   return candidate;
 };
 
