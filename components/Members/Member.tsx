@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { stringAvatar } from "../../helpers/stringAvatar";
-import { IUserProps, IRoles } from "../../types";
-import { roles } from "../../roles";
+import { IUserProps } from "../../types";
 
 function Member({ user, idx }: IUserProps) {
   const [listOfRoles, setRoles] = useState<string[]>(["a"]);
