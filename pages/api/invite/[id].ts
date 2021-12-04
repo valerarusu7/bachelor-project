@@ -4,7 +4,8 @@ import sendEmail from "../../../helpers/mailer";
 import jwt from "jsonwebtoken";
 import Candidate from "../../../models/Candidate";
 import absoluteUrl from "next-absolute-url";
-import withProtect from "../../../middleware/withProtect";
+import Template from "../../../models/Template";
+import connectDB from "../../../utils/mongodb";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -15,43 +16,76 @@ const { INTERVIEW_PRIVATE_KEY } = process.env;
  *     description: Create a new template
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
+  await connectDB();
 
   if (req.method === "POST") {
     try {
-      let candidate = await Candidate.findOne({ "interviews._id": id })
-        .populate("companyId")
-        .lean();
+      const body = req.body;
 
-      if (!candidate) {
-        return res.status(404).json({ error: "Cannot find candidate." });
+      let data;
+      if (body.constructor !== Object) {
+        data = JSON.parse(body);
+      } else {
+        data = body;
       }
 
-      let foundInterview = candidate.interviews.find(
-        (interview) => interview._id === id
-      );
-      if (!foundInterview) {
-        return res.status(404).json({ error: "No template found." });
+      if (!data.emails) {
+        return res.status(404).json({ error: "No emails provided." });
       }
 
-      const token = jwt.sign(
-        { interviewId: foundInterview._id as string },
-        INTERVIEW_PRIVATE_KEY as string,
-        { expiresIn: "7d" as string }
+      await Promise.all(
+        data.emails.map(async (email: string) => {
+          let template = await Template.findById(id).select("jobId").lean();
+          if (!template) {
+            return res.status(404).json({ error: "Cannot find template." });
+          }
+
+          let candidate = await Candidate.findOne({
+            email: email,
+            "interviews.jobId": template.jobId,
+          })
+            .select("interviews companyId")
+            .populate("companyId interviews.jobId")
+            .lean();
+
+          if (!candidate) {
+            return res.status(404).json({ error: "Cannot find candidate." });
+          }
+
+          let foundInterview = candidate.interviews.find(
+            // @ts-ignore
+            (interview) => interview.jobId._id === template.jobId
+          );
+          if (!foundInterview) {
+            return res.status(404).json({ error: "No interview found." });
+          }
+
+          const token = jwt.sign(
+            { interviewId: foundInterview._id as string },
+            INTERVIEW_PRIVATE_KEY as string,
+            { expiresIn: "7d" as string }
+          );
+
+          var { origin } = absoluteUrl(req);
+          var url = `${origin}/interview/${token}`;
+
+          await sendEmail(
+            // @ts-ignore
+            candidate.companyId.name,
+            // @ts-ignore
+            foundInterview.jobId.name,
+            email,
+            url
+          );
+        })
       );
 
-      var { origin } = absoluteUrl(req);
-      var url = `${origin}/interview/${token}`;
-      // @ts-ignore
-      await sendEmail(candidate.companyId.name, candidate.email, url);
-
-      return res.status(201).json({ success: true });
+      return res.status(200).json({ success: true });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
   }
 };
-
-export default withProtect(handler, ["manager", "admin"]);

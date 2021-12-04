@@ -47,7 +47,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         role: user.role,
       },
       ACCOUNT_ACCESS_PRIVATE_KEY as string,
-      { expiresIn: "10m" as string }
+      { expiresIn: "60m" as string }
     );
 
     const refreshToken = jwt.sign(
@@ -60,7 +60,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       cookie.serialize("accessToken", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== "development",
-        maxAge: 60 * 10,
+        maxAge: 60 * 10 * 6,
         sameSite: "strict",
         path: "/",
       }),

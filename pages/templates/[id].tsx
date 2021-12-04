@@ -1,5 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import { IPosition, ITemplate, ITemplateProps, IParams } from "../../types";
+import { IPosition, ITemplate, ITemplateProps, IParams, ICandidate } from "../../types";
 import { resetTask, selectTemplate, setEdit, setShow, setTasks } from "../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useEffect, useState } from "react";
@@ -15,8 +15,9 @@ import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
 import protect from "../../helpers/protect";
 import InviteCandidate from "../../components/Templates/InviteCandidate";
+import Candidate from "../../models/Candidate";
 
-function TemplatePage({ template, positions, selectedPosition }: ITemplateProps) {
+function TemplatePage({ template, positions, selectedPosition, candidates }: ITemplateProps) {
   const dispatch = useAppDispatch();
   const { templateTasks, showModal } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
@@ -24,14 +25,6 @@ function TemplatePage({ template, positions, selectedPosition }: ITemplateProps)
   const [templateName, setTemplateName] = useState(template.name);
   const [templateDescription, setTemplateDescription] = useState(template.description);
   const [isOpen, setIsOpen] = useState(false);
-  const [candidates, setCandidates] = useState([
-    { firstName: "David", lastName: "Le", email: "david.le@gmail.com" },
-    { firstName: "Viktoria", lastName: "Kouni", email: "viktoriakouni@gmail.com" },
-    { firstName: "Karsten", lastName: "Dehler", email: "karsten@gmail.com" },
-    { firstName: "Randi", lastName: "Vest.", email: "randi@gmail.com" },
-    { firstName: "Nadea", lastName: "Didenco", email: "nadea@gmail.com" },
-    { firstName: "Valeriu", lastName: "Rusu", email: "valera5182@gmail.com" },
-  ]);
 
   useEffect(() => {
     dispatch(setTasks(tasks));
@@ -79,7 +72,17 @@ function TemplatePage({ template, positions, selectedPosition }: ITemplateProps)
   }
 
   function invite() {
-    console.log("hahaha");
+    let emails = ["ledaodavid@gmail.com"];
+    fetch(`/api/invite/${template._id}`, {
+      method: "POST",
+      body: JSON.stringify({ emails: emails }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      });
   }
 
   return (
@@ -144,6 +147,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
     JobPosition.find({}).select("_id name location type recruitingStartDate").lean(),
   ]);
 
+  const candidates: ICandidate[] = await Candidate.find({
+    interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
+  })
+    .select("firstName lastName email")
+    .lean();
+
   const selectedPosition = jobPositions.find((jobPosition) => jobPosition._id === template.jobId);
 
   return {
@@ -151,6 +160,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       template: Template.toClientObject(template),
       positions: JobPosition.toClientArray(jobPositions),
       selectedPosition: selectedPosition,
+      candidates: Candidate.toClientArray(candidates),
     },
     revalidate: 5,
   };

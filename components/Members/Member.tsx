@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { stringAvatar } from "../../helpers/stringAvatar";
-import { IUserProps, IRoles } from "../../types";
-import { roles } from "../../roles";
+import { IUserProps } from "../../types";
 
 function Member({ user, idx }: IUserProps) {
   const [listOfRoles, setRoles] = useState<string[]>(["a"]);
+  var list = Object.values(Roles);
 
   useEffect(() => {
-    getRoles(roles);
+    getRoles(list);
   }, []);
 
-  function getRoles(data: IRoles[]): void {
+  function getRoles(data: string[]): void {
     const allRoles: string[] = data.map((e) => {
-      return e.role;
+      return e;
     });
     let uniqueRoles: string[] = allRoles.filter(function (item, pos, self) {
       return self.indexOf(item) == pos;
@@ -61,3 +61,9 @@ function Member({ user, idx }: IUserProps) {
 }
 
 export default Member;
+
+export enum Roles {
+  Manager = "Manager",
+  Admin = "Admin",
+  Viewer = "Viewer",
+}

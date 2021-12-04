@@ -7,7 +7,6 @@ import User from "../../models/User";
 import { IUsersProps, IUser } from "../../types";
 
 function Members({ users }: IUsersProps) {
-  console.log("LOOL " + users);
   return (
     <Layout header="Members">
       <div className="w-full flex justify-end items-center pb-2">

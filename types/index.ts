@@ -190,6 +190,7 @@ export interface ITemplateProps {
   template: ITemplate;
   positions: IPosition[];
   selectedPosition: IPosition;
+  candidates: ICandidate;
 }
 
 export interface ITemplatesProps {

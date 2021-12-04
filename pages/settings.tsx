@@ -23,7 +23,7 @@ function Settings({ company, user }: ISettingsProps) {
 
 export default Settings;
 
-export const getServerSideProps = async () => {
+export const getStaticProps = async () => {
   await connectDB();
 
   // @ts-ignore
@@ -43,5 +43,6 @@ export const getServerSideProps = async () => {
       user: User.toClientObject(user),
       company: company,
     },
+    revalidate: 30,
   };
 };
