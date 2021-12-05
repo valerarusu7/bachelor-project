@@ -20,6 +20,7 @@ import CustomButton from "../common/CustomButton";
 import EmailChoice from "./Choice";
 import { MdEmail } from "react-icons/md";
 import { VscTasklist } from "react-icons/vsc";
+import { TaskTypes } from "../../types";
 
 function TaskModalContent() {
   const dispatch = useAppDispatch();
@@ -42,13 +43,13 @@ function TaskModalContent() {
 
   useEffect(() => {
     switch (templateTaskType) {
-      case "single":
+      case TaskTypes.Single:
         setColor("sky");
         break;
-      case "multiple":
+      case TaskTypes.Multiple:
         setColor("purple");
         break;
-      case "email":
+      case TaskTypes.Email:
         setColor("red");
         break;
       default:
@@ -63,7 +64,7 @@ function TaskModalContent() {
         {
           taskType: templateTaskType,
           order: templateTasks.length,
-          choices: templateTaskType === "single" ? [] : templateChoices,
+          choices: templateTaskType === TaskTypes.Single ? [] : templateChoices,
           question: question,
         },
       ])
@@ -102,11 +103,11 @@ function TaskModalContent() {
           <div
             className={`rounded-full bg-gradient-to-tr from-${color}-700 to-${color}-400 h-16 w-16 flex justify-center items-center disabled:opacity-50 transition transform duration-400 ease-in-out absolute -top-8 shadow-lg`}
           >
-            {templateTaskType === "email" ? (
+            {templateTaskType === TaskTypes.Email ? (
               <MdEmail className="text-white h-8 w-8" />
-            ) : templateTaskType === "single" ? (
+            ) : templateTaskType === TaskTypes.Single ? (
               <BsQuestion className="text-white h-10 w-10" />
-            ) : templateTaskType === "multiple" ? (
+            ) : templateTaskType === TaskTypes.Multiple ? (
               <BiSelectMultiple className="text-white h-10 w-10" />
             ) : null}
           </div>
@@ -130,7 +131,7 @@ function TaskModalContent() {
             </div>
           </div>
 
-          {templateTaskType === "email" ? (
+          {templateTaskType === TaskTypes.Email ? (
             <div>
               <div className="mt-6 flex items-center">
                 <div className="w-1/3">
@@ -200,7 +201,7 @@ function TaskModalContent() {
                 </div>
               ) : null}
             </div>
-          ) : templateTaskType === "multiple" ? (
+          ) : templateTaskType === TaskTypes.Multiple ? (
             <div>
               <div className="mt-4">
                 {edit

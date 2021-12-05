@@ -12,6 +12,12 @@ export enum Roles {
   Viewer = "Viewer",
 }
 
+export enum TaskTypes {
+  Multiple = "Multiple",
+  Single = "Single",
+  Email = "Email",
+}
+
 export interface IParams extends ParsedUrlQuery {
   id: string;
 }
@@ -329,6 +335,7 @@ export interface IChoiceDocument extends Document {
 export interface ICandidateAnswerDocument extends Document {
   taskId: Types.ObjectId;
   answer: string;
+  choices: number[];
 }
 
 export interface ICandidateInterviewDocument extends Document {

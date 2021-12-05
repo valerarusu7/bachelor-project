@@ -5,6 +5,7 @@ import {
   ITemplate,
   ITemplateDocument,
   ITemplateModel,
+  TaskTypes,
 } from "../types";
 import { Schema, model, models } from "mongoose";
 import "./Company";
@@ -23,6 +24,8 @@ const ChoiceSchema = new Schema<IChoiceDocument>({
     required: [true, "Choice must be selected as correct or not correct."],
   },
 });
+
+const Choice = models.Choice || model<IChoiceDocument>("Choice", ChoiceSchema);
 
 const TaskSchema = new Schema<ITaskDocument>({
   _id: {
@@ -45,6 +48,8 @@ const TaskSchema = new Schema<ITaskDocument>({
   },
   choices: [ChoiceSchema],
 });
+
+const Task = models.Task || model<ITaskDocument>("Task", TaskSchema);
 
 const TemplateSchema = new Schema<ITemplateDocument>(
   {
@@ -110,15 +115,16 @@ TemplateSchema.statics.toClientArray = function (templates: ITemplate[]) {
 
     const tasks = template.tasks as ITask[];
     const taskTypes = tasks.map((task: ITask) => task.taskType);
-    template["multiple"] = taskTypes.includes("multiple");
-    template["email"] = taskTypes.includes("email");
-    template["single"] = taskTypes.includes("single");
-    template["code"] = taskTypes.includes("code");
-    template["tasks"] = taskTypes.length;
+    template.multiple = taskTypes.includes(TaskTypes.Multiple);
+    template.email = taskTypes.includes(TaskTypes.Email);
+    template.single = taskTypes.includes(TaskTypes.Single);
+    template.tasks = taskTypes.length;
 
     return template;
   });
 };
+
+export { Choice, Task };
 
 export default (models.Template as ITemplateModel) ||
   model<ITemplateDocument, ITemplateModel>("Template", TemplateSchema);
