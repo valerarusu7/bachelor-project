@@ -1,6 +1,6 @@
 export default function convertToTimeSpan(
-  startDate: Date,
-  endDate: Date
+  startDate: string,
+  endDate: string
 ): string {
   const time = Math.abs(
     (new Date(endDate).getTime() - new Date(startDate).getTime()) / 1000

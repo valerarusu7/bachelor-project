@@ -18,6 +18,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { order } = req.query;
     //@ts-ignore
     const interviewId = req.interviewId;
+    //@ts-ignore
+    const started = req.started;
+
+    if (!started) {
+      return res.status(400).json({ error: "Interview has not started yet." });
+    }
 
     try {
       const candidate = await Candidate.findOne({

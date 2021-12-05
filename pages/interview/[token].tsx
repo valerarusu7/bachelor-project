@@ -158,12 +158,7 @@ export const getServerSideProps = async (
     const decoded = jwt.verify(token, INTERVIEW_PRIVATE_KEY as string);
     // @ts-ignore
     if (!decoded.interviewId) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: "/_error",
-        },
-      };
+      return new Error("No interview id.");
     }
 
     let candidate = await Candidate.findOne({
@@ -171,37 +166,22 @@ export const getServerSideProps = async (
       "interviews._id": decoded.interviewId,
     })
       .select("interviews")
-      .lean();
+      .lean()
+      .orFail();
 
-    if (!candidate) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: "/_error",
-        },
-      };
-    }
-
-    var foundInterview = candidate.interviews.find(
+    var interview = candidate.interviews.find(
       // @ts-ignore
       (interview) => interview._id == decoded.interviewId
     );
 
-    if (!foundInterview) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: "/_error",
-        },
-      };
-    }
-
+    // @ts-ignore
     const template: ITemplate = await Template.findOne({
-      jobId: foundInterview.jobId,
+      jobId: interview?.jobId,
     })
       .select("_id name description tasks companyId")
       .populate("companyId")
-      .lean();
+      .lean()
+      .orFail();
 
     const tasksLength = (template.tasks as ITask[]).length;
     (template.tasks as ITask[]).length = 1;

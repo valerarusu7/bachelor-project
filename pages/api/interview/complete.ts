@@ -5,7 +5,11 @@ import convertToTimeSpan from "../../../helpers/timeFormatter";
 import withInterviewProtect from "../../../middleware/withInterviewProtect";
 import withBodyConverter from "../../../middleware/withBodyConverter";
 import Template from "../../../models/Template";
-import { TaskTypes } from "../../../types";
+import {
+  ICandidateAnswerDocument,
+  ITaskDocument,
+  TaskTypes,
+} from "../../../types";
 
 /**
  * @swagger
@@ -14,11 +18,62 @@ import { TaskTypes } from "../../../types";
  *     description: Create a new template
  */
 
+function calculateScore(
+  tasks: ITaskDocument[],
+  answers: ICandidateAnswerDocument[]
+) {
+  let multipleTasksCount = 0;
+
+  const points = tasks.map((task, i) => {
+    if (
+      (task.taskType === TaskTypes.Email && task.choices.length !== 0) ||
+      task.taskType === TaskTypes.Multiple
+    ) {
+      multipleTasksCount++;
+      if (!answers[i]) {
+        return 0;
+      } else {
+        const result = task.choices.reduce(
+          (total, choice) => {
+            if (choice.isCorrect && answers[i].choices.includes(choice._id)) {
+              total[0]++;
+              total[1]++;
+              return total;
+            } else if (
+              !choice.isCorrect &&
+              answers[i].choices.includes(choice._id)
+            ) {
+              total[1]++;
+              return total;
+            } else {
+              return total;
+            }
+          },
+          [0, 0]
+        );
+
+        return result[0] / result[1];
+      }
+    }
+    return 0;
+  });
+
+  return Math.round(
+    (points?.reduce((total, val) => total + val) / multipleTasksCount) * 100
+  );
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const body = req.body;
     //@ts-ignore
     const interviewId = req.interviewId;
+    //@ts-ignore
+    const started = req.started;
+
+    if (!started) {
+      return res.status(400).json({ error: "Interview has not started yet." });
+    }
 
     try {
       // let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
@@ -38,66 +93,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .lean()
         .orFail();
 
-      const tasks = template.tasks;
+      let score = calculateScore(
+        template.tasks as ITaskDocument[],
+        interview?.answers as ICandidateAnswerDocument[]
+      );
 
-      let multipleTasksCount = 0;
-
-      const points = tasks.map((task, i) => {
-        if (
-          (task.taskType === TaskTypes.Email && task.choices.length !== 0) ||
-          task.taskType === TaskTypes.Multiple
-        ) {
-          multipleTasksCount++;
-          if (!interview?.answers[i]) {
-            return 0;
-          } else {
-            const result = task.choices.reduce(
-              (total, choice) => {
-                if (
-                  choice.isCorrect &&
-                  interview?.answers[i].choices.includes(choice._id)
-                ) {
-                  total[0]++;
-                  total[1]++;
-                  return total;
-                } else if (
-                  !choice.isCorrect &&
-                  interview?.answers[i].choices.includes(choice._id)
-                ) {
-                  total[1]++;
-                  return total;
-                } else {
-                  return total;
-                }
-              },
-              [0, 0]
-            );
-
-            return result[0] / result[1];
-          }
-        }
-        return 0;
-      });
-
-      const score =
-        (points?.reduce((total, val) => total + val) / multipleTasksCount) *
-        100;
-
-      let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
+      let time = convertToTimeSpan(started, new Date().toISOString());
 
       await Candidate.findOneAndUpdate(
         { "interviews._id": interviewId },
         {
-          "interviews.$.startedUtc": body.startedUtc,
-          "interviews.$.completedUtc": body.completedUtc,
+          "interviews.$.startedUtc": started,
+          "interviews.$.completedUtc": new Date(),
           "interviews.$.time": time,
           "interviews.$.completed": true,
           "interviews.$.score": score,
         }
       );
       return res
-        .status(200)
-        .json({ success: "Interview successfully created." });
+        .status(201)
+        .json({ success: "Interview successfully completed." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

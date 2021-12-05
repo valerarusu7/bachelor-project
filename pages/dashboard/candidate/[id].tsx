@@ -1,11 +1,12 @@
-import { GetStaticPaths, GetStaticProps } from "next";
-import { ICandidate, ICandidateProps, IParams } from "../../../types";
+import { GetServerSideProps } from "next";
+import { ICandidate, ICandidateProps } from "../../../types";
 
 import Candidate from "../../../models/Candidate";
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
 import CandidateTimeline from "../../../components/CandidateDetails/Timeline/CandidateTimeline";
 import Layout from "../../../components/Layout/Layout";
 import connectDB from "../../../utils/mongodb";
+import protect from "../../../helpers/protect";
 
 function CandidateDetails({ candidate }: ICandidateProps) {
   return (
@@ -24,32 +25,32 @@ function CandidateDetails({ candidate }: ICandidateProps) {
 
 export default CandidateDetails;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  await connectDB();
-  const candidates: ICandidate[] = await Candidate.find({}).lean();
-
-  const paths = candidates.map((candidate) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  if (!protect(context.req.cookies["accessToken"]).status) {
     return {
-      params: { id: candidate._id.toString() },
+      redirect: {
+        permanent: false,
+        destination: "/auth/login",
+      },
     };
-  });
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
+  }
   await connectDB();
-  const { id } = context.params as IParams;
 
-  const candidate: ICandidate = await Candidate.findById(id).lean();
+  const id = context.params?.id;
 
-  return {
-    props: {
-      candidate: Candidate.toClientObject(candidate),
-    },
-    revalidate: 5,
-  };
+  try {
+    const candidate: ICandidate = await Candidate.findById(id).lean();
+    return {
+      props: {
+        candidate: Candidate.toClientObject(candidate),
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/404",
+      },
+    };
+  }
 };
