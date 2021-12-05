@@ -7,6 +7,7 @@ import {
   ICandidateModel,
 } from "../types";
 import "./JobPosition";
+import { Choice, Task } from "./Template";
 
 const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
   _id: {
@@ -16,12 +17,17 @@ const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
   taskId: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: "Task",
+    ref: Task,
   },
   answer: {
     type: String,
-    required: true,
   },
+  choices: [
+    {
+      type: Number,
+      ref: Choice,
+    },
+  ],
 });
 
 const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({

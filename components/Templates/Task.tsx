@@ -10,7 +10,7 @@ import {
 
 import { BiSelectMultiple } from "react-icons/bi";
 import { BsQuestion } from "react-icons/bs";
-import { ITaskTableObject } from "../../types";
+import { ITaskTableObject, TaskTypes } from "../../types";
 import { MdEmail } from "react-icons/md";
 import { Reorder } from "framer-motion";
 import { useAppDispatch } from "../../store/hooks";
@@ -53,15 +53,15 @@ function Task({ task, idx }: ITaskTableObject) {
       </td>
       <td className="py-3 px-6 text-center whitespace-nowrap">
         <div className="flex justify-center items-center">
-          {task.taskType === "single" ? (
+          {task.taskType === TaskTypes.Single ? (
             <div className="rounded-full bg-gradient-to-tr from-blue-700 to-blue-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
               <BsQuestion className="text-white h-6 w-6" />
             </div>
-          ) : task.taskType === "multiple" ? (
+          ) : task.taskType === TaskTypes.Multiple ? (
             <div className="rounded-full bg-gradient-to-tr from-purple-700 to-purple-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
               <BiSelectMultiple className="text-white h-6 w-6" />
             </div>
-          ) : task.taskType === "email" ? (
+          ) : task.taskType === TaskTypes.Email ? (
             <div className="rounded-full bg-gradient-to-tr from-red-700 to-red-400 h-8 w-8 flex justify-center items-center transition transform duration-400 ease-in-out shadow-lg">
               <MdEmail className="text-white h-6 w-6" />
             </div>

@@ -6,6 +6,7 @@ import { MdEmail } from "react-icons/md";
 import TaskType from "./TaskType";
 import { VideoCameraIcon } from "@heroicons/react/solid";
 import { useAppDispatch } from "../../store/hooks";
+import { TaskTypes } from "../../types";
 
 function AddTask() {
   const dispatch = useAppDispatch();
@@ -27,21 +28,21 @@ function AddTask() {
             taskName="Question"
             color="sky"
             disabled={false}
-            onClick={() => addTask("single")}
+            onClick={() => addTask(TaskTypes.Single)}
           />
           <TaskType
             Icon={BiSelectMultiple}
             taskName="Multiple question"
             color="purple"
             disabled={false}
-            onClick={() => addTask("multiple")}
+            onClick={() => addTask(TaskTypes.Multiple)}
           />
           <TaskType
             Icon={MdEmail}
             taskName="Email"
             color="red"
             disabled={false}
-            onClick={() => addTask("email")}
+            onClick={() => addTask(TaskTypes.Email)}
           />
           <TaskType
             Icon={BiCodeAlt}

@@ -4,6 +4,8 @@ import Candidate from "../../../models/Candidate";
 import convertToTimeSpan from "../../../helpers/timeFormatter";
 import withInterviewProtect from "../../../middleware/withInterviewProtect";
 import withBodyConverter from "../../../middleware/withBodyConverter";
+import Template from "../../../models/Template";
+import { TaskTypes } from "../../../types";
 
 /**
  * @swagger
@@ -19,14 +21,78 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const interviewId = req.interviewId;
 
     try {
+      // let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
+      const candidate = await Candidate.findOne({
+        "interviews._id": interviewId,
+      })
+        .select("interviews")
+        .lean()
+        .orFail();
+
+      const interview = candidate.interviews.find(
+        (interview) => interview._id.toString() === interviewId
+      );
+
+      const template = await Template.findOne({ jobId: interview?.jobId })
+        .select("tasks")
+        .lean()
+        .orFail();
+
+      const tasks = template.tasks;
+
+      let multipleTasksCount = 0;
+
+      const points = tasks.map((task, i) => {
+        if (
+          (task.taskType === TaskTypes.Email && task.choices.length !== 0) ||
+          task.taskType === TaskTypes.Multiple
+        ) {
+          multipleTasksCount++;
+          if (!interview?.answers[i]) {
+            return 0;
+          } else {
+            const result = task.choices.reduce(
+              (total, choice) => {
+                if (
+                  choice.isCorrect &&
+                  interview?.answers[i].choices.includes(choice._id)
+                ) {
+                  total[0]++;
+                  total[1]++;
+                  return total;
+                } else if (
+                  !choice.isCorrect &&
+                  interview?.answers[i].choices.includes(choice._id)
+                ) {
+                  total[1]++;
+                  return total;
+                } else {
+                  return total;
+                }
+              },
+              [0, 0]
+            );
+
+            return result[0] / result[1];
+          }
+        }
+        return 0;
+      });
+
+      const score =
+        (points?.reduce((total, val) => total + val) / multipleTasksCount) *
+        100;
+
       let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
+
       await Candidate.findOneAndUpdate(
         { "interviews._id": interviewId },
         {
           "interviews.$.startedUtc": body.startedUtc,
           "interviews.$.completedUtc": body.completedUtc,
           "interviews.$.time": time,
-          "interviews.$.answers": body.answers,
+          "interviews.$.completed": true,
+          "interviews.$.score": score,
         }
       );
       return res

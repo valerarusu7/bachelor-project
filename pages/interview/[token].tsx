@@ -11,7 +11,7 @@ import connectDB from "../../utils/mongodb";
 import jwt from "jsonwebtoken";
 import Candidate from "../../models/Candidate";
 import Template from "../../models/Template";
-import { ITemplate, IInterviewProps, ITask } from "../../types";
+import { ITemplate, IInterviewProps, ITask, TaskTypes } from "../../types";
 import { GetServerSidePropsContext } from "next";
 import { selectInterview, setCurrentTask } from "../../store/reducers/interviewSlice";
 import { useDispatch } from "react-redux";
@@ -21,7 +21,6 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
   console.log(companyName);
   console.log(template);
   console.log(tasksLength);
-  const [tasks, setTasks] = useState<any>([{ completed: true, taskType: "single" }, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
   const [emailCount, setEmailCount] = useState(0);
   const [showTasks, setShowTasks] = useState(false);
   const [showEmails, setShowEmails] = useState(false);
@@ -116,18 +115,18 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
                   <p className="font-semibold">{`Task ${idx + 1}`}</p>
                 </div>
                 <div>
-                  {task.completed && task.taskType === "multiple" ? (
+                  {task.completed && task.taskType === TaskTypes.Multiple ? (
                     <div className="rounded-full bg-gradient-to-tr from-purple-700 to-purple-400 h-8 w-8 flex justify-center items-center p-1">
                       <BiSelectMultiple className="h-6 w-6 text-white" />
                     </div>
                   ) : null}
-                  {task.completed && task.taskType === "single" ? (
+                  {task.completed && task.taskType === TaskTypes.Single ? (
                     <div className="rounded-full bg-gradient-to-tr from-sky-700 to-sky-400 h-8 w-8 flex justify-center items-center">
                       <BsQuestion className="h-6 w-6 text-white" />
                     </div>
                   ) : null}
 
-                  {task.completed && task.taskType === "email" ? (
+                  {task.completed && task.taskType === TaskTypes.Email ? (
                     <div className="rounded-full bg-gradient-to-tr from-red-700 to-red-400 h-8 w-8 flex justify-center items-center p-1">
                       <MdEmail className="h-6 w-6 text-white" />
                     </div>
