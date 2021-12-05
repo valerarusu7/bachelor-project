@@ -1,12 +1,14 @@
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 
 import dashboardSlice from "./reducers/dashboardSlice";
+import interviewSlice from "./reducers/interviewSlice";
 import templateSlice from "./reducers/template";
 
 export const store = configureStore({
   reducer: {
     dashboard: dashboardSlice,
     template: templateSlice,
+    interview: interviewSlice,
   },
   devTools: false,
 });
