@@ -6,8 +6,8 @@ import {
 } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import withProtect from "../../../middleware/withProtect";
-import Template from "../../../models/Template";
 import connectDB from "../../../utils/mongodb";
+import withBodyConverter from "../../../middleware/withBodyConverter";
 
 /**
  * @swagger
@@ -29,49 +29,13 @@ import connectDB from "../../../utils/mongodb";
  *          description: Internal error
  */
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const body = req.body;
-  await connectDB();
-
-  if (req.method === "GET") {
-    try {
-      const { templateId } = req.query;
-      if (!templateId) {
-        return res
-          .status(400)
-          .json({ error: "Query parameter template id is required." });
-      }
-
-      let template = await Template.findById(templateId).select("jobId").lean();
-      if (!template) {
-        return res
-          .status(404)
-          .json({ error: "Cannot find template with given template id." });
-      }
-
-      console.log(template);
-
-      const candidates = await Candidate.find({
-        interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
-      })
-        .select("firstName lastName email")
-        .lean();
-
-      return res.status(200).json(candidates);
-    } catch (error) {
-      const result = handleError(error as Error);
-      return res.status(result.code).json({ error: result.error });
-    }
-  }
-
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
+    await connectDB();
+    const body = req.body;
+
     try {
-      let candidate: ICandidateDocument;
-      if (body.constructor !== Object) {
-        candidate = new Candidate(JSON.parse(body));
-      } else {
-        candidate = new Candidate(body);
-      }
+      let candidate = new Candidate(body);
 
       var foundCandidate: ICandidateDocument | null = await Candidate.findOne({
         email: body.email,
@@ -99,4 +63,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(result.code).json({ error: result.error });
     }
   }
+
+  return res.status(405).json({ error: "Only POST requests are allowed." });
 };
+
+export default withBodyConverter(handler);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { stringAvatar } from "../../helpers/stringAvatar";
-import { IUserProps } from "../../types";
+import { IUserProps, Roles } from "../../types";
 
 function Member({ user, idx }: IUserProps) {
   const [listOfRoles, setRoles] = useState<string[]>(["a"]);
@@ -61,9 +61,3 @@ function Member({ user, idx }: IUserProps) {
 }
 
 export default Member;
-
-export enum Roles {
-  Manager = "Manager",
-  Admin = "Admin",
-  Viewer = "Viewer",
-}

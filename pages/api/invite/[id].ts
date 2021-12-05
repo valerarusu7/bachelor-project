@@ -6,6 +6,7 @@ import Candidate from "../../../models/Candidate";
 import absoluteUrl from "next-absolute-url";
 import Template from "../../../models/Template";
 import connectDB from "../../../utils/mongodb";
+import withBodyConverter from "../../../middleware/withBodyConverter";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -16,31 +17,23 @@ const { INTERVIEW_PRIVATE_KEY } = process.env;
  *     description: Create a new template
  */
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id } = req.query;
-  await connectDB();
-
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
+    await connectDB();
+    const { id } = req.query;
+    const body = req.body;
+
+    if (!body.emails) {
+      return res.status(404).json({ error: "No emails provided." });
+    }
+
     try {
-      const body = req.body;
-
-      let data;
-      if (body.constructor !== Object) {
-        data = JSON.parse(body);
-      } else {
-        data = body;
-      }
-
-      if (!data.emails) {
-        return res.status(404).json({ error: "No emails provided." });
-      }
-
       await Promise.all(
-        data.emails.map(async (email: string) => {
-          let template = await Template.findById(id).select("jobId").lean();
-          if (!template) {
-            return res.status(404).json({ error: "Cannot find template." });
-          }
+        body.emails.map(async (email: string) => {
+          let template = await Template.findById(id)
+            .select("jobId")
+            .lean()
+            .orFail();
 
           let candidate = await Candidate.findOne({
             email: email,
@@ -48,11 +41,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           })
             .select("interviews companyId")
             .populate("companyId interviews.jobId")
-            .lean();
-
-          if (!candidate) {
-            return res.status(404).json({ error: "Cannot find candidate." });
-          }
+            .lean()
+            .orFail();
 
           let foundInterview = candidate.interviews.find(
             // @ts-ignore
@@ -88,4 +78,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(result.code).json({ error: result.error });
     }
   }
+
+  return res.status(405).json({ error: "Only POST requests are allowed." });
 };
+
+export default withBodyConverter(handler);

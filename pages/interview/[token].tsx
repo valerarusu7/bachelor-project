@@ -16,12 +16,13 @@ import connectDB from "../../utils/mongodb";
 import jwt from "jsonwebtoken";
 import Candidate from "../../models/Candidate";
 import Template from "../../models/Template";
-import { ITemplate, IInterviewProps } from "../../types";
+import { ITemplate, IInterviewProps, ITask } from "../../types";
 import { GetServerSidePropsContext } from "next";
 
-function Interview({ companyName, template }: IInterviewProps) {
+function Interview({ companyName, template, tasksLength }: IInterviewProps) {
   console.log(companyName);
   console.log(template);
+  console.log(tasksLength);
   const [tasks, setTasks] = useState<any>([
     { completed: true, taskType: "single" },
     {},
@@ -195,15 +196,15 @@ export const getServerSideProps = async (
       };
     }
 
-    const template: ITemplate = await Template.findOne(
-      { jobId: foundInterview.jobId },
-      {
-        tasks: { $slice: 1 },
-      }
-    )
-      .select("_id name description companyId")
+    const template: ITemplate = await Template.findOne({
+      jobId: foundInterview.jobId,
+    })
+      .select("_id name description tasks companyId")
       .populate("companyId")
       .lean();
+
+    const tasksLength = (template.tasks as ITask[]).length;
+    (template.tasks as ITask[]).length = 1;
 
     // @ts-ignore
     const company = template.companyId.name;
@@ -212,6 +213,7 @@ export const getServerSideProps = async (
       props: {
         companyName: company,
         template: Template.toClientObject(template),
+        tasksLength: tasksLength,
       },
     };
   } catch (error) {

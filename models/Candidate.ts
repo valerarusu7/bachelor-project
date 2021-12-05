@@ -16,7 +16,7 @@ const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
   taskId: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: "JobPosition",
+    ref: "Task",
   },
   answer: {
     type: String,
@@ -96,22 +96,22 @@ const CandidateSchema = new Schema<ICandidateDocument>({
 
 CandidateSchema.statics.toClientObject = function (candidate: ICandidate) {
   candidate._id = candidate._id.toString();
-  if (candidate.companyId !== undefined) {
+  if (candidate.companyId) {
     candidate.companyId = candidate.companyId.toString();
   }
 
-  if (candidate.interviews !== undefined) {
+  if (candidate.interviews) {
     candidate.interviews.forEach((interview) => {
       interview._id = interview._id.toString();
-      if (interview.startedUtc !== undefined) {
+      if (interview.startedUtc) {
         interview.startedUtc = interview.startedUtc.toString();
       }
 
-      if (interview.completedUtc !== undefined) {
+      if (interview.completedUtc) {
         interview.completedUtc = interview.completedUtc.toString();
       }
 
-      if (interview.answers !== undefined) {
+      if (interview.answers) {
         interview.answers.forEach((answer) => {
           answer._id = answer._id.toString();
           answer.taskId = answer.taskId.toString();

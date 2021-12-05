@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
-import { IUserDocument, ICompanyDocument } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import User from "../../../models/User";
+import withBodyConverter from "../../../middleware/withBodyConverter";
+import { Roles } from "../../../types";
 
 /**
  * @swagger
@@ -20,25 +21,17 @@ import User from "../../../models/User";
  *      - in: body
  */
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  await connectDB();
-  const body = req.body;
-
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
+    await connectDB();
+    const body = req.body;
+
     try {
-      let company: ICompanyDocument;
-      let user: IUserDocument;
-      if (body.constructor !== Object) {
-        const bodyData = JSON.parse(body);
-        company = new Company(bodyData.company);
-        user = new User(bodyData.user);
-      } else {
-        company = new Company(body.company);
-        user = new User(body.user);
-      }
+      let company = new Company(body.company);
+      let user = new User(body.user);
 
       user.companyId = company._id;
-      user.role = "admin";
+      user.role = Roles.Admin;
 
       await Promise.all([company.save(), user.save()]);
 
@@ -48,4 +41,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(result.code).json({ error: result.error });
     }
   }
+
+  return res.status(405).json({ error: "Only POST requests are allowed." });
 };
+
+export default withBodyConverter(handler);

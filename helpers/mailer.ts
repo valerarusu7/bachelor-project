@@ -1,6 +1,11 @@
 import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { google } from "googleapis";
+import fs from "fs";
+import { promisify } from "util";
+import mailerContent from "./mailerContent";
+
+const readFile = promisify(fs.readFile);
 
 const {
   NODEMAILER_EMAIL,
@@ -69,11 +74,7 @@ export default async function sendEmail(
     from: `${companyName} Interview <${NODEMAILER_EMAIL}>`,
     to: recipient,
     subject: `${companyName} interview invitation`,
-    html: `
-        <h3> TEST </h3>
-        <p> Interview for ${positionName}:</p>
-        <p> ${url} </p>
-        `,
+    html: mailerContent(companyName, positionName, url),
   };
 
   await transporter.sendMail(messageOptions);

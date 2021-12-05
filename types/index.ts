@@ -6,6 +6,12 @@ import { MouseEventHandler } from "react";
 
 export type IHeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
 
+export enum Roles {
+  Manager = "Manager",
+  Admin = "Admin",
+  Viewer = "Viewer",
+}
+
 export interface IParams extends ParsedUrlQuery {
   id: string;
 }
@@ -176,7 +182,7 @@ export interface ITemplate {
   _id?: string;
   name: string;
   description: string;
-  companyId: string;
+  companyId?: string;
   jobId: string;
   createdAt?: string;
   multiple?: boolean;
@@ -189,6 +195,7 @@ export interface ITemplate {
 export interface IInterviewProps {
   companyName: string;
   template: ITemplate;
+  tasksLength: number;
 }
 
 export interface ITemplateProps {

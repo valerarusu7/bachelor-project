@@ -24,6 +24,7 @@ import Tasks from "../../components/Templates/Tasks";
 import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
 import protect from "../../helpers/protect";
+import { useRouter } from "next/router";
 
 function Create({ positions }: IPositionsProps) {
   const dispatch = useAppDispatch();
@@ -35,6 +36,8 @@ function Create({ positions }: IPositionsProps) {
   });
   const [templateName, setTemplateName] = useState("");
   const [templateDescription, setTemplateDescription] = useState("");
+
+  const router = useRouter();
 
   useEffect(() => {
     dispatch(setTasks(tasks));
@@ -48,19 +51,27 @@ function Create({ positions }: IPositionsProps) {
     let template: ITemplate = {
       name: templateName,
       description: templateDescription,
-      companyId: "6182887f8a051eb01be80084",
       jobId: selectedPosition._id,
       tasks: templateTasks,
     };
+
     fetch("/api/templates", {
       method: "POST",
       body: JSON.stringify(template),
     })
       .then((response) => {
-        return response.json();
+        if (response.ok) {
+          router.push("/templates");
+        } else {
+          console.log("HEY");
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
       })
-      .then((data) => {
-        console.log(data);
+      .catch((error) => {
+        //Handle error
+        console.log(error);
       });
   }
 

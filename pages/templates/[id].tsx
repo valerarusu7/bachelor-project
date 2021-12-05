@@ -1,5 +1,11 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import { IPosition, ITemplate, ITemplateProps, IParams, ICandidate } from "../../types";
+import {
+  IPosition,
+  ITemplate,
+  ITemplateProps,
+  IParams,
+  ICandidate,
+} from "../../types";
 import {
   resetTask,
   selectTemplate,
@@ -24,14 +30,25 @@ import TemplateDetails from "../../components/Templates/TemplateDetails";
 import connectDB from "../../utils/mongodb";
 import InviteCandidate from "../../components/Templates/InviteCandidate";
 import Candidate from "../../models/Candidate";
+import { useRouter } from "next/router";
 
-function TemplatePage({ template, positions, selectedPosition, candidates }: ITemplateProps) {
+function TemplatePage({
+  template,
+  positions,
+  selectedPosition,
+  candidates,
+}: ITemplateProps) {
   const dispatch = useAppDispatch();
-  const { templateTasks, showModal, invitedCandidates, showInviteModal } = useAppSelector(selectTemplate);
+  const { templateTasks, showModal, invitedCandidates, showInviteModal } =
+    useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
   const [position, setSelectedPosition] = useState(selectedPosition);
   const [templateName, setTemplateName] = useState(template.name);
-  const [templateDescription, setTemplateDescription] = useState(template.description);
+  const [templateDescription, setTemplateDescription] = useState(
+    template.description
+  );
+
+  const router = useRouter();
 
   useEffect(() => {
     dispatch(setTasks(tasks));
@@ -65,10 +82,16 @@ function TemplatePage({ template, positions, selectedPosition, candidates }: ITe
       }),
     })
       .then((response) => {
-        return response.json();
+        if (response.ok) {
+          router.push("/templates");
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
       })
-      .then((data) => {
-        console.log(data);
+      .catch((error) => {
+        console.log(error);
       });
   }
 
@@ -77,10 +100,17 @@ function TemplatePage({ template, positions, selectedPosition, candidates }: ITe
       method: "DELETE",
     })
       .then((response) => {
-        return response.json();
+        if (response.ok) {
+          router.push("/templates");
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
       })
-      .then((data) => {
-        console.log(data);
+      .catch((error) => {
+        //Handle error
+        console.log(error);
       });
   }
 
@@ -89,15 +119,23 @@ function TemplatePage({ template, positions, selectedPosition, candidates }: ITe
     invitedCandidates.map((candidate) => {
       emails.push(candidate.email);
     });
+
     fetch(`/api/invite/${template._id}`, {
       method: "POST",
       body: JSON.stringify({ emails: emails }),
     })
       .then((response) => {
-        return response.json();
+        if (response.ok) {
+          dispatch(setShowInvite(false));
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
       })
-      .then((data) => {
-        console.log(data);
+      .catch((error) => {
+        //Handle error
+        console.log(error);
       });
   }
 
@@ -127,7 +165,10 @@ function TemplatePage({ template, positions, selectedPosition, candidates }: ITe
         <CustomButton color="red" onClick={() => deleteTemplate()}>
           <p>Delete</p>
         </CustomButton>
-        <CustomButton color="blue" onClick={() => dispatch(setShowInvite(true))}>
+        <CustomButton
+          color="blue"
+          onClick={() => dispatch(setShowInvite(true))}
+        >
           <p>Invite candidates</p>
         </CustomButton>
         <CustomButton color="green" onClick={() => updateTemplate()}>
@@ -164,8 +205,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   // @ts-ignore
   const [template, jobPositions]: [ITemplate, IPosition[]] = await Promise.all([
-    Template.findById(id).select("_id name description tasks companyId jobId createdAt").lean(),
-    JobPosition.find({}).select("_id name location type recruitingStartDate").lean(),
+    Template.findById(id)
+      .select("_id name description tasks companyId jobId createdAt")
+      .lean(),
+    JobPosition.find({})
+      .select("_id name location type recruitingStartDate")
+      .lean(),
   ]);
 
   const candidates: ICandidate[] = await Candidate.find({
@@ -174,7 +219,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .select("firstName lastName email")
     .lean();
 
-  const selectedPosition = jobPositions.find((jobPosition) => jobPosition._id === template.jobId);
+  const selectedPosition = jobPositions.find(
+    (jobPosition) => jobPosition._id === template.jobId
+  );
 
   return {
     props: {

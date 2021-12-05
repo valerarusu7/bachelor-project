@@ -4,7 +4,7 @@ import connectDB from "../utils/mongodb";
 import User from "../models/User";
 import { Error } from "mongoose";
 import handleError from "../helpers/errorHandler";
-import { AsyncRequestHandler, IUserRequest, IUserTokenPayload } from "../types";
+import { AsyncRequestHandler, IUserTokenPayload } from "../types";
 
 const { ACCOUNT_ACCESS_PRIVATE_KEY } = process.env;
 
@@ -22,7 +22,7 @@ const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
         ACCOUNT_ACCESS_PRIVATE_KEY as string
       );
 
-      const { id, role } = decoded as IUserTokenPayload;
+      const { id, role, companyId } = decoded as IUserTokenPayload;
       if (!roles.includes(role)) {
         return res
           .status(401)
@@ -39,6 +39,8 @@ const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
 
       // @ts-ignore
       req.user = currentUser;
+      // @ts-ignore
+      req.companyId = companyId;
 
       return handler(req, res);
     } catch (error) {

@@ -1,7 +1,7 @@
+import Template from "../../../models/Template";
 import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import Candidate from "../../../models/Candidate";
-import convertToTimeSpan from "../../../helpers/timeFormatter";
 import withInterviewProtect from "../../../middleware/withInterviewProtect";
 import withBodyConverter from "../../../middleware/withBodyConverter";
 
@@ -15,23 +15,36 @@ import withBodyConverter from "../../../middleware/withBodyConverter";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const body = req.body;
+    const { order } = req.query;
     //@ts-ignore
     const interviewId = req.interviewId;
 
     try {
-      let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
-      await Candidate.findOneAndUpdate(
-        { "interviews._id": interviewId },
-        {
-          "interviews.$.startedUtc": body.startedUtc,
-          "interviews.$.completedUtc": body.completedUtc,
-          "interviews.$.time": time,
-          "interviews.$.answers": body.answers,
-        }
+      const candidate = await Candidate.findOne({
+        "interviews._id": interviewId,
+      }).orFail();
+
+      const foundInterview = candidate.interviews.find(
+        (interview) => interview._id.toString() === interviewId
       );
-      return res
-        .status(200)
-        .json({ success: "Interview successfully created." });
+      if (!foundInterview) {
+        return res.status(404).json({ error: "No template found." });
+      }
+
+      foundInterview.answers.push(body);
+      await candidate.save();
+
+      const template = await Template.findOne({
+        jobId: foundInterview.jobId,
+      })
+        .lean()
+        .orFail();
+
+      var task = template.tasks.find(
+        (item) => item.order == parseInt(order as string) + 1
+      );
+
+      return res.status(201).json(task);
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

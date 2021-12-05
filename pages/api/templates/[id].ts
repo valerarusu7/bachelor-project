@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Template from "../../../models/Template";
-import { ITemplateDocument } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import withProtect from "../../../middleware/withProtect";
+import withBodyConverter from "../../../middleware/withBodyConverter";
+import { Roles } from "../../../types";
 
 /**
  * @swagger
@@ -33,12 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "PUT") {
     try {
-      let template: ITemplateDocument;
-      if (body.constructor !== Object) {
-        template = new Template(JSON.parse(body));
-      } else {
-        template = new Template(body);
-      }
+      let template = new Template(body);
 
       template.tasks.forEach((task, index) => {
         task.order = index;
@@ -63,6 +59,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(result.code).json({ error: result.error });
     }
   }
+
+  return res
+    .status(405)
+    .json({ error: "Only PUT and DELETE requests are allowed." });
 };
 
-export default withProtect(handler, ["manager", "admin"]);
+export default withProtect(withBodyConverter(handler), [
+  Roles.Manager,
+  Roles.Admin,
+]);

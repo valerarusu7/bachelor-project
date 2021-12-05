@@ -2,6 +2,7 @@ import { API_URL } from "../../../config";
 import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../middleware/withProtect";
+import { Roles } from "../../../types";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
@@ -67,4 +68,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withProtect(handler, ["viewer", "manager", "admin"]);
+export default withProtect(handler, [Roles.Viewer, Roles.Manager, Roles.Admin]);

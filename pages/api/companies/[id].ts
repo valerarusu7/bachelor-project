@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
-import { ICompany, ICompanyDocument } from "../../../types";
+import { ICompanyDocument, Roles } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import withProtect from "../../../middleware/withProtect";
+import withBodyConverter from "../../../middleware/withBodyConverter";
 
 /**
  * @swagger
@@ -21,15 +22,15 @@ import withProtect from "../../../middleware/withProtect";
  */
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await connectDB();
-  const { id } = req.query;
-  const companyData: ICompany = req.body;
-
   if (req.method === "PUT") {
+    await connectDB();
+    const { id } = req.query;
+    const body = req.body;
+
     try {
       const company: ICompanyDocument = await Company.findByIdAndUpdate(
         id,
-        companyData,
+        body,
         {
           new: true,
         }
@@ -41,6 +42,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(result.code).json({ error: result.error });
     }
   }
+
+  return res.status(405).json({ error: "Only PUT requests are allowed." });
 };
 
-export default withProtect(handler, ["manager", "admin"]);
+export default withProtect(withBodyConverter(handler), [Roles.Manager, Roles.Admin]);

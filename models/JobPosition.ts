@@ -21,8 +21,7 @@ const JobPositionSchema = new Schema<IPositionDocument>({
 
 JobPositionSchema.statics.toClientArray = function (positions: IPosition[]) {
   return positions.map((position) => {
-    // @ts-ignore
-    position._id = position._id.toString();
+    position._id = position._id?.toString();
     // @ts-ignore
     position.recruitingStartDate = position.recruitingStartDate.toISOString();
     position.location = position.location ? position.location : "";

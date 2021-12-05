@@ -33,20 +33,18 @@ const Login: React.FC = () => {
       method: "POST",
       body: JSON.stringify(data),
     })
-      .then(async (response) => {
+      .then((response) => {
         if (response.ok) {
-          return response.json();
+          router.push("/dashboard");
         } else {
           return response.text().then((text) => {
             throw new Error(text);
           });
         }
       })
-      .then((response) => {
-        router.push("/dashboard");
-      })
       .catch((error) => {
         //Handle error
+        console.log(error);
       });
   };
 

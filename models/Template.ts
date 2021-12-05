@@ -81,21 +81,20 @@ const TemplateSchema = new Schema<ITemplateDocument>(
 TemplateSchema.statics.toClientObject = function (template: ITemplate) {
   // @ts-ignore
   template._id = template._id.toString();
-  if (template.companyId.constructor === Object) {
+  if (template.companyId?.constructor === Object) {
     // @ts-ignore
     template.companyId = template.companyId._id.toString();
   } else {
-    template.companyId = template.companyId.toString();
+    template.companyId = template.companyId?.toString();
   }
 
-  if (template.createdAt !== undefined) {
+  if (template.createdAt) {
     // @ts-ignore
     template.createdAt = template.createdAt.toISOString();
   }
 
   (template.tasks as ITask[]).forEach((task) => {
-    // @ts-ignore
-    task._id = task._id.toString();
+    task._id = task._id?.toString();
   });
 
   return template;
@@ -107,7 +106,7 @@ TemplateSchema.statics.toClientArray = function (templates: ITemplate[]) {
     template._id = template._id.toString();
     // @ts-ignore
     template.createdAt = template.createdAt.toISOString();
-    template.companyId = template.companyId.toString();
+    template.companyId = template.companyId?.toString();
 
     const tasks = template.tasks as ITask[];
     const taskTypes = tasks.map((task: ITask) => task.taskType);

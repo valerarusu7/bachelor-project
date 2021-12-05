@@ -1,4 +1,10 @@
-import { ICandidate, IDashboardProps, IPositions, IRegions } from "../../types";
+import {
+  ICandidate,
+  IDashboardProps,
+  IPositions,
+  IRegions,
+  IServerProps,
+} from "../../types";
 import { filterByScore, filterCandidates } from "../../helpers/filters";
 import {
   selectDashboard,
@@ -17,6 +23,7 @@ import CustomButton from "../../components/common/CustomButton";
 import Filter from "../../components/Dashboard/Filter";
 import Layout from "../../components/Layout/Layout";
 import connectDB from "../../utils/mongodb";
+import protect from "../../helpers/protect";
 
 function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
   const {
@@ -93,7 +100,16 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
 
 export default DashboardPage;
 
-export const getServerSideProps = async () => {
+export const getServerSideProps = async ({ req }: IServerProps) => {
+  if (!protect(req.cookies["accessToken"]).status) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/auth/login",
+      },
+    };
+  }
+
   await connectDB();
 
   const candidates: ICandidate[] = await Candidate.find({})
