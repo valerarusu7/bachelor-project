@@ -48,6 +48,7 @@ function Template({ template }: ITemplateObject) {
           </div>
           <div className="flex justify-center items-center pr-2">
             <p className="uppercase font-extrabold text-green-500 text-sm">{`${template.tasks} ${
+              // @ts-ignore
               template.tasks !== undefined && template?.tasks > 1 ? "tasks" : "task"
             }`}</p>
           </div>

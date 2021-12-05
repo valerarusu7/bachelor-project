@@ -118,6 +118,7 @@ TemplateSchema.statics.toClientArray = function (templates: ITemplate[]) {
     template.multiple = taskTypes.includes(TaskTypes.Multiple);
     template.email = taskTypes.includes(TaskTypes.Email);
     template.single = taskTypes.includes(TaskTypes.Single);
+    // @ts-ignore
     template.tasks = taskTypes.length;
 
     return template;
