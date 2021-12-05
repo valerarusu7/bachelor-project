@@ -1,16 +1,11 @@
-import { useState } from "react";
-import {
-  QuestionMarkCircleIcon,
-  DotsCircleHorizontalIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/solid";
+import { useEffect, useState } from "react";
+import { QuestionMarkCircleIcon, DotsCircleHorizontalIcon, CheckCircleIcon } from "@heroicons/react/solid";
 import { MailIcon, ClipboardListIcon } from "@heroicons/react/outline";
 
 import { BiSelectMultiple } from "react-icons/bi";
 import { MdEmail } from "react-icons/md";
 
 import { BsQuestion } from "react-icons/bs";
-import { Badge } from "@mui/material";
 import CustomButton from "../../components/common/CustomButton";
 import connectDB from "../../utils/mongodb";
 import jwt from "jsonwebtoken";
@@ -18,34 +13,54 @@ import Candidate from "../../models/Candidate";
 import Template from "../../models/Template";
 import { ITemplate, IInterviewProps, ITask } from "../../types";
 import { GetServerSidePropsContext } from "next";
+import { selectInterview, setCurrentTask } from "../../store/reducers/interviewSlice";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "../../store/hooks";
 
 function Interview({ companyName, template, tasksLength }: IInterviewProps) {
   console.log(companyName);
   console.log(template);
   console.log(tasksLength);
-  const [tasks, setTasks] = useState<any>([
-    { completed: true, taskType: "single" },
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-  ]);
+  const [tasks, setTasks] = useState<any>([{ completed: true, taskType: "single" }, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
   const [emailCount, setEmailCount] = useState(0);
+  const [showTasks, setShowTasks] = useState(false);
+  const [showEmails, setShowEmails] = useState(false);
   const [taskCount, setTaskCount] = useState(0);
+  const dispatch = useDispatch();
+  const { currentTask } = useAppSelector(selectInterview);
 
+  useEffect(() => {
+    dispatch(setCurrentTask(template.tasks[0]));
+    if (template.tasks[0].taskType === "email") {
+      setEmailCount(1);
+    }
+    if (template.tasks[0].taskType === "single" || template.tasks[0].taskType === "multiple") {
+      setTaskCount(1);
+    }
+  }, []);
+
+  function openTasks() {
+    setShowEmails(false);
+    setShowTasks(true);
+  }
+
+  function openEmails() {
+    setShowTasks(false);
+    setShowEmails(true);
+  }
   return (
     <div className="h-screen bg-gradient-to-r from-gray-100 to-white">
       <nav className="bg-darkGray shadow w-full h-16 flex items-center justify-between absolute p-6">
         <div>
-          <p className="text-white font-bold text-lg">{`Interview | Analyst Relations & Research Manager`}</p>
+          <p className="text-white font-bold text-lg">{`${companyName} | ${template.name}`}</p>
         </div>
         <div className="flex items-center">
-          <div className="flex items-center pt-2 pb-2 pl-12 pr-3 cursor-pointer rounded-md hover:bg-darkGrayLight mr-1">
+          <div
+            onClick={() => openEmails()}
+            className={`${
+              showEmails ? "bg-darkGrayLight" : ""
+            } flex items-center pt-2 pb-2 pl-12 pr-3 cursor-pointer rounded-md hover:bg-darkGrayLight mr-1`}
+          >
             <MailIcon className="h-6 w-6 text-gray-200 mr-1" />
             <p className="font-semibold text-white mr-3">Email</p>
             {emailCount !== 0 ? (
@@ -56,7 +71,12 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
               <div className="h-6 w-6"></div>
             )}
           </div>
-          <div className="bg-darkGrayLight flex items-center pt-2 pb-2 pl-12 pr-3 cursor-pointer rounded-md hover:bg-darkGrayLight">
+          <div
+            onClick={() => openTasks()}
+            className={`${
+              showTasks ? "bg-darkGrayLight" : ""
+            }  flex items-center pt-2 pb-2 pl-12 pr-3 cursor-pointer rounded-md hover:bg-darkGrayLight`}
+          >
             <ClipboardListIcon className="h-6 w-6 text-gray-200" />
             <p className="font-semibold text-white mr-3">Tasks</p>
             {taskCount !== 0 ? (
@@ -72,10 +92,13 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
       <div className="grid grid-cols-8 gap-6 h-screen">
         <div className="col-span-2 flex flex-col justify-center">
           <div className="bg-white m-10 rounded-md border border-gray-300 flex flex-col justify-center items-center shadow-lg">
-            {tasks.map((task: any, idx: number) => (
+            {template.tasks.map((task: any, idx: number) => (
               <div
+                key={task._id}
                 className={`${idx % 2 ? "bg-gray-50" : "bg-gray-100"} ${
-                  !task.completed
+                  !task.completed && task._id === currentTask?._id
+                    ? "opacity-100"
+                    : !task.completed
                     ? "opacity-30"
                     : task.completed
                     ? "opacity-70"
@@ -109,35 +132,29 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
                       <MdEmail className="h-6 w-6 text-white" />
                     </div>
                   ) : null}
-                  {!task.completed ? (
-                    <DotsCircleHorizontalIcon className="h-8 w-8 text-gray-400" />
-                  ) : null}
+                  {!task.completed ? <DotsCircleHorizontalIcon className="h-8 w-8 text-gray-400" /> : null}
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="col-span-6 bg-gray-50 ml-10 flex flex-col justify-center ">
-          <div className="mt-28 mb-28 mr-10 p-10 ">
-            <div className="border border-gray-200 bg-white rounded-md p-4 shadow-lg">
-              <div>
-                <p className="text-xl font-semibold mb-2">
-                  What are the key requirements for becoming a Data Analyst?
-                </p>
-                <textarea
-                  className="mt-1 w-full resize-none rounded-lg"
-                  rows={5}
-                  placeholder="Answer here"
-                ></textarea>
-                <div className="flex justify-end mt-2">
-                  <CustomButton color="blue">
-                    <p>Next</p>
-                  </CustomButton>
+        {showTasks ? (
+          <div className="col-span-6 bg-gray-50 ml-10 flex flex-col justify-center ">
+            <div className="mt-28 mb-28 mr-10 p-10 ">
+              <div className="border border-gray-200 bg-white rounded-md p-4 shadow-lg">
+                <div>
+                  <p className="text-xl font-semibold mb-2">{currentTask?.question}</p>
+                  <textarea className="mt-1 w-full resize-none rounded-lg" rows={5} placeholder="Answer here"></textarea>
+                  <div className="flex justify-end mt-2">
+                    <CustomButton color="blue">
+                      <p>Next</p>
+                    </CustomButton>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );
@@ -145,9 +162,7 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
 
 export default Interview;
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   await connectDB();
   const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -184,7 +199,7 @@ export const getServerSideProps = async (
 
     var foundInterview = candidate.interviews.find(
       // @ts-ignore
-      (interview) => interview._id == decoded.interviewId
+      (interview) => interview._id == decoded.interviewId,
     );
 
     if (!foundInterview) {
@@ -204,7 +219,6 @@ export const getServerSideProps = async (
       .lean();
 
     const tasksLength = (template.tasks as ITask[]).length;
-    (template.tasks as ITask[]).length = 1;
 
     // @ts-ignore
     const company = template.companyId.name;

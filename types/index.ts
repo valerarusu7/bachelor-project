@@ -16,10 +16,7 @@ export interface IParams extends ParsedUrlQuery {
   id: string;
 }
 
-export type AsyncRequestHandler = (
-  req: NextApiRequest,
-  res: NextApiResponse
-) => Promise<any>;
+export type AsyncRequestHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<any>;
 
 export interface IServerProps {
   req: NextApiRequest;
@@ -189,7 +186,7 @@ export interface ITemplate {
   email?: boolean;
   single?: boolean;
   code?: boolean;
-  tasks: ITask[] | number;
+  tasks: ITask[];
 }
 
 export interface IInterviewProps {
