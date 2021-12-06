@@ -36,6 +36,7 @@ const Invite: React.FC = () => {
   // const [state, setState] = useState([]);
   const [emails, setEmails] = useState<string[]>([]);
   const [email, setEmail] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   function invite() {
     console.log(emails + " sent");
@@ -76,8 +77,14 @@ const Invite: React.FC = () => {
   const handleKeyDown = (evt: any) => {
     if (["Enter", "Tab", ","].includes(evt.key)) {
       evt.preventDefault();
-      setEmails([email, ...emails]);
-      evt.target.value = "";
+      if (isValid(email)) {
+        console.log("valid");
+        setEmails([email, ...emails]);
+        evt.target.value = "";
+        setError("");
+      } else {
+        console.log(error);
+      }
     }
   };
   const handleDelete = (toBeRemoved: any) => {
@@ -85,6 +92,32 @@ const Invite: React.FC = () => {
     setEmails(newEmails);
   };
 
+  function isValid(email: string) {
+    var error = null;
+
+    if (!isEmail(email)) {
+      error = ` Not valid email address.`;
+    }
+
+    if (isInList(email)) {
+      error = `This email has been already added.`;
+    }
+
+    if (error) {
+      setError(error);
+
+      return false;
+    }
+
+    return true;
+  }
+  function isEmail(email: string) {
+    return /[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/.test(email);
+  }
+
+  function isInList(email: string) {
+    return emails.includes(email);
+  }
   return (
     <Layout header="Invite New Member">
       <div className="m-2">
@@ -106,7 +139,8 @@ const Invite: React.FC = () => {
             </svg>
             <span className="text-xl text-gray-800">Assemble Team</span>
             <span className="text-gray-600">
-              Add members to your reqruiting team
+              Add members to your reqruiting team. To add multiple members press
+              enter after typing the email
             </span>
 
             <div className="flex flex-row w-full mt-4">
@@ -141,14 +175,20 @@ const Invite: React.FC = () => {
               </form>
             </div>
           </div>
-          <div className="items-center font-medium tracking-wide text-red-500 text-s mt-1 ml-2">
-            {errors.email?.message}
-          </div>
+          <p className="items-center font-medium tracking-wide text-red-500 text-s mt-1 ml-2">
+            {error}
+          </p>
           {emails.map((email) => (
-            <div key={email}>
+            <div
+              className="bg-gray-200 text-base rounded-3xl h-14 align-center p-4 m-2 inline-flex text-sm items-center"
+              key={email}
+            >
               {email}
-
-              <button type="button" onClick={() => handleDelete(email)}>
+              <button
+                type="button"
+                className="bg-white w-5 h-5 cursor-pointer ml-2 font-bold p-0 leading-none flex items-center justify-center rounded-3xl "
+                onClick={() => handleDelete(email)}
+              >
                 &times;
               </button>
             </div>
