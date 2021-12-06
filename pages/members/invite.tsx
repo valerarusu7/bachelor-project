@@ -2,7 +2,7 @@ import CustomButton from "../../components/common/CustomButton";
 import Layout from "../../components/Layout/Layout";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-
+import { useAppSelector } from "../../store/hooks";
 import React, { useState } from "react";
 import * as Yup from "yup";
 
@@ -33,7 +33,57 @@ const Invite: React.FC = () => {
   const onSubmit = (data: UserSubmitForm) => {
     console.log(JSON.stringify(data, null, 2));
   };
-  const [state, setState] = useState([]);
+  // const [state, setState] = useState([]);
+  const [emails, setEmails] = useState<string[]>([]);
+  const [email, setEmail] = useState<string>("");
+
+  function invite() {
+    console.log(emails + " sent");
+    let body = { emails };
+    if (!emails.length) {
+      body.emails = [email];
+    }
+    fetch(`/api/account/invite`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        if (response.ok) {
+          // emails = [];
+          setEmails([]);
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+      })
+      .catch((error) => {
+        //Handle error
+        console.log(error);
+      });
+  }
+
+  // const handleChange = (e: any) => {
+  //   let email = e.target.value.split(",");
+  //   setEmail(email);
+  // };
+
+  const handleChange = (evt: any) => {
+    let value = evt.target.value;
+    setEmail(value);
+  };
+
+  const handleKeyDown = (evt: any) => {
+    if (["Enter", "Tab", ","].includes(evt.key)) {
+      evt.preventDefault();
+      setEmails([email, ...emails]);
+      evt.target.value = "";
+    }
+  };
+  const handleDelete = (toBeRemoved: any) => {
+    let newEmails = emails.filter((singleEmail) => singleEmail !== toBeRemoved);
+    setEmails(newEmails);
+  };
 
   return (
     <Layout header="Invite New Member">
@@ -66,17 +116,25 @@ const Invite: React.FC = () => {
               >
                 <div className="flex flex-row w-full mt-4">
                   <input
+                    id="member"
+                    // onChange={(e: any) => handleChange(e)}
                     type="text"
                     multiple
                     placeholder="Enter Email Address"
-                    {...register("email")}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    // {...register("email")}
                     className={`rounded-md flex-grow border border-gray-400 focus:border-blue-400 mr-4 ${
                       errors.email ? "is-invalid" : ""
                     }`}
                   />
                 </div>
                 <div className="mt-4">
-                  <CustomButton color="blue" type="submit">
+                  <CustomButton
+                    onClick={() => invite()}
+                    color="blue"
+                    type="submit"
+                  >
                     Invite Members
                   </CustomButton>
                 </div>{" "}
@@ -86,6 +144,15 @@ const Invite: React.FC = () => {
           <div className="items-center font-medium tracking-wide text-red-500 text-s mt-1 ml-2">
             {errors.email?.message}
           </div>
+          {emails.map((email) => (
+            <div key={email}>
+              {email}
+
+              <button type="button" onClick={() => handleDelete(email)}>
+                &times;
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </Layout>
