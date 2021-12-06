@@ -55,9 +55,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             .map((interview: ICandidateInterviewDocument) => interview.jobId)
             .includes(body.jobId)
         ) {
-          // @ts-ignore
-          (foundCandidate as ICandidateDocument).interviews.push(interview);
-          await foundCandidate.save();
+          await foundCandidate.updateOne({
+            $push: {
+              interviews: interview,
+            },
+          });
         } else {
           return res
             .status(400)

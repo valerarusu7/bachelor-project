@@ -54,15 +54,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (
         (task.taskType === TaskTypes.Single ||
           (task.taskType === TaskTypes.Email && !task.choices)) &&
-        !answer.answer
+        typeof answer.answer !== "string"
       ) {
         return res.status(400).json({ error: "Incorrect answer." });
       } else if (
         (task.taskType === TaskTypes.Multiple ||
           (task.taskType === TaskTypes.Email && task.choices)) &&
-        !answer.choices
+        !Array.isArray(answer.answer)
       ) {
         return res.status(400).json({ error: "Incorrect answer." });
+      }
+
+      if (Array.isArray(answer.answer)) {
+        answer.choices = answer.answer;
+        delete answer.answer;
       }
 
       answer.taskId = task._id;
