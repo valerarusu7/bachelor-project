@@ -4,7 +4,9 @@ import CustomButton from "../../components/common/CustomButton";
 import Link from "next/link";
 import connectDB from "../../utils/mongodb";
 import User from "../../models/User";
-import { IUsersProps, IUser } from "../../types";
+import { IUsersProps, IUser, IUserTokenPayload } from "../../types";
+import { GetServerSidePropsContext } from "next";
+import protect from "../../helpers/protect";
 
 function Members({ users }: IUsersProps) {
   return (
@@ -23,18 +25,30 @@ function Members({ users }: IUsersProps) {
 
 export default Members;
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const protection = protect(context.req.cookies["accessToken"]);
+  if (!protection.status) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/auth/login",
+      },
+    };
+  }
+
   await connectDB();
 
-  const users: IUser[] = await User.find({})
+  const users: IUser[] = await User.find({
+    companyId: (protection.payload as IUserTokenPayload).companyId,
+  })
     .select("email firstName lastName role")
     .lean();
-  let lol = User.toClientArray(users);
 
   return {
     props: {
-      users: lol,
+      users: User.toClientArray(users),
     },
-    revalidate: 60,
   };
 };

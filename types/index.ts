@@ -274,6 +274,12 @@ export interface IInterviewTokenPayload {
   interviewId: string;
 }
 
+export interface IRegistrationTokenPayload {
+  email: string;
+  companyId: string;
+  companyName: string;
+}
+
 export interface IUserTokenPayload {
   id: string;
   email: string;

@@ -4,6 +4,7 @@ import handleError from "../../../helpers/errorHandler";
 import Candidate from "../../../models/Candidate";
 import withInterviewProtect from "../../../middleware/withInterviewProtect";
 import withBodyConverter from "../../../middleware/withBodyConverter";
+import { TaskTypes } from "../../../types";
 
 /**
  * @swagger
@@ -14,7 +15,6 @@ import withBodyConverter from "../../../middleware/withBodyConverter";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const body = req.body;
     const { order } = req.query;
     //@ts-ignore
     const interviewId = req.interviewId;
@@ -37,20 +37,50 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(404).json({ error: "No template found." });
       }
 
-      foundInterview.answers.push(body);
-      await candidate.save();
-
       const template = await Template.findOne({
         jobId: foundInterview.jobId,
       })
         .lean()
         .orFail();
 
-      var task = template.tasks.find(
-        (item) => item.order == parseInt(order as string) + 1
+      const answer = req.body;
+      const task = template.tasks.find(
+        (task) => task.order === parseInt(order as string)
+      );
+      if (!task) {
+        return res.status(404).json({ error: "No task found." });
+      }
+
+      if (
+        (task.taskType === TaskTypes.Single ||
+          (task.taskType === TaskTypes.Email && !task.choices)) &&
+        !answer.answer
+      ) {
+        console.log("HELLO");
+        return res.status(400).json({ error: "Incorrect answer." });
+      } else if (
+        (task.taskType === TaskTypes.Multiple ||
+          (task.taskType === TaskTypes.Email && task.choices)) &&
+        !answer.choices
+      ) {
+        return res.status(400).json({ error: "Incorrect answer." });
+      }
+
+      answer.taskId = task._id;
+      foundInterview.answers[parseInt(order as string)] = answer;
+
+      await candidate.save();
+
+      var nextTask = template.tasks.find(
+        (task) => task.order == parseInt(order as string) + 1
       );
 
-      return res.status(201).json(task);
+      nextTask?.choices.forEach((choice) => {
+        // @ts-ignore
+        delete choice.isCorrect;
+      });
+
+      return res.status(201).json(nextTask);
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

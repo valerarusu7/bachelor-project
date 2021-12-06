@@ -4,6 +4,7 @@ import {
   IPositions,
   IRegions,
   IServerProps,
+  IUserTokenPayload,
 } from "../../types";
 import { filterByScore, filterCandidates } from "../../helpers/filters";
 import {
@@ -101,7 +102,8 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
 export default DashboardPage;
 
 export const getServerSideProps = async ({ req }: IServerProps) => {
-  if (!protect(req.cookies["accessToken"]).status) {
+  const protection = protect(req.cookies["accessToken"]);
+  if (!protection.status) {
     return {
       redirect: {
         permanent: false,
@@ -112,7 +114,9 @@ export const getServerSideProps = async ({ req }: IServerProps) => {
 
   await connectDB();
 
-  const candidates: ICandidate[] = await Candidate.find({})
+  const candidates: ICandidate[] = await Candidate.find({
+    companyId: (protection.payload as IUserTokenPayload).companyId,
+  })
     .populate({
       path: "interviews.jobId",
       select: "name",

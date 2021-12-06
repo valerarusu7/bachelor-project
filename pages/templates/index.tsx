@@ -1,4 +1,9 @@
-import { ITemplate, IServerProps, ITemplatesProps } from "../../types";
+import {
+  ITemplate,
+  IServerProps,
+  ITemplatesProps,
+  IUserTokenPayload,
+} from "../../types";
 import CustomButton from "../../components/common/CustomButton";
 import Layout from "../../components/Layout/Layout";
 import Link from "next/link";
@@ -27,7 +32,8 @@ function Templates({ templates }: ITemplatesProps) {
 export default Templates;
 
 export const getServerSideProps = async ({ req }: IServerProps) => {
-  if (!protect(req.cookies["accessToken"]).status) {
+  const protection = protect(req.cookies["accessToken"]);
+  if (!protection.status) {
     return {
       redirect: {
         permanent: false,
@@ -38,7 +44,9 @@ export const getServerSideProps = async ({ req }: IServerProps) => {
 
   await connectDB();
 
-  const templates: ITemplate[] = await TemplateModel.find({})
+  const templates: ITemplate[] = await TemplateModel.find({
+    companyId: (protection.payload as IUserTokenPayload).companyId,
+  })
     .select("_id name description tasks companyId jobId createdAt")
     .lean();
 

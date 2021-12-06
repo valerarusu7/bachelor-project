@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { QuestionMarkCircleIcon, DotsCircleHorizontalIcon, CheckCircleIcon } from "@heroicons/react/solid";
+import {
+  QuestionMarkCircleIcon,
+  DotsCircleHorizontalIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/solid";
 import { MailIcon, ClipboardListIcon } from "@heroicons/react/outline";
 
 import { BiSelectMultiple } from "react-icons/bi";
@@ -13,7 +17,10 @@ import Candidate from "../../models/Candidate";
 import Template from "../../models/Template";
 import { ITemplate, IInterviewProps, ITask, TaskTypes } from "../../types";
 import { GetServerSidePropsContext } from "next";
-import { selectInterview, setCurrentTask } from "../../store/reducers/interviewSlice";
+import {
+  selectInterview,
+  setCurrentTask,
+} from "../../store/reducers/interviewSlice";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../store/hooks";
 
@@ -33,7 +40,10 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
     if (template.tasks[0].taskType === "email") {
       setEmailCount(1);
     }
-    if (template.tasks[0].taskType === "single" || template.tasks[0].taskType === "multiple") {
+    if (
+      template.tasks[0].taskType === "single" ||
+      template.tasks[0].taskType === "multiple"
+    ) {
       setTaskCount(1);
     }
   }, []);
@@ -131,7 +141,9 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
                       <MdEmail className="h-6 w-6 text-white" />
                     </div>
                   ) : null}
-                  {!task.completed ? <DotsCircleHorizontalIcon className="h-8 w-8 text-gray-400" /> : null}
+                  {!task.completed ? (
+                    <DotsCircleHorizontalIcon className="h-8 w-8 text-gray-400" />
+                  ) : null}
                 </div>
               </div>
             ))}
@@ -142,8 +154,14 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
             <div className="mt-28 mb-28 mr-10 p-10 ">
               <div className="border border-gray-200 bg-white rounded-md p-4 shadow-lg">
                 <div>
-                  <p className="text-xl font-semibold mb-2">{currentTask?.question}</p>
-                  <textarea className="mt-1 w-full resize-none rounded-lg" rows={5} placeholder="Answer here"></textarea>
+                  <p className="text-xl font-semibold mb-2">
+                    {currentTask?.question}
+                  </p>
+                  <textarea
+                    className="mt-1 w-full resize-none rounded-lg"
+                    rows={5}
+                    placeholder="Answer here"
+                  ></textarea>
                   <div className="flex justify-end mt-2">
                     <CustomButton color="blue">
                       <p>Next</p>
@@ -161,7 +179,9 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
 
 export default Interview;
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   await connectDB();
   const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -185,7 +205,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
     var interview = candidate.interviews.find(
       // @ts-ignore
-      (interview) => interview._id == decoded.interviewId,
+      (interview) => interview._id == decoded.interviewId
     );
 
     // @ts-ignore
@@ -213,7 +233,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     return {
       redirect: {
         permanent: false,
-        destination: "/_error",
+        destination: "/interview_error",
       },
     };
   }

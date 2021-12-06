@@ -1,13 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import withBodyConverter from "../../../middleware/withBodyConverter";
+import withRegistrationProtect from "../../../middleware/withRegistrationProtect";
 import User from "../../../models/User";
-import connectDB from "../../../utils/mongodb";
+import { Roles } from "../../../types";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    await connectDB();
     const body = req.body;
+    // @ts-ignore
+    const companyId = req.companyId;
+    // @ts-ignore
+    const email = req.email;
 
     if (!body.password || !body.rePassword) {
       return res
@@ -21,6 +25,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
       let user = new User(body);
+      user.email = email;
+      user.companyId = companyId;
+      user.role = Roles.Viewer;
+
       await user.save();
 
       return res.status(201).json({ success: true });
@@ -33,4 +41,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withBodyConverter(handler);
+export default withRegistrationProtect(withBodyConverter(handler));

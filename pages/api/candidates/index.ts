@@ -5,7 +5,6 @@ import {
   ICandidateInterviewDocument,
 } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
-import withProtect from "../../../middleware/withProtect";
 import connectDB from "../../../utils/mongodb";
 import withBodyConverter from "../../../middleware/withBodyConverter";
 
@@ -39,6 +38,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       var foundCandidate: ICandidateDocument | null = await Candidate.findOne({
         email: body.email,
+        // Hardcoded companyId?
+        companyId: body.companyId,
       });
 
       if (!foundCandidate) {

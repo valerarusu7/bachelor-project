@@ -45,6 +45,12 @@ function calculateScore(
             ) {
               total[1]++;
               return total;
+            } else if (
+              choice.isCorrect &&
+              !answers[i].choices.includes(choice._id)
+            ) {
+              total[1]++;
+              return total;
             } else {
               return total;
             }
@@ -65,7 +71,6 @@ function calculateScore(
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const body = req.body;
     //@ts-ignore
     const interviewId = req.interviewId;
     //@ts-ignore
@@ -76,7 +81,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-      // let time = convertToTimeSpan(body.startedUtc, body.completedUtc);
       const candidate = await Candidate.findOne({
         "interviews._id": interviewId,
       })
@@ -88,7 +92,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         (interview) => interview._id.toString() === interviewId
       );
 
-      const template = await Template.findOne({ jobId: interview?.jobId })
+      const template = await Template.findOne({
+        jobId: interview?.jobId,
+      })
         .select("tasks")
         .lean()
         .orFail();

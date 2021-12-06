@@ -1,10 +1,11 @@
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSidePropsContext } from "next";
 import {
   IPosition,
   ITemplate,
   ITemplateProps,
   IParams,
   ICandidate,
+  IUserTokenPayload,
 } from "../../types";
 import {
   resetTask,
@@ -31,6 +32,7 @@ import connectDB from "../../utils/mongodb";
 import InviteCandidate from "../../components/Templates/InviteCandidate";
 import Candidate from "../../models/Candidate";
 import { useRouter } from "next/router";
+import protect from "../../helpers/protect";
 
 function TemplatePage({
   template,
@@ -181,55 +183,66 @@ function TemplatePage({
 
 export default TemplatePage;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  await connectDB();
-
-  const templates = await Template.find({}).select("_id").lean();
-
-  const paths = templates.map((template) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const protection = protect(context.req.cookies["accessToken"]);
+  if (!protection.status) {
     return {
-      params: { id: template._id.toString() },
+      redirect: {
+        permanent: false,
+        destination: "/auth/login",
+      },
     };
-  });
+  }
 
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
   await connectDB();
 
   const { id } = context.params as IParams;
 
-  // @ts-ignore
-  const [template, jobPositions]: [ITemplate, IPosition[]] = await Promise.all([
-    Template.findById(id)
-      .select("_id name description tasks companyId jobId createdAt")
-      .lean(),
-    JobPosition.find({})
-      .select("_id name location type recruitingStartDate")
-      .lean(),
-  ]);
+  try {
+    // @ts-ignore
+    const [template, jobPositions]: [ITemplate, IPosition[]] =
+      await Promise.all([
+        Template.findById(id)
+          .select("_id name description tasks companyId jobId createdAt")
+          .lean()
+          .orFail(),
+        JobPosition.find({
+          companyId: (protection.payload as IUserTokenPayload).companyId,
+        })
+          .select("_id name location type recruitingStartDate")
+          .lean()
+          .orFail(),
+      ]);
 
-  const candidates: ICandidate[] = await Candidate.find({
-    interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
-  })
-    .select("firstName lastName email")
-    .lean();
+    // @ts-ignore
+    const candidates: ICandidate[] = await Candidate.find({
+      companyId: (protection.payload as IUserTokenPayload).companyId,
+      interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
+    })
+      .select("firstName lastName email")
+      .lean()
+      .orFail();
 
-  const selectedPosition = jobPositions.find(
-    (jobPosition) => jobPosition._id === template.jobId
-  );
+    const selectedPosition = jobPositions.find(
+      (jobPosition) => jobPosition._id === template.jobId
+    );
 
-  return {
-    props: {
-      template: Template.toClientObject(template),
-      positions: JobPosition.toClientArray(jobPositions),
-      selectedPosition: selectedPosition,
-      candidates: Candidate.toClientArray(candidates),
-    },
-    revalidate: 5,
-  };
+    return {
+      props: {
+        template: Template.toClientObject(template),
+        positions: JobPosition.toClientArray(jobPositions),
+        selectedPosition: selectedPosition,
+        candidates: Candidate.toClientArray(candidates),
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/404",
+      },
+    };
+  }
 };

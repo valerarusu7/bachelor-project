@@ -33,7 +33,7 @@ const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
       const currentUser = await User.findById(id).lean();
       if (!currentUser) {
         return res.status(401).json({
-          error: "The user belonging to this token no longer exists",
+          error: "The user belonging to this token no longer exists.",
         });
       }
 

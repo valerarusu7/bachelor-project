@@ -8,6 +8,7 @@ import { ICompany, ISettingsProps, IUser } from "../types";
 import Company from "../models/Company";
 import connectDB from "../utils/mongodb";
 import User from "../models/User";
+import { GetServerSidePropsContext } from "next";
 
 function Settings({ company, user }: ISettingsProps) {
   return (
@@ -23,7 +24,9 @@ function Settings({ company, user }: ISettingsProps) {
 
 export default Settings;
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   await connectDB();
 
   // @ts-ignore
@@ -43,6 +46,5 @@ export const getStaticProps = async () => {
       user: User.toClientObject(user),
       company: company,
     },
-    revalidate: 30,
   };
 };

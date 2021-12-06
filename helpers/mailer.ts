@@ -1,11 +1,8 @@
 import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { google } from "googleapis";
-import fs from "fs";
-import { promisify } from "util";
-import mailerContent from "./mailerContent";
-
-const readFile = promisify(fs.readFile);
+import mailerInterviewContent from "./mailerInterviewContent";
+import mailerRegistrationContent from "./mailerRegistrationContent";
 
 const {
   NODEMAILER_EMAIL,
@@ -61,20 +58,39 @@ function verifyTransporter(
   });
 }
 
-export default async function sendEmail(
+export async function sendInterviewEmail(
   companyName: string,
   positionName: string,
-  recipient: string,
-  url: string
+  recipientEmail: string,
+  interviewUrl: string
 ) {
   let transporter = await createTransporter();
   verifyTransporter(transporter);
 
   const messageOptions = {
     from: `${companyName} Interview <${NODEMAILER_EMAIL}>`,
-    to: recipient,
+    to: recipientEmail,
     subject: `${companyName} interview invitation`,
-    html: mailerContent(companyName, positionName, url),
+    html: mailerInterviewContent(companyName, positionName, interviewUrl),
+  };
+
+  await transporter.sendMail(messageOptions);
+}
+
+export async function sendRegistrationEmail(
+  companyName: string,
+  senderName: string,
+  recipientEmail: string,
+  registerUrl: string
+) {
+  let transporter = await createTransporter();
+  verifyTransporter(transporter);
+
+  const messageOptions = {
+    from: `${companyName} Interview <${NODEMAILER_EMAIL}>`,
+    to: recipientEmail,
+    subject: `${companyName} register invitation`,
+    html: mailerRegistrationContent(companyName, senderName, registerUrl),
   };
 
   await transporter.sendMail(messageOptions);

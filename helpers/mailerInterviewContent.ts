@@ -1,7 +1,7 @@
-const mailerContent = (
+const mailerInterviewContent = (
   companyName: string,
   positionName: string,
-  url: string
+  interviewUrl: string
 ) => {
   return `<!doctype html>
   <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -105,8 +105,8 @@ const mailerContent = (
     <body style="word-spacing:normal;background-color:#ffffff;">
       <div style="background-color:#ffffff;">
         <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-        <div style="background:#F1FAEE;background-color:#F1FAEE;margin:0px auto;max-width:600px;">
-          <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#F1FAEE;background-color:#F1FAEE;width:100%;">
+        <div style="background:#006D77;background-color:#006D77;margin:0px auto;border-radius:0px;max-width:600px;">
+          <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#006D77;background-color:#006D77;width:100%;border-radius:0px;">
             <tbody>
               <tr>
                 <td style="direction:ltr;font-size:0px;padding:20px;text-align:center;">
@@ -120,7 +120,7 @@ const mailerContent = (
                               <tbody>
                                 <tr>
                                   <td align="center" style="font-size:0px;padding:10px;word-break:break-word;">
-                                    <div style="font-family:'Comfortaa', 'Helvetica', 'Arial', sans-serif;font-size:20px;line-height:1;text-align:center;color:#1d3557;"><strong>Eligo</strong></div>
+                                    <div style="font-family:'Comfortaa', 'Helvetica', 'Arial', sans-serif;font-size:20px;line-height:1;text-align:center;color:#ffffff;"><strong>Eligo</strong></div>
                                   </td>
                                 </tr>
                               </tbody>
@@ -151,18 +151,13 @@ const mailerContent = (
                             <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
                               <tbody>
                                 <tr>
-                                  <td style="font-size:0px;word-break:break-word;">
-                                    <div style="height:50px;line-height:50px;">&#8202;</div>
-                                  </td>
-                                </tr>
-                                <tr>
                                   <td align="center" style="font-size:0px;padding:10px;padding-top:10px;padding-right:30px;padding-bottom:10px;padding-left:30px;word-break:break-word;">
                                     <div style="font-family:'Prompt', 'Helvetica', 'Arial', sans-serif;font-size:48px;line-height:1.25;text-align:center;color:#1d3557;"><strong>Interview invitation&nbsp;&nbsp;</strong></div>
                                   </td>
                                 </tr>
                                 <tr>
                                   <td align="center" style="font-size:0px;padding:10px;padding-top:10px;padding-right:50px;padding-bottom:10px;padding-left:50px;word-break:break-word;">
-                                    <div style="font-family:'Montserrat', 'Helvetica', 'Arial', sans-serif;font-size:20px;line-height:1.5;text-align:center;color:#1d3557;">You have been invited by ${companyName} to take interview for:</div>
+                                    <div style="font-family:'Montserrat', 'Helvetica', 'Arial', sans-serif;font-size:20px;line-height:1.5;text-align:center;color:#1d3557;">You have been invited by ${companyName} to take interview for</div>
                                   </td>
                                 </tr>
                                 <tr>
@@ -184,13 +179,8 @@ const mailerContent = (
                                   </td>
                                 </tr>
                                 <tr>
-                                  <td align="center" style="font-size:0px;padding:10px;padding-top:10px;padding-right:50px;padding-bottom:10px;padding-left:50px;word-break:break-word;">
-                                    <div style="font-family:'Montserrat', 'Helvetica', 'Arial', sans-serif;font-size:20px;line-height:1.5;text-align:center;color:#1d3557;">Think link will expire in 7 days.</div>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td style="font-size:0px;word-break:break-word;">
-                                    <div style="height:30px;line-height:30px;">&#8202;</div>
+                                  <td align="center" style="font-size:0px;padding:10px;padding-top:10px;padding-right:50px;padding-bottom:20px;padding-left:50px;word-break:break-word;">
+                                    <div style="font-family:'Montserrat', 'Helvetica', 'Arial', sans-serif;font-size:20px;line-height:1.5;text-align:center;color:#1d3557;">Use the button below to take the interview.</div>
                                   </td>
                                 </tr>
                                 <tr>
@@ -198,7 +188,7 @@ const mailerContent = (
                                     <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
                                       <tr>
                                         <td align="center" bgcolor="#E63946" role="presentation" style="border:none;border-radius:32px;cursor:auto;mso-padding-alt:10px 25px;background:#E63946;" valign="middle">
-                                          <a href=${url} style="display:inline-block;background:#E63946;color:#ffffff;font-family:'Montserrat', 'Helvetica', 'Arial', sans-serif;font-size:20px;font-weight:normal;line-height:1.5;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:32px;" target="_blank">
+                                          <a href=${interviewUrl} style="display:inline-block;background:#E63946;color:#ffffff;font-family:'Montserrat', 'Helvetica', 'Arial', sans-serif;font-size:20px;font-weight:normal;line-height:1.5;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:32px;" target="_blank">
                                             <strong>Take interview</strong>
                                           </a>
                                         </td>
@@ -207,8 +197,40 @@ const mailerContent = (
                                   </td>
                                 </tr>
                                 <tr>
-                                  <td style="font-size:0px;word-break:break-word;">
-                                    <div style="height:50px;line-height:50px;">&#8202;</div>
+                                  <td align="center" style="font-size:0px;padding:20px;word-break:break-word;">
+                                    <div style="font-family:'Montserrat', 'Helvetica', 'Arial', sans-serif;font-size:16px;line-height:1;text-align:center;color:#1d3557;">The link will expire in 7 days.</div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!--[if mso | IE]></td></tr></table><![endif]-->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+        <div style="margin:0px auto;max-width:600px;">
+          <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+            <tbody>
+              <tr>
+                <td style="direction:ltr;font-size:0px;padding:20px;text-align:center;">
+                  <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
+                  <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                      <tbody>
+                        <tr>
+                          <td style="vertical-align:top;padding:0;">
+                            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
+                              <tbody>
+                                <tr>
+                                  <td align="center" style="font-size:0px;padding:10px;word-break:break-word;">
+                                    <div style="font-family:'Montserrat', 'Helvetica', 'Arial', sans-serif;font-size:14px;line-height:1;text-align:center;color:#1d3557;">Do not share the invitation link to anyone.&nbsp;<br /><br />If you were not expecting this invitation, reply to this email.</div>
                                   </td>
                                 </tr>
                               </tbody>
@@ -231,4 +253,4 @@ const mailerContent = (
   </html>`;
 };
 
-export default mailerContent;
+export default mailerInterviewContent;

@@ -2,15 +2,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import { Error } from "mongoose";
 import handleError from "../helpers/errorHandler";
-import { AsyncRequestHandler, IInterviewTokenPayload } from "../types";
+import { AsyncRequestHandler, IRegistrationTokenPayload } from "../types";
 import connectDB from "../utils/mongodb";
 
-const { INTERVIEW_PRIVATE_KEY } = process.env;
+const { ACCOUNT_PRIVATE_KEY } = process.env;
 
-const withInterviewProtect = (handler: AsyncRequestHandler) => {
+const withRegistrationProtect = (handler: AsyncRequestHandler) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const authValue = req.headers.authorization;
-    const { started } = req.cookies;
 
     if (!authValue) {
       return res.status(401).json({ error: "No authentication provided." });
@@ -18,16 +17,19 @@ const withInterviewProtect = (handler: AsyncRequestHandler) => {
 
     const token = authValue.replace("Bearer ", "");
     try {
-      var decodedToken = jwt.verify(token, INTERVIEW_PRIVATE_KEY as string);
-      const { interviewId } = decodedToken as IInterviewTokenPayload;
-      if (!interviewId) {
+      var decodedToken = jwt.verify(token, ACCOUNT_PRIVATE_KEY as string);
+      const { email, companyId, companyName } =
+        decodedToken as IRegistrationTokenPayload;
+      if (!email || !companyId || !companyName) {
         return res.status(401).json({ error: "Token is invalid." });
       }
 
       // @ts-ignore
-      req.interviewId = interviewId;
+      req.email = email;
       // @ts-ignore
-      req.started = started;
+      req.companyId = companyId;
+      // @ts-ignore
+      req.companyName = companyName;
 
       await connectDB();
       return handler(req, res);
@@ -38,4 +40,4 @@ const withInterviewProtect = (handler: AsyncRequestHandler) => {
   };
 };
 
-export default withInterviewProtect;
+export default withRegistrationProtect;

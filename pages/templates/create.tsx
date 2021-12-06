@@ -3,6 +3,7 @@ import {
   ITemplate,
   IPositionsProps,
   IServerProps,
+  IUserTokenPayload,
 } from "../../types";
 import {
   resetTask,
@@ -110,7 +111,8 @@ function Create({ positions }: IPositionsProps) {
 export default Create;
 
 export const getServerSideProps = async ({ req }: IServerProps) => {
-  if (!protect(req.cookies["accessToken"]).status) {
+  const protection = protect(req.cookies["accessToken"]);
+  if (!protection.status) {
     return {
       redirect: {
         permanent: false,
@@ -121,7 +123,9 @@ export const getServerSideProps = async ({ req }: IServerProps) => {
 
   await connectDB();
 
-  const jobPositions: IPosition[] = await JobPosition.find({})
+  const jobPositions: IPosition[] = await JobPosition.find({
+    jobId: (protection.payload as IUserTokenPayload).companyId,
+  })
     .select("_id name location type recruitingStartDate")
     .lean();
 
