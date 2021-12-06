@@ -25,8 +25,6 @@ const ChoiceSchema = new Schema<IChoiceDocument>({
   },
 });
 
-const Choice = models.Choice || model<IChoiceDocument>("Choice", ChoiceSchema);
-
 const TaskSchema = new Schema<ITaskDocument>({
   _id: {
     type: Schema.Types.ObjectId,
@@ -48,8 +46,6 @@ const TaskSchema = new Schema<ITaskDocument>({
   },
   choices: [ChoiceSchema],
 });
-
-const Task = models.Task || model<ITaskDocument>("Task", TaskSchema);
 
 const TemplateSchema = new Schema<ITemplateDocument>(
   {
@@ -125,8 +121,6 @@ TemplateSchema.statics.toClientArray = function (templates: ITemplate[]) {
     return template;
   });
 };
-
-export { Choice, Task };
 
 export default (models.Template as ITemplateModel) ||
   model<ITemplateDocument, ITemplateModel>("Template", TemplateSchema);

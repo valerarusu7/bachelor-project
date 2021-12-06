@@ -34,28 +34,35 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
 
     try {
+      const interview = {
+        region: body.region,
+        countryCode: body.countryCode,
+        jobId: body.jobId,
+      };
+      body.interviews = [interview];
       let candidate = new Candidate(body);
 
       var foundCandidate: ICandidateDocument | null = await Candidate.findOne({
         email: body.email,
-        // Hardcoded companyId?
         companyId: body.companyId,
       });
 
       if (!foundCandidate) {
         await candidate.save();
       } else {
-        body.interviews.forEach((interview: ICandidateInterviewDocument) => {
-          if (
-            !(foundCandidate as ICandidateDocument).interviews
-              .map((interview: ICandidateInterviewDocument) => interview.jobId)
-              .includes(interview.jobId)
-          ) {
-            (foundCandidate as ICandidateDocument).interviews.push(interview);
-          }
-        });
-
-        await foundCandidate.save();
+        if (
+          !(foundCandidate as ICandidateDocument).interviews
+            .map((interview: ICandidateInterviewDocument) => interview.jobId)
+            .includes(body.jobId)
+        ) {
+          // @ts-ignore
+          (foundCandidate as ICandidateDocument).interviews.push(interview);
+          await foundCandidate.save();
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Candidate already applied to the job position." });
+        }
       }
 
       return res.status(201).json({ success: "Candidate successfully added." });

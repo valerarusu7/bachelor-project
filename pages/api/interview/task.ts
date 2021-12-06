@@ -56,7 +56,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           (task.taskType === TaskTypes.Email && !task.choices)) &&
         !answer.answer
       ) {
-        console.log("HELLO");
         return res.status(400).json({ error: "Incorrect answer." });
       } else if (
         (task.taskType === TaskTypes.Multiple ||

@@ -23,7 +23,10 @@ const UserSchema = new Schema<IUserDocument>({
     required: [true, "Last name cannot be empty."],
     maxlength: [64, "Last name cannot be more than 64 characters."],
   },
-  birthday: Date,
+  birthday: {
+    type: Date,
+    required: [true, "Birthday cannot be empty."],
+  },
   password: {
     type: String,
     required: [true, "Password cannot be empty."],

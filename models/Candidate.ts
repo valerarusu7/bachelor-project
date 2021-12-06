@@ -7,7 +7,6 @@ import {
   ICandidateModel,
 } from "../types";
 import "./JobPosition";
-import { Choice, Task } from "./Template";
 
 const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
   _id: {
@@ -17,7 +16,7 @@ const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
   taskId: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: Task,
+    ref: "Task",
   },
   answer: {
     type: String,
@@ -25,7 +24,7 @@ const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
   choices: [
     {
       type: Number,
-      ref: Choice,
+      ref: "Choice",
     },
   ],
 });
@@ -86,7 +85,6 @@ const CandidateSchema = new Schema<ICandidateDocument>({
   email: {
     type: String,
     required: true,
-    unique: true,
   },
   favorite: {
     type: Boolean,
@@ -99,6 +97,8 @@ const CandidateSchema = new Schema<ICandidateDocument>({
   },
   interviews: [CandidateInterviewSchema],
 });
+
+CandidateSchema.index({ email: 1, companyId: 1 }, { unique: true });
 
 CandidateSchema.statics.toClientObject = function (candidate: ICandidate) {
   candidate._id = candidate._id.toString();
