@@ -7,6 +7,7 @@ import {
 import handleError from "../../../helpers/errorHandler";
 import connectDB from "../../../utils/mongodb";
 import withBodyConverter from "../../../middleware/withBodyConverter";
+import CandidateVideoAnswer from "../../../models/CandidateVideoAnswer";
 
 /**
  * @swagger
@@ -33,22 +34,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
-    try {
-      const interview = {
-        region: body.region,
-        countryCode: body.countryCode,
-        jobId: body.jobId,
-      };
-      body.interviews = [interview];
-      let candidate = new Candidate(body);
+    const interview = {
+      region: body.region,
+      countryCode: body.countryCode,
+      jobId: body.jobId,
+    };
 
+    body.interviews = [interview];
+
+    let candidate = new Candidate(body);
+    let candidateVideoAnswer = new CandidateVideoAnswer({
+      candidateId: candidate._id,
+      answers: body.answers,
+    });
+
+    try {
       var foundCandidate: ICandidateDocument | null = await Candidate.findOne({
         email: body.email,
         companyId: body.companyId,
       });
 
       if (!foundCandidate) {
-        await candidate.save();
+        await Promise.all([candidate.save(), candidateVideoAnswer.save()]);
       } else {
         if (
           !(foundCandidate as ICandidateDocument).interviews

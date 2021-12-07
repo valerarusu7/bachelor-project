@@ -385,6 +385,16 @@ export interface IUserDocument extends Document {
   comparePassword(userPassword: string): Promise<boolean>;
 }
 
+export interface ICandidateVideoInterviewAnswerDocument extends Document {
+  order: number;
+  answer: string;
+}
+
+export interface ICandidateVideoInterviewDocument extends Document {
+  candidateId: Types.ObjectId;
+  answers: ICandidateVideoInterviewAnswerDocument[];
+}
+
 export interface IUserModel extends Model<IUserDocument> {
   toClientObject(user: IUser): IUser;
   toClientArray(users: IUser[]): IUser[];
