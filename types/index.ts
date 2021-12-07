@@ -288,6 +288,11 @@ export interface IUserTokenPayload {
   role: string;
 }
 
+export interface ICandidateVideoInterviewAnswer {
+  order: number;
+  answer: string;
+}
+
 //Interfaces for mongoose models
 
 export interface ICompanyDocument extends Document {

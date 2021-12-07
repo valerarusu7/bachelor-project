@@ -79,6 +79,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         (task) => task.order == parseInt(order as string) + 1
       );
 
+      if (!nextTask) {
+        return res.status(201).json({ finished: true });
+      }
+
       nextTask?.choices.forEach((choice) => {
         // @ts-ignore
         delete choice.isCorrect;

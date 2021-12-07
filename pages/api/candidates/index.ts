@@ -1,13 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Candidate from "../../../models/Candidate";
 import {
+  ICandidateVideoInterviewAnswer,
   ICandidateDocument,
   ICandidateInterviewDocument,
 } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import connectDB from "../../../utils/mongodb";
 import withBodyConverter from "../../../middleware/withBodyConverter";
-import CandidateVideoAnswer from "../../../models/CandidateVideoAnswer";
+import CandidateVideoInterview from "../../../models/CandidateVideoInterview";
+import { Types } from "mongoose";
 
 /**
  * @swagger
@@ -34,16 +36,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
+    if (!body.answers || !Array.isArray(body.answers)) {
+      return res.status(400).json({ error: "Video answers cannot be empty." });
+    }
+
     const interview = {
-      region: body.region,
-      countryCode: body.countryCode,
+      region: body.answers.find(
+        (answer: ICandidateVideoInterviewAnswer) => answer.order === 3
+      ).answer,
       jobId: body.jobId,
     };
 
     body.interviews = [interview];
 
     let candidate = new Candidate(body);
-    let candidateVideoAnswer = new CandidateVideoAnswer({
+    candidate.companyId = new Types.ObjectId("6182887f8a051eb01be80084");
+
+    let candidateVideoAnswer = new CandidateVideoInterview({
       candidateId: candidate._id,
       answers: body.answers,
     });
@@ -51,7 +60,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       var foundCandidate: ICandidateDocument | null = await Candidate.findOne({
         email: body.email,
-        companyId: body.companyId,
+        companyId: "6182887f8a051eb01be80084",
       });
 
       if (!foundCandidate) {
