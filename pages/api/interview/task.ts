@@ -30,9 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         "interviews._id": interviewId,
       }).orFail();
 
-      const foundInterview = candidate.interviews.find(
-        (interview) => interview._id.toString() === interviewId
-      );
+      const foundInterview = candidate.interviews.find((interview) => interview._id.toString() === interviewId);
       if (!foundInterview) {
         return res.status(404).json({ error: "No template found." });
       }
@@ -42,24 +40,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       })
         .lean()
         .orFail();
-
       const answer = req.body;
-      const task = template.tasks.find(
-        (task) => task.order === parseInt(order as string)
-      );
+      console.log(answer);
+      const task = template.tasks.find((task) => task.order === parseInt(order as string));
       if (!task) {
         return res.status(404).json({ error: "No task found." });
       }
 
       if (
-        (task.taskType === TaskTypes.Single ||
-          (task.taskType === TaskTypes.Email && !task.choices)) &&
+        (task.taskType === TaskTypes.Single || (task.taskType === TaskTypes.Email && !task.choices)) &&
         typeof answer.answer !== "string"
       ) {
         return res.status(400).json({ error: "Incorrect answer." });
       } else if (
-        (task.taskType === TaskTypes.Multiple ||
-          (task.taskType === TaskTypes.Email && task.choices)) &&
+        (task.taskType === TaskTypes.Multiple || (task.taskType === TaskTypes.Email && task.choices)) &&
         !Array.isArray(answer.answer)
       ) {
         return res.status(400).json({ error: "Incorrect answer." });
@@ -75,9 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await candidate.save();
 
-      var nextTask = template.tasks.find(
-        (task) => task.order == parseInt(order as string) + 1
-      );
+      var nextTask = template.tasks.find((task) => task.order == parseInt(order as string) + 1);
 
       nextTask?.choices.forEach((choice) => {
         // @ts-ignore
