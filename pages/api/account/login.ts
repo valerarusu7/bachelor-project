@@ -1,12 +1,9 @@
-import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import User from "../../../models/User";
-import jwt from "jsonwebtoken";
 import handleError from "../../../helpers/errorHandler";
 import connectDB from "../../../utils/mongodb";
 import withBodyConverter from "../../../middleware/withBodyConverter";
-
-const { ACCOUNT_ACCESS_PRIVATE_KEY, ACCOUNT_REFRESH_PRIVATE_KEY } = process.env;
+import setTokensInCookie from "../../../helpers/authCookie";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
@@ -30,7 +27,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ error: "Email or password is incorrect." });
       }
 
-      const accessToken = jwt.sign(
+      setTokensInCookie(
+        res,
         {
           id: user._id,
           email: user.email,
@@ -38,32 +36,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           companyId: user.companyId,
           role: user.role,
         },
-        ACCOUNT_ACCESS_PRIVATE_KEY as string,
-        { expiresIn: "60m" as string }
+        {
+          id: user._id,
+        }
       );
-
-      const refreshToken = jwt.sign(
-        { id: user._id },
-        ACCOUNT_REFRESH_PRIVATE_KEY as string,
-        { expiresIn: "3d" as string }
-      );
-
-      res.setHeader("Set-Cookie", [
-        cookie.serialize("accessToken", accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV !== "development",
-          maxAge: 60 * 10 * 6,
-          sameSite: "strict",
-          path: "/",
-        }),
-        cookie.serialize("refreshToken", refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV !== "development",
-          maxAge: 60 * 60 * 24 * 3,
-          sameSite: "strict",
-          path: "/",
-        }),
-      ]);
 
       return res.status(200).json({ success: "Successfully logged in." });
     } catch (error) {

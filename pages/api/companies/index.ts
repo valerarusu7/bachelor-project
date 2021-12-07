@@ -26,6 +26,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
+    if (!body.user) {
+      return res
+        .status(400)
+        .json({ error: "User information needs to be provided." });
+    }
+
+    if (!body.user.password || !body.user.rePassword) {
+      return res
+        .status(400)
+        .json({ error: "Password and re-password cannot be empty." });
+    }
+
+    if (body.user.password !== body.user.rePassword) {
+      return res.status(401).json({ error: "Passwords do not match." });
+    }
+
+    if (!body.user.birthday) {
+      return res.status(400).json({ error: "Birthday needs to be provided." });
+    }
+    body.user.birthday = body.user.birthday + "T00:00:00.000Z";
+
     try {
       let company = new Company(body.company);
       let user = new User(body.user);

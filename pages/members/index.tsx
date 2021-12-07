@@ -2,10 +2,9 @@ import Layout from "../../components/Layout/Layout";
 import MembersList from "../../components/Members/MembersList";
 import CustomButton from "../../components/common/CustomButton";
 import Link from "next/link";
-import connectDB from "../../utils/mongodb";
 import User from "../../models/User";
-import { IUsersProps, IUser, IUserTokenPayload } from "../../types";
-import { GetServerSidePropsContext } from "next";
+import { IUsersProps, IUser, IAccessTokenPayload } from "../../types";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import protect from "../../helpers/protect";
 
 function Members({ users }: IUsersProps) {
@@ -25,11 +24,12 @@ function Members({ users }: IUsersProps) {
 
 export default Members;
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const protection = protect(context.req.cookies["accessToken"]);
-  if (!protection.status) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const protection = await protect(
+    context.req as NextApiRequest,
+    context.res as NextApiResponse
+  );
+  if (!protection.status && !protection.payload) {
     return {
       redirect: {
         permanent: false,
@@ -38,10 +38,8 @@ export const getServerSideProps = async (
     };
   }
 
-  await connectDB();
-
   const users: IUser[] = await User.find({
-    companyId: (protection.payload as IUserTokenPayload).companyId,
+    companyId: (protection.payload as IAccessTokenPayload).companyId,
   })
     .select("email firstName lastName role")
     .lean();

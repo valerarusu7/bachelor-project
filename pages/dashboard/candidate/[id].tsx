@@ -1,11 +1,10 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { ICandidate, ICandidateProps } from "../../../types";
 
 import Candidate from "../../../models/Candidate";
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
 import CandidateTimeline from "../../../components/CandidateDetails/Timeline/CandidateTimeline";
 import Layout from "../../../components/Layout/Layout";
-import connectDB from "../../../utils/mongodb";
 import protect from "../../../helpers/protect";
 
 function CandidateDetails({ candidate }: ICandidateProps) {
@@ -26,7 +25,11 @@ function CandidateDetails({ candidate }: ICandidateProps) {
 export default CandidateDetails;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (!protect(context.req.cookies["accessToken"]).status) {
+  const protection = await protect(
+    context.req as NextApiRequest,
+    context.res as NextApiResponse
+  );
+  if (!protection.status && !protection.payload) {
     return {
       redirect: {
         permanent: false,
@@ -34,7 +37,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  await connectDB();
 
   const id = context.params?.id;
 

@@ -27,10 +27,6 @@ export type AsyncRequestHandler = (
   res: NextApiResponse
 ) => Promise<any>;
 
-export interface IServerProps {
-  req: NextApiRequest;
-}
-
 // Pages
 export interface IDashboardProps {
   candidates: ICandidate[];
@@ -280,12 +276,21 @@ export interface IRegistrationTokenPayload {
   companyName: string;
 }
 
-export interface IUserTokenPayload {
-  id: string;
+export interface IAccessTokenPayload {
+  id: Types.ObjectId;
   email: string;
   name: string;
-  companyId: string;
+  companyId: Types.ObjectId;
   role: string;
+}
+
+export interface IRefreshTokenPayload {
+  id: Types.ObjectId;
+}
+
+export interface IProtection {
+  status: boolean;
+  payload: IAccessTokenPayload | undefined;
 }
 
 export interface ICandidateVideoInterviewAnswer {

@@ -3,8 +3,7 @@ import {
   IDashboardProps,
   IPositions,
   IRegions,
-  IServerProps,
-  IUserTokenPayload,
+  IAccessTokenPayload,
 } from "../../types";
 import { filterByScore, filterCandidates } from "../../helpers/filters";
 import {
@@ -23,8 +22,8 @@ import Candidates from "../../components/Dashboard/Candidates";
 import CustomButton from "../../components/common/CustomButton";
 import Filter from "../../components/Dashboard/Filter";
 import Layout from "../../components/Layout/Layout";
-import connectDB from "../../utils/mongodb";
 import protect from "../../helpers/protect";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 
 function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
   const {
@@ -101,9 +100,12 @@ function DashboardPage({ candidates, positions, regions }: IDashboardProps) {
 
 export default DashboardPage;
 
-export const getServerSideProps = async ({ req }: IServerProps) => {
-  const protection = protect(req.cookies["accessToken"]);
-  if (!protection.status) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const protection = await protect(
+    context.req as NextApiRequest,
+    context.res as NextApiResponse
+  );
+  if (!protection.status && !protection.payload) {
     return {
       redirect: {
         permanent: false,
@@ -112,10 +114,8 @@ export const getServerSideProps = async ({ req }: IServerProps) => {
     };
   }
 
-  await connectDB();
-
   const candidates: ICandidate[] = await Candidate.find({
-    companyId: (protection.payload as IUserTokenPayload).companyId,
+    companyId: (protection.payload as IAccessTokenPayload).companyId,
   })
     .populate({
       path: "interviews.jobId",

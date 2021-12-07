@@ -23,7 +23,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // @ts-ignore
     const companyId: string = req.companyId;
     // @ts-ignore
-    const user: IUser = req.user;
+    const name: string = req.name;
 
     if (!body.emails || body.emails.length === 0) {
       return res
@@ -44,12 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           var { origin } = absoluteUrl(req);
           var url = `${origin}/auth/register/${token}`;
 
-          await sendRegistrationEmail(
-            company.name,
-            user.firstName + " " + user.lastName,
-            email,
-            url
-          );
+          await sendRegistrationEmail(company.name, name, email, url);
         })
       );
 

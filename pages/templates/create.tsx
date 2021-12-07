@@ -2,8 +2,7 @@ import {
   IPosition,
   ITemplate,
   IPositionsProps,
-  IServerProps,
-  IUserTokenPayload,
+  IAccessTokenPayload,
 } from "../../types";
 import {
   resetTask,
@@ -23,9 +22,9 @@ import Layout from "../../components/Layout/Layout";
 import TaskModal from "../../components/Templates/TaskModal";
 import Tasks from "../../components/Templates/Tasks";
 import TemplateDetails from "../../components/Templates/TemplateDetails";
-import connectDB from "../../utils/mongodb";
 import protect from "../../helpers/protect";
 import { useRouter } from "next/router";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 
 function Create({ positions }: IPositionsProps) {
   const dispatch = useAppDispatch();
@@ -110,9 +109,12 @@ function Create({ positions }: IPositionsProps) {
 
 export default Create;
 
-export const getServerSideProps = async ({ req }: IServerProps) => {
-  const protection = protect(req.cookies["accessToken"]);
-  if (!protection.status) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const protection = await protect(
+    context.req as NextApiRequest,
+    context.res as NextApiResponse
+  );
+  if (!protection.status && !protection.payload) {
     return {
       redirect: {
         permanent: false,
@@ -121,10 +123,8 @@ export const getServerSideProps = async ({ req }: IServerProps) => {
     };
   }
 
-  await connectDB();
-
   const jobPositions: IPosition[] = await JobPosition.find({
-    jobId: (protection.payload as IUserTokenPayload).companyId,
+    jobId: (protection.payload as IAccessTokenPayload).companyId,
   })
     .select("_id name location type recruitingStartDate")
     .lean();

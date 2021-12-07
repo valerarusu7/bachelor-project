@@ -1,52 +1,28 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import jwt from "jsonwebtoken";
-import connectDB from "../utils/mongodb";
-import User from "../models/User";
-import { Error } from "mongoose";
-import handleError from "../helpers/errorHandler";
-import { AsyncRequestHandler, IUserTokenPayload } from "../types";
-
-const { ACCOUNT_ACCESS_PRIVATE_KEY } = process.env;
+import { AsyncRequestHandler, IAccessTokenPayload } from "../types";
+import protect from "../helpers/protect";
 
 const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    const { accessToken } = req.cookies;
-
-    if (!req.cookies || !accessToken) {
-      return res.status(401).json({ error: "Please login to get access." });
+    const protection = await protect(req, res);
+    if (!protection.status && !protection.payload) {
+      return res.status(401).json({ error: "You need to login." });
     }
 
-    try {
-      const decoded = jwt.verify(
-        accessToken,
-        ACCOUNT_ACCESS_PRIVATE_KEY as string
-      );
+    const payload = protection.payload as IAccessTokenPayload;
 
-      const { id, role, companyId } = decoded as IUserTokenPayload;
-      if (!roles.includes(role)) {
-        return res
-          .status(401)
-          .json({ error: "You don't have enough permission." });
-      }
-
-      await connectDB();
-      const currentUser = await User.findById(id).lean();
-      if (!currentUser) {
-        return res.status(401).json({
-          error: "The user belonging to this token no longer exists.",
-        });
-      }
-
-      // @ts-ignore
-      req.user = currentUser;
-      // @ts-ignore
-      req.companyId = companyId;
-
-      return handler(req, res);
-    } catch (error) {
-      const result = handleError(error as Error);
-      return res.status(result.code).json({ error: result.error });
+    if (!roles.includes(payload.role)) {
+      return res
+        .status(401)
+        .json({ error: "You don't have enough permissions." });
     }
+
+    // @ts-ignore
+    req.name = payload.name;
+    // @ts-ignore
+    req.companyId = payload.companyId;
+
+    return handler(req, res);
   };
 };
 
