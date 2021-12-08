@@ -323,7 +323,6 @@ export interface IPositionModel extends Model<IPositionDocument> {
 export interface ITemplateDocument extends Document {
   name: string;
   description: string;
-  createdAt?: Date;
   tasks: ITaskDocument[];
   companyId: Types.ObjectId;
   jobId: string;
@@ -405,6 +404,12 @@ export interface ICandidateVideoInterviewDocument extends Document {
 export interface IUserModel extends Model<IUserDocument> {
   toClientObject(user: IUser): IUser;
   toClientArray(users: IUser[]): IUser[];
+}
+
+export interface ICandidateCommentDocument extends Document {
+  comment: string;
+  candidateId: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 export interface IUserRequest extends NextApiRequest {

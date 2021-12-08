@@ -10,12 +10,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
-    if (!body || !body.email || !body.password) {
-      return res
-        .status(400)
-        .json({ error: "Email and password cannot be empty." });
-    }
-
     try {
       const user = await User.findOne({
         email: body.email,

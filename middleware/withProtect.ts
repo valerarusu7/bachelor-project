@@ -18,6 +18,8 @@ const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
     }
 
     // @ts-ignore
+    req.id = payload.id;
+    // @ts-ignore
     req.name = payload.name;
     // @ts-ignore
     req.companyId = payload.companyId;

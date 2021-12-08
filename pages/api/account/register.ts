@@ -27,7 +27,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       let user = new User(body);
       user.email = email;
       user.companyId = companyId;
-      user.role = Roles.Viewer;
 
       await user.save();
 

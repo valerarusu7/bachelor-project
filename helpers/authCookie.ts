@@ -13,7 +13,7 @@ export default function setTokensInCookie(
   const accessToken = jwt.sign(
     accessTokenPayload,
     ACCOUNT_ACCESS_PRIVATE_KEY as string,
-    { expiresIn: "15m" as string }
+    { expiresIn: "7m" as string }
   );
 
   const refreshToken = jwt.sign(

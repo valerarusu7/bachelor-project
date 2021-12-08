@@ -6,6 +6,8 @@ import CandidateInfo from "../../../components/CandidateDetails/Timeline/Candida
 import CandidateTimeline from "../../../components/CandidateDetails/Timeline/CandidateTimeline";
 import Layout from "../../../components/Layout/Layout";
 import protect from "../../../helpers/protect";
+import CandidateVideoInterview from "../../../models/CandidateVideoInterview";
+import CandidateComment from "../../../models/CandidateComment";
 
 function CandidateDetails({ candidate }: ICandidateProps) {
   return (
@@ -40,7 +42,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const id = context.params?.id;
 
-  const candidate: ICandidate = await Candidate.findById(id).lean();
+  //
+  const [candidate, videoInterview, comments]: [
+    ICandidate,
+    ICandidateVideoInterview,
+    ICandidateComment[]
+  ] = await Promise.all([
+    Candidate.findById(id).lean(),
+    CandidateVideoInterview.findOne({ candidateId: id }).lean(),
+    CandidateComment.find({ candidateId: id }).lean(),
+  ]);
+
+  console.log(candidate);
+  console.log(videoInterview);
+  console.log(comments);
+
   return {
     props: {
       candidate: Candidate.toClientObject(candidate),

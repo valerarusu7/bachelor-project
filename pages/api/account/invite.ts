@@ -34,17 +34,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const company = await Company.findById(companyId).select("name").lean();
 
       await Promise.all(
-        body.emails.map(async (email: string) => {
+        body.emails.map((email: string) => {
           const token = jwt.sign(
-            // @ts-ignore
             { email: email, companyId: companyId, companyName: company.name },
             ACCOUNT_PRIVATE_KEY as string,
             { expiresIn: "1d" as string }
           );
+
           var { origin } = absoluteUrl(req);
           var url = `${origin}/auth/register/${token}`;
 
-          await sendRegistrationEmail(company.name, name, email, url);
+          sendRegistrationEmail(company.name, name, email, url);
         })
       );
 

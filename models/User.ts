@@ -1,12 +1,8 @@
-import { IUser, IUserDocument, IUserModel } from "../types";
+import { IUser, IUserDocument, IUserModel, Roles } from "../types";
 import { Schema, model, models } from "mongoose";
 import bcryptjs from "bcryptjs";
 
 const UserSchema = new Schema<IUserDocument>({
-  _id: {
-    type: Schema.Types.ObjectId,
-    auto: true,
-  },
   email: {
     type: String,
     unique: true,
@@ -32,7 +28,8 @@ const UserSchema = new Schema<IUserDocument>({
   role: {
     type: String,
     required: [true, "Role cannot be empty."],
-    default: "read",
+    enum: Object.values(Roles),
+    default: Roles.Viewer,
   },
   companyId: {
     type: Schema.Types.ObjectId,

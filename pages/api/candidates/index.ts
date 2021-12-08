@@ -40,6 +40,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ error: "Video answers cannot be empty." });
     }
 
+    if (!body.answers || !Array.isArray(body.answers)) {
+      return res
+        .status(400)
+        .json({
+          error: "You need to provide answers for the video in correct format.",
+        });
+    }
+
+    // if (!body.jobId) {
+    //   return res.status(400).json({ error: "Job id needs to be provided." });
+    // }
+
     const interview = {
       region: body.answers.find(
         (answer: ICandidateVideoInterviewAnswer) => answer.order === 3
