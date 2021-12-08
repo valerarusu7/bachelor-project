@@ -40,19 +40,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const id = context.params?.id;
 
-  try {
-    const candidate: ICandidate = await Candidate.findById(id).lean();
-    return {
-      props: {
-        candidate: Candidate.toClientObject(candidate),
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/404",
-      },
-    };
-  }
+  const candidate: ICandidate = await Candidate.findById(id).lean();
+  return {
+    props: {
+      candidate: Candidate.toClientObject(candidate),
+    },
+  };
 };

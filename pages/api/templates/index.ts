@@ -15,9 +15,12 @@ import { Roles } from "../../../types";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const body = req.body;
+    //@ts-ignore
+    const companyId = req.companyId;
 
     try {
       let template = new Template(body);
+      template.companyId = companyId;
 
       await template.save();
 

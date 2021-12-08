@@ -198,49 +198,38 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const { id } = context.params as IParams;
 
-  try {
-    // @ts-ignore
-    const [template, jobPositions]: [ITemplate, IPosition[]] =
-      await Promise.all([
-        Template.findById(id)
-          .select("_id name description tasks companyId jobId createdAt")
-          .lean()
-          .orFail(),
-        JobPosition.find({
-          companyId: (protection.payload as IAccessTokenPayload).companyId,
-        })
-          .select("_id name location type recruitingStartDate")
-          .lean()
-          .orFail(),
-      ]);
-
-    // @ts-ignore
-    const candidates: ICandidate[] = await Candidate.find({
+  // @ts-ignore
+  const [template, jobPositions]: [ITemplate, IPosition[]] = await Promise.all([
+    Template.findById(id)
+      .select("_id name description tasks companyId jobId createdAt")
+      .lean(),
+    JobPosition.find({
       companyId: (protection.payload as IAccessTokenPayload).companyId,
-      interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
     })
-      .select("firstName lastName email")
-      .lean()
-      .orFail();
+      .select("_id name location type recruitingStartDate")
+      .lean(),
+  ]);
 
-    const selectedPosition = jobPositions.find(
-      (jobPosition) => jobPosition._id === template.jobId
-    );
+  // @ts-ignore
+  const candidates: ICandidate[] = await Candidate.find({
+    companyId: (protection.payload as IAccessTokenPayload).companyId,
+    interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
+  })
+    .select("firstName lastName email")
+    .lean();
 
-    return {
-      props: {
-        template: Template.toClientObject(template),
-        positions: JobPosition.toClientArray(jobPositions),
-        selectedPosition: selectedPosition,
-        candidates: Candidate.toClientArray(candidates),
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/404",
-      },
-    };
-  }
+  console.log(candidates);
+
+  const selectedPosition = jobPositions.find(
+    (jobPosition) => jobPosition._id === template.jobId
+  );
+
+  return {
+    props: {
+      template: Template.toClientObject(template),
+      positions: JobPosition.toClientArray(jobPositions),
+      selectedPosition: selectedPosition,
+      candidates: Candidate.toClientArray(candidates),
+    },
+  };
 };
