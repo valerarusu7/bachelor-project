@@ -32,7 +32,6 @@ function BecomeACustomer() {
         lastName: data.last_name,
         password: data.password,
         rePassword: data.re_password,
-        birthday: data.birthday,
       },
       company: {
         name: data.company_name,
@@ -111,14 +110,6 @@ function BecomeACustomer() {
                 errors={errors}
                 label="Last name"
                 {...register("last_name")}
-              />
-              <FormInput
-                type="text"
-                id="birthday"
-                placeholder="Birthday"
-                errors={errors}
-                label="Birthday "
-                {...register("birthday")}
               />
             </div>
             <div>

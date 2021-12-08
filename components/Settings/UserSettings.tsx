@@ -10,7 +10,6 @@ function UserSettings({ user }: IUserObject) {
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
   const [email, setEmail] = useState(user.email);
-  const [birthday, setBirthday] = useState(user.birthday);
 
   const {
     register,
@@ -27,7 +26,7 @@ function UserSettings({ user }: IUserObject) {
 
   const onEdit = () => {
     if (edit) {
-      reset({ firstName, lastName, email, birthday });
+      reset({ firstName, lastName, email });
     }
     setEdit(!edit);
   };
@@ -96,19 +95,6 @@ function UserSettings({ user }: IUserObject) {
           edit={edit}
           value={email}
           {...register("email", { required: "Please enter the email" })}
-        />
-        <SettingsInput
-          label="Birthday"
-          id="birthday"
-          type="date"
-          errors={errors}
-          placeholder=""
-          edit={edit}
-          value={birthday}
-          {...register("birthday", {
-            required: "Please select the birthday",
-            valueAsDate: true,
-          })}
         />
       </FormLayout>
       <Separator />

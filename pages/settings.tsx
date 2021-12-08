@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // @ts-ignore
   const [user, company]: [IUser, ICompany] = await Promise.all([
     User.findById(payload.id)
-      .select("email firstName lastName birthday")
+      .select("email firstName lastName")
       .lean(),
     Company.findById(payload.companyId).lean(),
   ]);

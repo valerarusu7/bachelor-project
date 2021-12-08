@@ -150,7 +150,6 @@ export interface IUser {
   firstName?: string;
   lastName?: string;
   email?: string;
-  birthday?: string;
   role: string;
   companyId: string;
 }
@@ -177,7 +176,6 @@ export interface IUserFormValues {
   firstName: string;
   lastName: string;
   email: string;
-  birthday: string;
 }
 
 export interface ITemplate {
@@ -386,7 +384,6 @@ export interface IUserDocument extends Document {
   email: string;
   firstName: string;
   lastName: string;
-  birthday: Date;
   password: string;
   position: string;
   department: string;

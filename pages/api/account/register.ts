@@ -23,11 +23,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(401).json({ error: "Passwords do not match." });
     }
 
-    if (!body.birthday) {
-      return res.status(400).json({ error: "Birthday needs to be provided." });
-    }
-    body.birthday = body.birthday + "T00:00:00.000Z";
-
     try {
       let user = new User(body);
       user.email = email;

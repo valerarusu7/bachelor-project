@@ -23,10 +23,6 @@ const UserSchema = new Schema<IUserDocument>({
     required: [true, "Last name cannot be empty."],
     maxlength: [64, "Last name cannot be more than 64 characters."],
   },
-  birthday: {
-    type: Date,
-    required: [true, "Birthday cannot be empty."],
-  },
   password: {
     type: String,
     required: [true, "Password cannot be empty."],
@@ -68,9 +64,6 @@ UserSchema.methods.comparePassword = async function (
 
 UserSchema.statics.toClientObject = function (user: IUser) {
   user._id = user._id.toString();
-  if (user.birthday) {
-    user.birthday = user.birthday.toString();
-  }
 
   return user;
 };
