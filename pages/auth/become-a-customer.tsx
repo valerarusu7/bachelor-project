@@ -2,7 +2,7 @@ import FormInput from "../../components/Landing Page/FormInput";
 // import { register as registerCompanyUser } from "../store/reducers/authSlice";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { yupResolver } from "@hookform/resolvers/yup/dist/yup.umd";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../../helpers/formSchemas";
 import PasswordCheckItem from "../../components/Landing Page/PasswordtCheckItem";
 import { BsCheckCircleFill } from "react-icons/bs";
