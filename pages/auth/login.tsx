@@ -51,52 +51,56 @@ const Login: React.FC = () => {
   return (
     <div className="h-screen w-full bg-white mx-auto text-center">
       <NavBar></NavBar>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col flex-grow xl:w-1/3 md:w-1/2 sm:w-2/3 p-4 rounded-lg shadow-xl">
-          <div className="flex justify-center items-center">
-            <p className="font-semibold text-gray-700 text-xl">Login</p>
-          </div>
-          <div>{/* <p>Company Details</p> */}</div>
-          <div className="w-full h-0.5 bg-gray-200 mt-2 mb-2" />
-
-          <div>
-            {/* <p>Account Details</p> */}
-            <FormInput
-              type="text"
-              id="email"
-              placeholder="Enter Email"
-              label="Email"
-              className={`rounded-md flex-grow border border-gray-400 focus:border-blue-400 mr-4 `}
-              // onChange={(e) => onChangeEmail(e)}
-              {...register("email")}
-            />
-            <div className="text-justify font-medium tracking-wide text-red-500 text-xs">
-              {errors.email?.message}
-            </div>
-            <div>
-              <FormInput
-                type="password"
-                id="password"
-                placeholder="Enter Password"
-                label="Password"
-                {...register("password")}
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+      />
+      <div className="flex">
+        <div className="flex-col flex ml-auto mr-auto items-center w-full lg:w-2/3 md:w-3/5">
+          <h1 className="font-bold text-2xl my-10 mt-16 text-black"> Login </h1>
+          <form
+            action=""
+            onSubmit={handleSubmit(onSubmit)}
+            className="mt-2 flex flex-col lg:w-1/2 w-8/12"
+          >
+            <div className="flex flex-wrap items-stretch w-full mb-4 relative h-15 bg-white items-center rounded mb-6 pr-10">
+              <div className="flex -mr-px justify-center w-15 p-4">
+                <span className="flex items-center leading-normal bg-white px-3 border-0 rounded rounded-r-none text-2xl text-gray-600">
+                  <i className="fas fa-user-circle"></i>
+                </span>
+              </div>
+              <input
+                type="text"
+                className="rounded-2xl flex-shrink flex-grow flex-auto leading-normal w-px flex-1 border-10 h-10 border-grey-light px-3 self-center relative  font-roboto text-xl outline-none"
+                placeholder="Username"
               />
             </div>
-          </div>
-          <div className="flex justify-center items-center p-4">
-            {false ? (
-              "Loading..."
-            ) : (
-              <button
-                type="submit"
-                className="bg-blue-300 w-32 cursor-pointer rounded-lg shadow-md p-1 font-semibold"
-              >
-                Login
-              </button>
-            )}{" "}
-          </div>
+            <div className="flex flex-wrap items-stretch w-full relative h-15 bg-white items-center rounded mb-4">
+              <div className="flex -mr-px justify-center w-15 p-4">
+                <span className="flex items-center leading-normal bg-white rounded rounded-r-none text-xl px-3 whitespace-no-wrap text-gray-600">
+                  <i className="fas fa-lock"></i>
+                </span>
+              </div>
+              <input
+                type="password"
+                className=" rounded-2xl flex-shrink flex-grow flex-auto leading-normal w-px flex-1 border-10 h-10 px-3 relative self-center font-roboto text-xl outline-none"
+                placeholder="Password"
+              />
+
+              <div className="flex -mr-px">
+                <span className="flex items-center leading-normal bg-white rounded rounded-l-none border-0 px-3 whitespace-no-wrap text-gray-600"></span>
+              </div>
+            </div>
+            <a
+              type="submit"
+              href="/dashboard"
+              className="bg-blue-400 py-4 text-center px-17 md:px-12 md:py-4 text-white rounded-2xl leading-tight text-xl md:text-base font-sans mt-4 mb-20"
+            >
+              Login
+            </a>
+          </form>
         </div>
-      </form>
+      </div>
       <Canvas />
     </div>
   );
