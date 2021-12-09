@@ -3,18 +3,15 @@ import handleError from "../../../helpers/errorHandler";
 import { Roles } from "../../../types";
 import CandidateComment from "../../../models/CandidateComment";
 import withProtection from "../../../middleware/protection";
-import { commentSchema } from "../../../models/api/Candidate";
-import withValidation from "../../../middleware/validation";
+import withBodyConversion from "../../../middleware/bodyConversion";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { candidateId } = req.query;
     const body = req.body;
     // @ts-ignore
     const userId = req.id;
 
     let candidateComment = new CandidateComment(body);
-    candidateComment.candidateId = candidateId;
     candidateComment.userId = userId;
 
     try {
@@ -31,8 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withValidation(
-  commentSchema,
-  withProtection(handler, [Roles.Manager, Roles.Admin]),
-  true
-);
+export default withProtection(withBodyConversion(handler), [
+  Roles.Manager,
+  Roles.Admin,
+]);
