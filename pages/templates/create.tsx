@@ -63,7 +63,6 @@ function Create({ positions }: IPositionsProps) {
         if (response.ok) {
           router.push("/templates");
         } else {
-          console.log("HEY");
           return response.text().then((text) => {
             throw new Error(text);
           });

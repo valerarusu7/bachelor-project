@@ -2,7 +2,7 @@ import FormInput from "../../components/Landing Page/FormInput";
 // import { register as registerCompanyUser } from "../store/reducers/authSlice";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { yupResolver } from "@hookform/resolvers/yup/dist/yup.umd";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../../helpers/formSchemas";
 import PasswordCheckItem from "../../components/Landing Page/PasswordtCheckItem";
 import { BsCheckCircleFill } from "react-icons/bs";
@@ -24,21 +24,37 @@ function BecomeACustomer() {
   const password = watch("password", "");
   const re_password = watch("re_password", "");
 
-  const onSubmit = async ({
-    company_name,
-    company_website,
-    first_name,
-    last_name,
-    email,
-    password,
-    re_password,
-  }) => {
-    // if (dispatch && dispatch !== null && dispatch !== undefined) {
-    //   if (registerSchema.isValid({ company_name, company_website, first_name, last_name, email, password, re_password })) {
-    //     dispatch(registerCompanyUser(company_name, company_website, first_name, last_name, email, password, re_password, true));
-    //     router.replace("/auth/login");
-    //   }
-    // }
+  const onSubmit = (data: any) => {
+    let toSend = {
+      user: {
+        email: data.email,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        password: data.password,
+        rePassword: data.re_password,
+      },
+      company: {
+        name: data.company_name,
+        website: data.company_website,
+      },
+    };
+    fetch("/api/companies", {
+      method: "POST",
+      body: JSON.stringify(toSend),
+    })
+      .then((response) => {
+        if (response.ok) {
+          router.push("/dashboard");
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+      })
+      .catch((error) => {
+        //Handle error
+        console.log(error);
+      });
   };
 
   // if (typeof window !== "undefined" && isAuthenticated) router.push("/dashboard");
@@ -111,7 +127,7 @@ function BecomeACustomer() {
                   id="password"
                   placeholder="Enter Password"
                   label="Password"
-                  onChange={(e) => console.log(e)}
+                  // onChange={(e) => console.log(e)}
                   {...register("password")}
                 />
                 <FormInput

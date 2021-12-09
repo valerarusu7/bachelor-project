@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Template from "../../../models/Template";
 import handleError from "../../../helpers/errorHandler";
-import withProtect from "../../../middleware/withProtect";
-import withBodyConverter from "../../../middleware/withBodyConverter";
 import { Roles } from "../../../types";
+import withBodyConversion from "../../../middleware/bodyConversion";
+import withProtection from "../../../middleware/protection";
 
 /**
  * @swagger
@@ -40,9 +40,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         task.order = index;
       });
 
-      await Template.findByIdAndUpdate(id, template);
+      await Template.findByIdAndUpdate(id, template, { runValidators: true });
 
-      return res.status(200).json({ success: true });
+      return res
+        .status(200)
+        .json({ success: "Template successfully updated." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
@@ -53,7 +55,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       await Template.findByIdAndDelete(id);
 
-      return res.status(200).json({ success: true });
+      return res
+        .status(200)
+        .json({ success: "Template successfully deleted." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
@@ -65,7 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     .json({ error: "Only PUT and DELETE requests are allowed." });
 };
 
-export default withProtect(withBodyConverter(handler), [
+export default withProtection(withBodyConversion(handler), [
   Roles.Manager,
   Roles.Admin,
 ]);

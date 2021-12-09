@@ -12,6 +12,9 @@ export default async function protect(
   res: NextApiResponse
 ): Promise<IProtection> {
   const { accessToken, refreshToken } = req.cookies;
+
+  await connectDB();
+
   if (!accessToken) {
     return { status: false, payload: undefined };
   }
@@ -47,7 +50,6 @@ export default async function protect(
     }))(decodedAccessToken);
 
     //Check that access token has everything
-    await connectDB();
     const currentUser = await User.findById(accessPayload.id).lean();
     if (!currentUser) {
       return { status: false, payload: undefined };

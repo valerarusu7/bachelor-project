@@ -7,7 +7,7 @@ import connectDB from "../utils/mongodb";
 
 const { ACCOUNT_PRIVATE_KEY } = process.env;
 
-const withRegistrationProtect = (handler: AsyncRequestHandler) => {
+const withRegistrationProtection = (handler: AsyncRequestHandler) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const authValue = req.headers.authorization;
 
@@ -40,4 +40,4 @@ const withRegistrationProtect = (handler: AsyncRequestHandler) => {
   };
 };
 
-export default withRegistrationProtect;
+export default withRegistrationProtection;

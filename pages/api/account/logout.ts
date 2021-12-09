@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import cookie from "cookie";
-import withProtect from "../../../middleware/withProtect";
 import { Roles } from "../../../types";
+import withProtection from "../../../middleware/protection";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     res.setHeader("Set-Cookie", [
       cookie.serialize("accessToken", "", {
         httpOnly: true,
@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  return res.status(405).json({ error: "Only POST requests are allowed." });
+  return res.status(405).json({ error: "Only GET requests are allowed." });
 };
 
-export default withProtect(handler, [Roles.Viewer, Roles.Manager, Roles.Admin]);
+export default withProtection(handler);

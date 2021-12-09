@@ -14,14 +14,13 @@ const JobPositionSchema = new Schema<IPositionDocument>({
   recruitingStartDate: Date,
   companyId: {
     type: Schema.Types.ObjectId,
-    required: true,
+    required: [true, "Company id cannot be empty."],
     ref: "Company",
   },
 });
 
 JobPositionSchema.statics.toClientArray = function (positions: IPosition[]) {
   return positions.map((position) => {
-    position._id = position._id?.toString();
     // @ts-ignore
     position.recruitingStartDate = position.recruitingStartDate.toISOString();
     position.location = position.location ? position.location : "";

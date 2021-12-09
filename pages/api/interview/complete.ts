@@ -2,14 +2,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import Candidate from "../../../models/Candidate";
 import convertToTimeSpan from "../../../helpers/timeFormatter";
-import withInterviewProtect from "../../../middleware/withInterviewProtect";
-import withBodyConverter from "../../../middleware/withBodyConverter";
 import Template from "../../../models/Template";
 import {
   ICandidateAnswerDocument,
   ITaskDocument,
   TaskTypes,
 } from "../../../types";
+import withInterviewProtection from "../../../middleware/interviewProtection";
 
 /**
  * @swagger
@@ -114,7 +113,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           "interviews.$.time": time,
           "interviews.$.completed": true,
           "interviews.$.score": score,
-        }
+        },
+        { runValidators: true }
       );
       return res
         .status(201)
@@ -128,4 +128,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withInterviewProtect(withBodyConverter(handler));
+export default withInterviewProtection(handler);

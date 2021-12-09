@@ -34,7 +34,6 @@ function CandidateInfo({ candidate }: ICandidateProps) {
       <Separator />
       {/* info */}
       <div className="grid grid-cols-3 justify-center items-center h-full ">
-        <InfoItem label="Birthday" value={"24/11/1999 (21 years old)"} />
         <InfoItem label="Email" value={candidate.email} />
         <InfoItem label="Position" value={candidate.interviews[0].position} />
         <InfoItem

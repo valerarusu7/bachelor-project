@@ -17,7 +17,7 @@ const ChoiceSchema = new Schema<IChoiceDocument>({
   },
   value: {
     type: String,
-    required: [true, "Choice cannot be empty."],
+    required: [true, "Choice value cannot be empty."],
   },
   isCorrect: {
     type: Boolean,
@@ -26,50 +26,56 @@ const ChoiceSchema = new Schema<IChoiceDocument>({
 });
 
 const TaskSchema = new Schema<ITaskDocument>({
-  _id: {
-    type: Schema.Types.ObjectId,
-    auto: true,
-  },
   question: {
     type: String,
-    required: [true, "Question cannot be empty."],
-    maxLength: [2048, "Question cannot be more than 2048 characters."],
+    required: [true, "Task question cannot be empty."],
+    maxLength: [2048, "Task question cannot be more than 2048 characters."],
   },
   order: {
     type: Number,
-    required: true,
-    min: [0, "Order cannot be negative integer"],
+    required: [true, "Task order cannot be empty."],
+    min: [0, "Task order cannot be negative."],
   },
   taskType: {
     type: String,
-    required: true,
+    enum: Object.values(TaskTypes),
+    required: [true, "Task type cannot be empty."],
   },
   choices: [ChoiceSchema],
 });
 
 const TemplateSchema = new Schema<ITemplateDocument>(
   {
-    _id: {
-      type: Schema.Types.ObjectId,
-      auto: true,
-    },
     name: {
       type: String,
-      required: [true, "Name cannot be empty."],
+      required: [true, "Template name cannot be empty."],
+      maxLength: [256, "Template name cannot be more than 256 characters."],
     },
     description: {
       type: String,
-      maxLength: [256, "Description cannot be more than 256 characters."],
+      maxLength: [
+        256,
+        "Template description cannot be more than 256 characters.",
+      ],
     },
-    tasks: [TaskSchema],
+    tasks: {
+      type: [TaskSchema],
+      required: [true, "Tasks cannot be empty."],
+      validate: {
+        validator: function (arr: ITask[]) {
+          return arr.length > 0;
+        },
+        message: "Template needs to have at least 1 task.",
+      },
+    },
     companyId: {
       type: Schema.Types.ObjectId,
-      required: [true, "Company id cannot be empty."],
+      required: [true, "Company id cannot be empty for the template."],
       ref: "Company",
     },
     jobId: {
       type: String,
-      required: [true, "Job id cannot be empty."],
+      required: [true, "Job id cannot be empty for the template."],
       unique: true,
       ref: "JobPosition",
     },

@@ -2,19 +2,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 import User from "../../../models/User";
 import handleError from "../../../helpers/errorHandler";
 import connectDB from "../../../utils/mongodb";
-import withBodyConverter from "../../../middleware/withBodyConverter";
 import setTokensInCookie from "../../../helpers/authCookie";
+import withValidation from "../../../middleware/validation";
+import { loginSchema } from "../../../models/api/User";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     await connectDB();
     const body = req.body;
-
-    if (!body || !body.email || !body.password) {
-      return res
-        .status(400)
-        .json({ error: "Email and password cannot be empty." });
-    }
 
     try {
       const user = await User.findOne({
@@ -51,4 +46,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withBodyConverter(handler);
+export default withValidation(loginSchema, handler);

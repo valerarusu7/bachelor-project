@@ -1,5 +1,6 @@
 import { Schema, model, models } from "mongoose";
 import {
+  ICandidateVideoInterviewAnswer,
   ICandidateVideoInterviewAnswerDocument,
   ICandidateVideoInterviewDocument,
 } from "../types";
@@ -9,28 +10,40 @@ const CandidateVideoInterviewAnswerSchema =
     {
       order: {
         type: Number,
-        required: true,
+        required: [true, "Order cannot be empty."],
+        min: [0, "Order cannot be negative."],
       },
       answer: {
         type: String,
-        required: true,
+        required: [true, "Answer cannot be empty."],
       },
     },
     { _id: false }
   );
 
 const CandidateVideoInterviewSchema =
-  new Schema<ICandidateVideoInterviewDocument>({
-    _id: {
-      type: Schema.Types.ObjectId,
-      auto: true,
+  new Schema<ICandidateVideoInterviewDocument>(
+    {
+      candidateId: {
+        type: Schema.Types.ObjectId,
+        required: [true, "Candidate id cannot be empty."],
+        unique: true,
+      },
+      answers: {
+        type: [CandidateVideoInterviewAnswerSchema],
+        required: [true, "Answers cannot be empty."],
+        validate: {
+          validator: function (arr: ICandidateVideoInterviewAnswer[]) {
+            return arr.length > 10;
+          },
+          message: "At least 10 answers need to be provided.",
+        },
+      },
     },
-    candidateId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-    },
-    answers: [CandidateVideoInterviewAnswerSchema],
-  });
+    {
+      timestamps: true,
+    }
+  );
 
 CandidateVideoInterviewSchema.pre("validate", function validate(next) {
   var unique = [];
@@ -39,7 +52,7 @@ CandidateVideoInterviewSchema.pre("validate", function validate(next) {
     let prop = this.answers[i].order;
 
     if (unique.indexOf(prop) > -1) {
-      return next(new Error("Id needs to be unique."));
+      return next(new Error("Order needs to be unique."));
     }
 
     unique.push(prop);

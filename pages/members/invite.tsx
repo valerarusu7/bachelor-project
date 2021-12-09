@@ -44,7 +44,7 @@ const Invite: React.FC = () => {
     if (!emails.length) {
       body.emails = [email];
     }
-    fetch(`/api/account/invite`, {
+    fetch(`/api/account/emails`, {
       method: "POST",
       body: JSON.stringify(body),
     })

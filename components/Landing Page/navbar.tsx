@@ -63,7 +63,7 @@ function NavBar() {
 
             <li className=" float-right space-x-8 px-4">
               <a
-                href="/login"
+                href="auth/login"
                 className="pt-16 px-2 mr-36 border-gray-400 border-b-2 border-gray-400 border-b-2 text-gray-700 hover:text-blue-400 hover:border-blue-400 hidden  tracking-widest md:flex items-center space-x-8 "
               >
                 Login
