@@ -60,6 +60,7 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
   jobId: {
     type: String,
     required: [true, "Job id cannot be empty."],
+    unique: true,
     ref: "JobPosition",
   },
 });

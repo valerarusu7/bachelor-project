@@ -40,9 +40,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         task.order = index;
       });
 
-      await Template.findByIdAndUpdate(id, template);
+      await Template.findByIdAndUpdate(id, template, { runValidators: true });
 
-      return res.status(200).json({ success: true });
+      return res
+        .status(200)
+        .json({ success: "Template successfully updated." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
@@ -53,7 +55,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       await Template.findByIdAndDelete(id);
 
-      return res.status(200).json({ success: true });
+      return res
+        .status(200)
+        .json({ success: "Template successfully deleted." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

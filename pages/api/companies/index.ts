@@ -52,7 +52,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await user.save();
       await company.save();
 
-      return res.status(201).json({ success: true });
+      return res
+        .status(201)
+        .json({ success: "Company successfully registered." });
     } catch (error) {
       const result = handleError(error as Error);
       if (result.code === 409) {

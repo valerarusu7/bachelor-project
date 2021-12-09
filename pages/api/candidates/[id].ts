@@ -18,15 +18,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // @ts-ignore
       await Candidate.findByIdAndUpdate(
         id,
+        // @ts-ignore
         { favorite: favorite },
         { runValidators: true }
       );
 
-      return res.status(201).json({
+      return res.status(200).json({
         success:
           favorite === "true"
-            ? "Candidate added to favorites."
-            : "Candidate removed from favorites.",
+            ? "Candidate successfully added to favorites."
+            : "Candidate successfully removed from favorites.",
       });
     } catch (error) {
       const result = handleError(error as Error);

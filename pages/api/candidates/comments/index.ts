@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // @ts-ignore
       await candidateComment.save();
 
-      return res.status(201).json({ success: true });
+      return res.status(201).json({ success: "Successfully added comment." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

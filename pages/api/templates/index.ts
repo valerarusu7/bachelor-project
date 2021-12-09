@@ -24,7 +24,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await template.save();
 
-      return res.status(201).json({ success: true });
+      return res
+        .status(201)
+        .json({ success: "Template successfully created." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

@@ -42,10 +42,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const id = context.params?.id;
 
-  //
+  // @ts-ignore
   const [candidate, videoInterview, comments]: [
     ICandidate,
+    // @ts-ignore
     ICandidateVideoInterview,
+    // @ts-ignore
     ICandidateComment[]
   ] = await Promise.all([
     Candidate.findById(id).lean(),

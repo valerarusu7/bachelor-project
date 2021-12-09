@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         { runValidators: true }
       );
 
-      return res.status(201).json({ success: "Successfully changed role." });
+      return res.status(200).json({ success: "Role successfully changed." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

@@ -114,7 +114,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           "interviews.$.time": time,
           "interviews.$.completed": true,
           "interviews.$.score": score,
-        }
+        },
+        { runValidators: true }
       );
       return res
         .status(201)

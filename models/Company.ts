@@ -6,11 +6,11 @@ const CompanySchema = new Schema<ICompanyDocument>({
     type: String,
     required: [true, "Company name cannot be empty."],
     unique: true,
-    maxlength: [64, "Name cannot be more than 64 characters."],
+    maxlength: [64, "Company name cannot be more than 64 characters."],
   },
   website: {
     type: String,
-    maxlength: [2000, "Website cannot be more than 2000 characters."],
+    maxlength: [2000, "Company website cannot be more than 2000 characters."],
   },
 });
 

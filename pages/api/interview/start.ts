@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }),
     ]);
 
-    return res.status(201).json({ success: true });
+    return res.status(201).json({ success: "Interview successfully started." });
   }
 
   return res.status(405).json({ error: "Only POST requests are allowed." });

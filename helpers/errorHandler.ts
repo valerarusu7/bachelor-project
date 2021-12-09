@@ -2,6 +2,11 @@ import { MongoServerError } from "mongodb";
 import { Error as MongooseError } from "mongoose";
 
 export default function handleError(error: Error) {
+  if (error.name === "CustomError") {
+    // @ts-ignore
+    return { code: error.code, error: error.message };
+  }
+
   if (error.name === "ValidationError") {
     const errors = (error as MongooseError.ValidationError).errors;
     const messages = Object.keys(errors).map((key) => errors[key].message);

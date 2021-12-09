@@ -3,7 +3,6 @@ import handleError from "../../../helpers/errorHandler";
 import withBodyConverter from "../../../middleware/withBodyConverter";
 import withRegistrationProtect from "../../../middleware/withRegistrationProtect";
 import User from "../../../models/User";
-import { Roles } from "../../../types";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
@@ -30,7 +29,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await user.save();
 
-      return res.status(201).json({ success: true });
+      return res
+        .status(201)
+        .json({ success: "Account successfully registered." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

@@ -5,10 +5,9 @@ import jwt from "jsonwebtoken";
 import Candidate from "../../../models/Candidate";
 import absoluteUrl from "next-absolute-url";
 import Template from "../../../models/Template";
-import connectDB from "../../../utils/mongodb";
 import withBodyConverter from "../../../middleware/withBodyConverter";
-import withProtect from "../../../middleware/withProtect";
 import { Roles } from "../../../types";
+import withProtect from "../../../middleware/withProtect";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -21,7 +20,6 @@ const { INTERVIEW_PRIVATE_KEY } = process.env;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    await connectDB();
     const { id } = req.query;
     const body = req.body;
     // @ts-ignore
@@ -79,7 +77,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         })
       );
 
-      return res.status(200).json({ success: true });
+      return res
+        .status(200)
+        .json({ success: "Interview emails successfully sent." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

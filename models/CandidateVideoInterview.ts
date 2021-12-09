@@ -27,6 +27,7 @@ const CandidateVideoInterviewSchema =
       candidateId: {
         type: Schema.Types.ObjectId,
         required: [true, "Candidate id cannot be empty."],
+        unique: true,
       },
       answers: {
         type: [CandidateVideoInterviewAnswerSchema],
