@@ -2,9 +2,10 @@ import Template from "../../../models/Template";
 import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import Candidate from "../../../models/Candidate";
-import withInterviewProtect from "../../../middleware/withInterviewProtect";
-import withBodyConverter from "../../../middleware/withBodyConverter";
 import { TaskTypes } from "../../../types";
+import withInterviewProtection from "../../../middleware/interviewProtection";
+import withValidation from "../../../middleware/validation";
+import { taskSchema } from "../../../models/api/Interview";
 
 /**
  * @swagger
@@ -98,4 +99,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withInterviewProtect(withBodyConverter(handler));
+export default withValidation(taskSchema, withInterviewProtection(handler));

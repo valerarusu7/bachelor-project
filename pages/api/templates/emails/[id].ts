@@ -1,13 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import handleError from "../../../helpers/errorHandler";
-import { sendInterviewEmail } from "../../../helpers/mailer";
+import handleError from "../../../../helpers/errorHandler";
+import { sendInterviewEmail } from "../../../../helpers/mailer";
 import jwt from "jsonwebtoken";
-import Candidate from "../../../models/Candidate";
+import Candidate from "../../../../models/Candidate";
 import absoluteUrl from "next-absolute-url";
-import Template from "../../../models/Template";
-import withBodyConverter from "../../../middleware/withBodyConverter";
-import { Roles } from "../../../types";
-import withProtect from "../../../middleware/withProtect";
+import Template from "../../../../models/Template";
+import { Roles } from "../../../../types";
+import withProtection from "../../../../middleware/protection";
+import { emailsSchema } from "../../../../models/api/Email";
+import withValidation from "../../../../middleware/validation";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -24,12 +25,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const companyId = req.companyId;
-
-    if (!body.emails || body.emails.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "At least one email needs to be provided" });
-    }
 
     try {
       await Promise.all(
@@ -89,7 +84,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withProtect(withBodyConverter(handler), [
-  Roles.Manager,
-  Roles.Admin,
-]);
+export default withValidation(
+  emailsSchema,
+  withProtection(handler, [Roles.Manager, Roles.Admin])
+);

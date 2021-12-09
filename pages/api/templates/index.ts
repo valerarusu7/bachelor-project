@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
-import withBodyConverter from "../../../middleware/withBodyConverter";
-import withProtect from "../../../middleware/withProtect";
+import withBodyConversion from "../../../middleware/bodyConversion";
+import withProtection from "../../../middleware/protection";
 import Template from "../../../models/Template";
 import { Roles } from "../../../types";
 
@@ -36,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withProtect(withBodyConverter(handler), [
+export default withProtection(withBodyConversion(handler), [
   Roles.Manager,
   Roles.Admin,
 ]);

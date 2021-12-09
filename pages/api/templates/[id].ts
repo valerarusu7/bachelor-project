@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Template from "../../../models/Template";
 import handleError from "../../../helpers/errorHandler";
-import withProtect from "../../../middleware/withProtect";
-import withBodyConverter from "../../../middleware/withBodyConverter";
 import { Roles } from "../../../types";
+import withBodyConversion from "../../../middleware/bodyConversion";
+import withProtection from "../../../middleware/protection";
 
 /**
  * @swagger
@@ -69,7 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     .json({ error: "Only PUT and DELETE requests are allowed." });
 };
 
-export default withProtect(withBodyConverter(handler), [
+export default withProtection(withBodyConversion(handler), [
   Roles.Manager,
   Roles.Admin,
 ]);

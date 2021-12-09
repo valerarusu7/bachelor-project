@@ -1,8 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { AsyncRequestHandler, IAccessTokenPayload } from "../types";
+import { AsyncRequestHandler, IAccessTokenPayload, Roles } from "../types";
 import protect from "../helpers/protect";
 
-const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
+const withProtection = (
+  handler: AsyncRequestHandler,
+  roles: string[] = [Roles.Viewer, Roles.Manager, Roles.Admin]
+) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const protection = await protect(req, res);
     if (!protection.status && !protection.payload) {
@@ -28,4 +31,4 @@ const withProtect = (handler: AsyncRequestHandler, roles: string[]) => {
   };
 };
 
-export default withProtect;
+export default withProtection;

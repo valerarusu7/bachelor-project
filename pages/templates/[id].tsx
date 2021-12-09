@@ -121,7 +121,7 @@ function TemplatePage({
       emails.push(candidate.email);
     });
 
-    fetch(`/api/invite/${template._id}`, {
+    fetch(`/api/templates/emails/${template._id}`, {
       method: "POST",
       body: JSON.stringify({ emails: emails }),
     })

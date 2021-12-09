@@ -3,10 +3,11 @@ import handleError from "../../../helpers/errorHandler";
 import { sendRegistrationEmail } from "../../../helpers/mailer";
 import jwt from "jsonwebtoken";
 import absoluteUrl from "next-absolute-url";
-import withProtect from "../../../middleware/withProtect";
-import withBodyConverter from "../../../middleware/withBodyConverter";
+import withProtection from "../../../middleware/protection";
 import { Roles } from "../../../types";
 import Company from "../../../models/Company";
+import { emailsSchema } from "../../../models/api/Email";
+import withValidation from "../../../middleware/validation";
 
 const { ACCOUNT_PRIVATE_KEY } = process.env;
 
@@ -25,11 +26,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // @ts-ignore
     const name: string = req.name;
 
-    if (!body.emails || body.emails.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "At least one email needs to be provided" });
-    }
     try {
       const company = await Company.findById(companyId).select("name").lean();
 
@@ -60,4 +56,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withProtect(withBodyConverter(handler), [Roles.Admin]);
+export default withValidation(
+  emailsSchema,
+  withProtection(handler, [Roles.Admin])
+);

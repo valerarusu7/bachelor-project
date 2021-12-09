@@ -3,8 +3,9 @@ import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
 import handleError from "../../../helpers/errorHandler";
 import User from "../../../models/User";
-import withBodyConverter from "../../../middleware/withBodyConverter";
 import { Roles } from "../../../types";
+import withValidation from "../../../middleware/validation";
+import { registrationSchema } from "../../../models/api/Company";
 
 /**
  * @swagger
@@ -25,22 +26,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     await connectDB();
     const body = req.body;
-
-    if (!body.user) {
-      return res
-        .status(400)
-        .json({ error: "User information needs to be provided." });
-    }
-
-    if (!body.user.password || !body.user.rePassword) {
-      return res
-        .status(400)
-        .json({ error: "Password and re-password cannot be empty." });
-    }
-
-    if (body.user.password !== body.user.rePassword) {
-      return res.status(401).json({ error: "Passwords do not match." });
-    }
 
     let company = new Company(body.company);
     let user = new User(body.user);
@@ -68,4 +53,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withBodyConverter(handler);
+export default withValidation(registrationSchema, handler);

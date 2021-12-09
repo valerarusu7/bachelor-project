@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
-import withBodyConverter from "../../../middleware/withBodyConverter";
-import withRegistrationProtect from "../../../middleware/withRegistrationProtect";
+import withRegistrationProtection from "../../../middleware/registrationProtection";
+import withValidation from "../../../middleware/validation";
+import { registrationSchema } from "../../../models/api/User";
 import User from "../../../models/User";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -12,21 +13,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // @ts-ignore
     const email = req.email;
 
-    if (!body.password || !body.rePassword) {
-      return res
-        .status(400)
-        .json({ error: "Password and re-password cannot be empty." });
-    }
-
     if (body.password !== body.rePassword) {
       return res.status(401).json({ error: "Passwords do not match." });
     }
 
-    try {
-      let user = new User(body);
-      user.email = email;
-      user.companyId = companyId;
+    let user = new User(body);
+    user.email = email;
+    user.companyId = companyId;
 
+    try {
       await user.save();
 
       return res
@@ -41,4 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withRegistrationProtect(withBodyConverter(handler));
+export default withValidation(
+  registrationSchema,
+  withRegistrationProtection(handler)
+);

@@ -6,10 +6,11 @@ import {
 } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import connectDB from "../../../utils/mongodb";
-import withBodyConverter from "../../../middleware/withBodyConverter";
 import CandidateVideoInterview from "../../../models/CandidateVideoInterview";
 import { Types } from "mongoose";
 import CustomError from "../../../helpers/CustomError";
+import withValidation from "../../../middleware/validation";
+import { answersSchema } from "../../../models/api/Candidate";
 
 /**
  * @swagger
@@ -35,16 +36,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     await connectDB();
     const body = req.body;
-
-    if (!body.answers || !Array.isArray(body.answers)) {
-      return res.status(400).json({ error: "Video answers cannot be empty." });
-    }
-
-    if (!body.answers || !Array.isArray(body.answers)) {
-      return res.status(400).json({
-        error: "You need to provide answers for the video in correct format.",
-      });
-    }
 
     const interview = {
       region: body.answers.find(
@@ -113,4 +104,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withBodyConverter(handler);
+export default withValidation(answersSchema, handler);

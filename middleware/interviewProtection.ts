@@ -7,7 +7,7 @@ import connectDB from "../utils/mongodb";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
-const withInterviewProtect = (handler: AsyncRequestHandler) => {
+const withInterviewProtection = (handler: AsyncRequestHandler) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const authValue = req.headers.authorization;
     const { started } = req.cookies;
@@ -38,4 +38,4 @@ const withInterviewProtect = (handler: AsyncRequestHandler) => {
   };
 };
 
-export default withInterviewProtect;
+export default withInterviewProtection;

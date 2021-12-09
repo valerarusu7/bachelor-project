@@ -3,8 +3,9 @@ import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
 import { Roles } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
-import withProtect from "../../../middleware/withProtect";
-import withBodyConverter from "../../../middleware/withBodyConverter";
+import withProtection from "../../../middleware/protection";
+import { websiteSchema } from "../../../models/api/Company";
+import withValidation from "../../../middleware/validation";
 
 /**
  * @swagger
@@ -42,7 +43,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only PATCH requests are allowed." });
 };
 
-export default withProtect(withBodyConverter(handler), [
-  Roles.Manager,
-  Roles.Admin,
-]);
+export default withValidation(
+  websiteSchema,
+  withProtection(handler, [Roles.Manager, Roles.Admin])
+);

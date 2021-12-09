@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import handleError from "../../../../helpers/errorHandler";
-import { Roles } from "../../../../types";
-import withProtect from "../../../../middleware/withProtect";
-import withBodyConverter from "../../../../middleware/withBodyConverter";
-import CandidateComment from "../../../../models/CandidateComment";
+import handleError from "../../../helpers/errorHandler";
+import { Roles } from "../../../types";
+import CandidateComment from "../../../models/CandidateComment";
+import withProtection from "../../../middleware/protection";
+import { commentSchema } from "../../../models/api/Candidate";
+import withValidation from "../../../middleware/validation";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
@@ -30,7 +31,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withProtect(withBodyConverter(handler), [
-  Roles.Manager,
-  Roles.Admin,
-]);
+export default withValidation(
+  commentSchema,
+  withProtection(handler, [Roles.Manager, Roles.Admin]),
+  true
+);

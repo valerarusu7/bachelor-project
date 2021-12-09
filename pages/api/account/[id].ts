@@ -2,7 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import User from "../../../models/User";
 import handleError from "../../../helpers/errorHandler";
 import { Roles } from "../../../types";
-import withProtect from "../../../middleware/withProtect";
+import withProtection from "../../../middleware/protection";
+import withValidation from "../../../middleware/validation";
+import { roleSchema } from "../../../models/api/User";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "PATCH") {
@@ -37,4 +39,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only PATCH requests are allowed." });
 };
 
-export default withProtect(handler, [Roles.Admin]);
+export default withValidation(
+  roleSchema,
+  withProtection(handler, [Roles.Admin]),
+  true
+);
