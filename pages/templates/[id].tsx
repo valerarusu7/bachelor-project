@@ -1,11 +1,11 @@
-import { GetServerSidePropsContext } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import {
   IPosition,
   ITemplate,
   ITemplateProps,
   IParams,
   ICandidate,
-  IUserTokenPayload,
+  IAccessTokenPayload,
 } from "../../types";
 import {
   resetTask,
@@ -28,7 +28,6 @@ import TaskModal from "../../components/Templates/TaskModal";
 import Tasks from "../../components/Templates/Tasks";
 import Template from "../../models/Template";
 import TemplateDetails from "../../components/Templates/TemplateDetails";
-import connectDB from "../../utils/mongodb";
 import InviteCandidate from "../../components/Templates/InviteCandidate";
 import Candidate from "../../models/Candidate";
 import { useRouter } from "next/router";
@@ -122,7 +121,7 @@ function TemplatePage({
       emails.push(candidate.email);
     });
 
-    fetch(`/api/invite/${template._id}`, {
+    fetch(`/api/templates/emails/${template._id}`, {
       method: "POST",
       body: JSON.stringify({ emails: emails }),
     })
@@ -183,11 +182,12 @@ function TemplatePage({
 
 export default TemplatePage;
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const protection = protect(context.req.cookies["accessToken"]);
-  if (!protection.status) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const protection = await protect(
+    context.req as NextApiRequest,
+    context.res as NextApiResponse
+  );
+  if (!protection.status && !protection.payload) {
     return {
       redirect: {
         permanent: false,
@@ -196,53 +196,40 @@ export const getServerSideProps = async (
     };
   }
 
-  await connectDB();
-
   const { id } = context.params as IParams;
 
-  try {
-    // @ts-ignore
-    const [template, jobPositions]: [ITemplate, IPosition[]] =
-      await Promise.all([
-        Template.findById(id)
-          .select("_id name description tasks companyId jobId createdAt")
-          .lean()
-          .orFail(),
-        JobPosition.find({
-          companyId: (protection.payload as IUserTokenPayload).companyId,
-        })
-          .select("_id name location type recruitingStartDate")
-          .lean()
-          .orFail(),
-      ]);
-
-    // @ts-ignore
-    const candidates: ICandidate[] = await Candidate.find({
-      companyId: (protection.payload as IUserTokenPayload).companyId,
-      interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
+  // @ts-ignore
+  const [template, jobPositions]: [ITemplate, IPosition[]] = await Promise.all([
+    Template.findById(id)
+      .select("_id name description tasks companyId jobId createdAt")
+      .lean(),
+    JobPosition.find({
+      companyId: (protection.payload as IAccessTokenPayload).companyId,
     })
-      .select("firstName lastName email")
-      .lean()
-      .orFail();
+      .select("_id name location type recruitingStartDate")
+      .lean(),
+  ]);
 
-    const selectedPosition = jobPositions.find(
-      (jobPosition) => jobPosition._id === template.jobId
-    );
+  // @ts-ignore
+  const candidates: ICandidate[] = await Candidate.find({
+    companyId: (protection.payload as IAccessTokenPayload).companyId,
+    interviews: { $elemMatch: { jobId: template.jobId, completed: false } },
+  })
+    .select("firstName lastName email")
+    .lean();
 
-    return {
-      props: {
-        template: Template.toClientObject(template),
-        positions: JobPosition.toClientArray(jobPositions),
-        selectedPosition: selectedPosition,
-        candidates: Candidate.toClientArray(candidates),
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/404",
-      },
-    };
-  }
+  console.log(candidates);
+
+  const selectedPosition = jobPositions.find(
+    (jobPosition) => jobPosition._id === template.jobId
+  );
+
+  return {
+    props: {
+      template: Template.toClientObject(template),
+      positions: JobPosition.toClientArray(jobPositions),
+      selectedPosition: selectedPosition,
+      candidates: Candidate.toClientArray(candidates),
+    },
+  };
 };

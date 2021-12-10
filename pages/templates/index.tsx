@@ -1,16 +1,15 @@
 import {
   ITemplate,
-  IServerProps,
   ITemplatesProps,
-  IUserTokenPayload,
+  IAccessTokenPayload,
 } from "../../types";
 import CustomButton from "../../components/common/CustomButton";
 import Layout from "../../components/Layout/Layout";
 import Link from "next/link";
 import Template from "../../components/Templates/Template";
-import connectDB from "../../utils/mongodb";
 import TemplateModel from "../../models/Template";
 import protect from "../../helpers/protect";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 
 function Templates({ templates }: ITemplatesProps) {
   return (
@@ -31,9 +30,12 @@ function Templates({ templates }: ITemplatesProps) {
 
 export default Templates;
 
-export const getServerSideProps = async ({ req }: IServerProps) => {
-  const protection = protect(req.cookies["accessToken"]);
-  if (!protection.status) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const protection = await protect(
+    context.req as NextApiRequest,
+    context.res as NextApiResponse
+  );
+  if (!protection.status && !protection.payload) {
     return {
       redirect: {
         permanent: false,
@@ -42,10 +44,8 @@ export const getServerSideProps = async ({ req }: IServerProps) => {
     };
   }
 
-  await connectDB();
-
   const templates: ITemplate[] = await TemplateModel.find({
-    companyId: (protection.payload as IUserTokenPayload).companyId,
+    companyId: (protection.payload as IAccessTokenPayload).companyId,
   })
     .select("_id name description tasks companyId jobId createdAt")
     .lean();

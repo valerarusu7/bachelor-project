@@ -4,11 +4,11 @@ import Layout from "../components/Layout/Layout";
 import NotificationsSettings from "../components/Settings/NotificationsSettings";
 import PasswordSettings from "../components/Settings/PasswordSettings";
 import UserSettings from "../components/Settings/UserSettings";
-import { ICompany, ISettingsProps, IUser } from "../types";
+import { IAccessTokenPayload, ICompany, ISettingsProps, IUser } from "../types";
 import Company from "../models/Company";
-import connectDB from "../utils/mongodb";
 import User from "../models/User";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import protect from "../helpers/protect";
 
 function Settings({ company, user }: ISettingsProps) {
   return (
@@ -24,17 +24,28 @@ function Settings({ company, user }: ISettingsProps) {
 
 export default Settings;
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  await connectDB();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const protection = await protect(
+    context.req as NextApiRequest,
+    context.res as NextApiResponse
+  );
+  if (!protection.status && !protection.payload) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/auth/login",
+      },
+    };
+  }
+
+  const payload = protection.payload as IAccessTokenPayload;
 
   // @ts-ignore
   const [user, company]: [IUser, ICompany] = await Promise.all([
-    User.findOne({ email: "david.le@test.com" })
-      .select("email firstName lastName birthday")
+    User.findById(payload.id)
+      .select("email firstName lastName")
       .lean(),
-    Company.findOne({ name: "Stibo Accelerator" }).lean(),
+    Company.findById(payload.companyId).lean(),
   ]);
 
   if (company && company._id) {

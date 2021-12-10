@@ -9,13 +9,9 @@ import {
 import "./JobPosition";
 
 const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
-  _id: {
-    type: Schema.Types.ObjectId,
-    auto: true,
-  },
   taskId: {
     type: Schema.Types.ObjectId,
-    required: true,
+    required: [true, "Task id cannot be empty."],
     ref: "Task",
   },
   answer: {
@@ -30,12 +26,9 @@ const CandidateAnswerSchema = new Schema<ICandidateAnswerDocument>({
 });
 
 const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
-  _id: {
-    type: Schema.Types.ObjectId,
-    auto: true,
-  },
   region: {
     type: String,
+    required: [true, "Region cannot be empty."],
   },
   countryCode: {
     type: String,
@@ -44,10 +37,11 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
   completed: {
     type: Boolean,
     default: false,
+    required: [true, "Completed cannot be empty."],
   },
   time: {
     type: String,
-    default: "",
+    trim: true,
   },
   startedUtc: {
     type: Date,
@@ -58,44 +52,49 @@ const CandidateInterviewSchema = new Schema<ICandidateInterviewDocument>({
   score: {
     type: Number,
     default: 0,
+    required: [true, "Score cannot be empty."],
+    min: [0, "Score cannot be negative."],
+    max: [100, "Score cannot be over 100%."],
   },
   answers: [CandidateAnswerSchema],
   jobId: {
     type: String,
-    required: true,
+    required: [true, "Job id cannot be empty."],
+    unique: true,
     ref: "JobPosition",
   },
 });
 
 const CandidateSchema = new Schema<ICandidateDocument>({
-  _id: {
-    type: Schema.Types.ObjectId,
-    auto: true,
-  },
   firstName: {
     type: String,
-    required: true,
+    required: [true, "First name cannot be empty."],
     maxlength: [64, "First name cannot be more than 64 characters."],
   },
   lastName: {
     type: String,
-    required: true,
+    required: [true, "Last name cannot be empty."],
     maxlength: [64, "Last name cannot be more than 64 characters."],
   },
   email: {
     type: String,
-    required: true,
+    required: [true, "Email cannot be empty."],
+    maxlength: [64, "Email cannot be more than 64 characters."],
   },
   favorite: {
     type: Boolean,
     default: false,
+    required: [true, "Favorite cannot be empty."],
   },
   companyId: {
     type: Schema.Types.ObjectId,
-    required: true,
+    required: [true, "Company id cannot be empty."],
     ref: "Company",
   },
-  interviews: [CandidateInterviewSchema],
+  interviews: {
+    type: [CandidateInterviewSchema],
+    required: [true, "Interview details cannot be empty."],
+  },
 });
 
 CandidateSchema.index({ email: 1, companyId: 1 }, { unique: true });

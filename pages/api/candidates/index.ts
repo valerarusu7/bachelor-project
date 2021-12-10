@@ -1,12 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Candidate from "../../../models/Candidate";
 import {
+  ICandidateVideoInterviewAnswer,
   ICandidateDocument,
-  ICandidateInterviewDocument,
 } from "../../../types";
 import handleError from "../../../helpers/errorHandler";
 import connectDB from "../../../utils/mongodb";
-import withBodyConverter from "../../../middleware/withBodyConverter";
+import CandidateVideoInterview from "../../../models/CandidateVideoInterview";
+import { Types } from "mongoose";
+import CustomError from "../../../helpers/CustomError";
+import withValidation from "../../../middleware/validation";
+import { answersSchema } from "../../../models/api/Candidate";
 
 /**
  * @swagger
@@ -33,41 +37,64 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
-    try {
-      const interview = {
-        region: body.region,
-        countryCode: body.countryCode,
-        jobId: body.jobId,
-      };
-      body.interviews = [interview];
-      let candidate = new Candidate(body);
+    const interview = {
+      region: body.answers.find(
+        (answer: ICandidateVideoInterviewAnswer) => answer.order === 3
+      ).answer,
+      jobId: body.jobId,
+    };
 
+    try {
       var foundCandidate: ICandidateDocument | null = await Candidate.findOne({
         email: body.email,
-        companyId: body.companyId,
+        companyId: "6182887f8a051eb01be80084",
       });
 
       if (!foundCandidate) {
-        await candidate.save();
+        body.interviews = [interview];
+        let candidate = new Candidate(body);
+        candidate.companyId = new Types.ObjectId("6182887f8a051eb01be80084");
+
+        let candidateVideoInterview = new CandidateVideoInterview({
+          candidateId: candidate._id,
+          answers: body.answers,
+        });
+
+        await Promise.all([candidate.save(), candidateVideoInterview.save()]);
       } else {
-        if (
-          !(foundCandidate as ICandidateDocument).interviews
-            .map((interview: ICandidateInterviewDocument) => interview.jobId)
-            .includes(body.jobId)
-        ) {
-          await foundCandidate.updateOne({
+        await Candidate.updateOne(
+          {
+            _id: foundCandidate._id,
+            "interviews.jobId": {
+              $ne: interview.jobId,
+            },
+          },
+          {
             $push: {
               interviews: interview,
             },
-          });
-        } else {
-          return res
-            .status(400)
-            .json({ error: "Candidate already applied to the job position." });
-        }
+          }
+        ).then((raw) => {
+          if (raw.modifiedCount === 0) {
+            throw CustomError(
+              "409",
+              "Candidate already applied to the job position."
+            );
+          }
+        });
+
+        await CandidateVideoInterview.findOneAndUpdate(
+          {
+            candidateId: foundCandidate._id,
+          },
+          { answers: body.answers },
+          { runValidators: true }
+        );
       }
 
-      return res.status(201).json({ success: "Candidate successfully added." });
+      return res
+        .status(201)
+        .json({ success: "Candidate details successfully added." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
@@ -77,4 +104,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withBodyConverter(handler);
+export default withValidation(answersSchema, handler);

@@ -3,8 +3,9 @@ import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
 import handleError from "../../../helpers/errorHandler";
 import User from "../../../models/User";
-import withBodyConverter from "../../../middleware/withBodyConverter";
 import { Roles } from "../../../types";
+import withValidation from "../../../middleware/validation";
+import { registrationSchema } from "../../../models/api/Company";
 
 /**
  * @swagger
@@ -26,18 +27,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
+    let company = new Company(body.company);
+    let user = new User(body.user);
+
+    user.companyId = company._id;
+    user.role = Roles.Admin;
+
     try {
-      let company = new Company(body.company);
-      let user = new User(body.user);
+      await user.save();
+      await company.save();
 
-      user.companyId = company._id;
-      user.role = Roles.Admin;
-
-      await Promise.all([company.save(), user.save()]);
-
-      return res.status(201).json({ success: true });
+      return res
+        .status(201)
+        .json({ success: "Company successfully registered." });
     } catch (error) {
       const result = handleError(error as Error);
+      if (result.code === 409) {
+        await User.findByIdAndDelete(user._id);
+      }
+
       return res.status(result.code).json({ error: result.error });
     }
   }
@@ -45,4 +53,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Only POST requests are allowed." });
 };
 
-export default withBodyConverter(handler);
+export default withValidation(registrationSchema, handler);

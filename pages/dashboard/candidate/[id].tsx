@@ -1,12 +1,13 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { ICandidate, ICandidateProps } from "../../../types";
 
 import Candidate from "../../../models/Candidate";
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
 import CandidateTimeline from "../../../components/CandidateDetails/Timeline/CandidateTimeline";
 import Layout from "../../../components/Layout/Layout";
-import connectDB from "../../../utils/mongodb";
 import protect from "../../../helpers/protect";
+import CandidateVideoInterview from "../../../models/CandidateVideoInterview";
+import CandidateComment from "../../../models/CandidateComment";
 
 function CandidateDetails({ candidate }: ICandidateProps) {
   return (
@@ -26,7 +27,11 @@ function CandidateDetails({ candidate }: ICandidateProps) {
 export default CandidateDetails;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (!protect(context.req.cookies["accessToken"]).status) {
+  const protection = await protect(
+    context.req as NextApiRequest,
+    context.res as NextApiResponse
+  );
+  if (!protection.status && !protection.payload) {
     return {
       redirect: {
         permanent: false,
@@ -34,23 +39,29 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  await connectDB();
 
   const id = context.params?.id;
 
-  try {
-    const candidate: ICandidate = await Candidate.findById(id).lean();
-    return {
-      props: {
-        candidate: Candidate.toClientObject(candidate),
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/404",
-      },
-    };
-  }
+  // @ts-ignore
+  const [candidate, videoInterview, comments]: [
+    ICandidate,
+    // @ts-ignore
+    ICandidateVideoInterview,
+    // @ts-ignore
+    ICandidateComment[]
+  ] = await Promise.all([
+    Candidate.findById(id).lean(),
+    CandidateVideoInterview.findOne({ candidateId: id }).lean(),
+    CandidateComment.find({ candidateId: id }).lean(),
+  ]);
+
+  console.log(candidate);
+  console.log(videoInterview);
+  console.log(comments);
+
+  return {
+    props: {
+      candidate: Candidate.toClientObject(candidate),
+    },
+  };
 };

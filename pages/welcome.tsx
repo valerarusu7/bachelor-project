@@ -21,7 +21,7 @@ function Welcome() {
               πιέ, χέσε, κοιμήσου.Ο Θεός άλλους έπλασε και άλλους έκλασε. Ο
               γέρος πάει ή από πέσιμο ή από χέσιμο.
             </p>
-            <Link href="/become-a-customer">
+            <Link href="/auth/become-a-customer">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-8 py-4 px-4 rounded-full">
                 Become Member
               </button>

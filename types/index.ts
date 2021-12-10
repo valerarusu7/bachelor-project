@@ -27,10 +27,6 @@ export type AsyncRequestHandler = (
   res: NextApiResponse
 ) => Promise<any>;
 
-export interface IServerProps {
-  req: NextApiRequest;
-}
-
 // Pages
 export interface IDashboardProps {
   candidates: ICandidate[];
@@ -154,7 +150,6 @@ export interface IUser {
   firstName?: string;
   lastName?: string;
   email?: string;
-  birthday?: string;
   role: string;
   companyId: string;
 }
@@ -181,7 +176,6 @@ export interface IUserFormValues {
   firstName: string;
   lastName: string;
   email: string;
-  birthday: string;
 }
 
 export interface ITemplate {
@@ -280,12 +274,26 @@ export interface IRegistrationTokenPayload {
   companyName: string;
 }
 
-export interface IUserTokenPayload {
-  id: string;
+export interface IAccessTokenPayload {
+  id: Types.ObjectId;
   email: string;
   name: string;
-  companyId: string;
+  companyId: Types.ObjectId;
   role: string;
+}
+
+export interface IRefreshTokenPayload {
+  id: Types.ObjectId;
+}
+
+export interface IProtection {
+  status: boolean;
+  payload: IAccessTokenPayload | undefined;
+}
+
+export interface ICandidateVideoInterviewAnswer {
+  order: number;
+  answer: string;
 }
 
 //Interfaces for mongoose models
@@ -315,7 +323,6 @@ export interface IPositionModel extends Model<IPositionDocument> {
 export interface ITemplateDocument extends Document {
   name: string;
   description: string;
-  createdAt?: Date;
   tasks: ITaskDocument[];
   companyId: Types.ObjectId;
   jobId: string;
@@ -376,7 +383,6 @@ export interface IUserDocument extends Document {
   email: string;
   firstName: string;
   lastName: string;
-  birthday: Date;
   password: string;
   position: string;
   department: string;
@@ -385,9 +391,25 @@ export interface IUserDocument extends Document {
   comparePassword(userPassword: string): Promise<boolean>;
 }
 
+export interface ICandidateVideoInterviewAnswerDocument extends Document {
+  order: number;
+  answer: string;
+}
+
+export interface ICandidateVideoInterviewDocument extends Document {
+  candidateId: Types.ObjectId;
+  answers: ICandidateVideoInterviewAnswerDocument[];
+}
+
 export interface IUserModel extends Model<IUserDocument> {
   toClientObject(user: IUser): IUser;
   toClientArray(users: IUser[]): IUser[];
+}
+
+export interface ICandidateCommentDocument extends Document {
+  comment: string;
+  candidateId: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 export interface IUserRequest extends NextApiRequest {

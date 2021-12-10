@@ -1,32 +1,24 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
-import withBodyConversion from "../../../middleware/bodyConversion";
-import withProtection from "../../../middleware/protection";
-import Template from "../../../models/Template";
 import { Roles } from "../../../types";
-
-/**
- * @swagger
- * /api/templates:
- *   post:
- *     description: Create a new template
- */
+import CandidateComment from "../../../models/CandidateComment";
+import withProtection from "../../../middleware/protection";
+import withBodyConversion from "../../../middleware/bodyConversion";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const body = req.body;
-    //@ts-ignore
-    const companyId = req.companyId;
+    // @ts-ignore
+    const userId = req.id;
+
+    let candidateComment = new CandidateComment(body);
+    candidateComment.userId = userId;
 
     try {
-      let template = new Template(body);
-      template.companyId = companyId;
+      // @ts-ignore
+      await candidateComment.save();
 
-      await template.save();
-
-      return res
-        .status(201)
-        .json({ success: "Template successfully created." });
+      return res.status(201).json({ success: "Successfully added comment." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
