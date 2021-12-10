@@ -1,12 +1,12 @@
-import NavBar from "../../components/Landing Page/navbar";
+import * as Yup from "yup";
+
 import Canvas from "../../components/Landing Page/canvas/canvas";
 import FormInput from "../../components/Landing Page/FormInput";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-
+import NavBar from "../../components/Landing Page/navbar";
 import React from "react";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type UserSubmitForm = {
   email: string;
@@ -49,8 +49,8 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-white mx-auto text-center">
-      <NavBar></NavBar>
+    <div className="h-screen w-full bg-white mx-auto text-center overflow-hidden">
+      <NavBar />
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
