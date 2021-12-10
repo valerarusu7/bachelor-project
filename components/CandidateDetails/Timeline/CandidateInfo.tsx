@@ -1,41 +1,21 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/solid";
 import React, { useEffect, useState } from "react";
+
 import { ICandidateProps } from "../../../types";
 import InfoItem from "../InfoItem";
 import Separator from "../../common/Separator";
 import { stringAvatar } from "../../../helpers/stringAvatar";
 
 function CandidateInfo({ candidate }: ICandidateProps) {
-  const [favorite, setFavorite] = useState<boolean>();
+  const [favorite, setFavorite] = useState(candidate.favorite);
 
-  useEffect(() => {
-    setFavorite(candidate.favorite);
-  }, []);
-
-  {
-    console.log(favorite, "favorite");
-  }
-  async function updateFavorite() {
-    console.log(favorite, "if it is true");
-
-    if (favorite === true) {
-      setFavorite(false);
-    }
-    console.log(favorite, "if it is true ... after");
-
-    console.log(favorite, "if it is false");
-
-    if (favorite === false) {
-      setFavorite(true);
-    }
-    console.log(favorite, "if it is false ... after");
-
-    await fetch(`/api/candidates/${candidate._id}?favorite=${!favorite}`, {
+  function updateFavorite() {
+    setFavorite(!favorite);
+    fetch(`/api/candidates/${candidate._id}?favorite=${!favorite}`, {
       method: "PATCH",
       body: JSON.stringify({
         ...candidate,
-        _id: candidate._id,
-        //favorite: !favorite,
+        id: candidate._id,
       }),
     })
       .then((response) => {
@@ -64,13 +44,12 @@ function CandidateInfo({ candidate }: ICandidateProps) {
           <div>
             <p className="2xl:text-4xl xl:text-2xl lg:text-xl font-semibold text-gray-600">{`${candidate.firstName} ${candidate.lastName}`}</p>
           </div>
-          <div className="h-full" onClick={() => updateFavorite()}>
+          <div className="h-full">
             <StarIcon
+              onClick={() => updateFavorite()}
               className={`${
-                favorite
-                  ? "text-yellow-400 hover:text-gray-400"
-                  : "text-gray-400 hover:text-yellow-400"
-              } h-8 w-8 cursor-pointer mb-2`}
+                favorite ? "text-yellow-400 " : "text-gray-400 "
+              } h-8 w-8 cursor-pointer mb-2 hover:opacity-80`}
             />
             <PencilIcon className="h-8 w-8 cursor-pointer hover:text-green-500 text-gray-500 mb-2" />
             <TrashIcon className="h-8 w-8 cursor-pointer hover:text-red-500 text-gray-500" />
