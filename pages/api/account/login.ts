@@ -1,13 +1,14 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import User from "../../../models/User";
 import handleError from "../../../helpers/errorHandler";
 import connectDB from "../../../utils/mongodb";
 import setTokensInCookie from "../../../helpers/authCookie";
 import withValidation from "../../../middleware/validation";
 import { loginSchema } from "../../../models/api/User";
+import handler from "../../../utils/handler";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+export default handler
+  .use(withValidation(loginSchema))
+  .post(async (req, res) => {
     await connectDB();
     const body = req.body;
 
@@ -41,9 +42,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
-
-export default withValidation(loginSchema, handler);
+  });

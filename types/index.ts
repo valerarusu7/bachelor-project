@@ -65,6 +65,12 @@ export interface ICandidate {
   interviews: ICandidateInterview[];
 }
 
+export interface ICandidateComment {
+  _id: string;
+  comment: string;
+  createdAt: string;
+}
+
 export interface IPosition {
   _id: string;
   name: string;
@@ -291,6 +297,12 @@ export interface IProtection {
   payload: IAccessTokenPayload | undefined;
 }
 
+export interface ICandidateVideoInterview {
+  _id: string;
+  answers: ICandidateVideoInterviewAnswer[];
+  createdAt: string;
+}
+
 export interface ICandidateVideoInterviewAnswer {
   order: number;
   answer: string;
@@ -401,6 +413,13 @@ export interface ICandidateVideoInterviewDocument extends Document {
   answers: ICandidateVideoInterviewAnswerDocument[];
 }
 
+export interface ICandidateVideoInterviewModel
+  extends Model<ICandidateVideoInterviewDocument> {
+  toClientObject(
+    candidateVideoInterview: ICandidateVideoInterview
+  ): ICandidateVideoInterview;
+}
+
 export interface IUserModel extends Model<IUserDocument> {
   toClientObject(user: IUser): IUser;
   toClientArray(users: IUser[]): IUser[];
@@ -410,6 +429,11 @@ export interface ICandidateCommentDocument extends Document {
   comment: string;
   candidateId: Types.ObjectId;
   userId: Types.ObjectId;
+}
+
+export interface ICandidateCommentModel
+  extends Model<ICandidateCommentDocument> {
+  toClientArray(comments: ICandidateComment[]): ICandidateComment[];
 }
 
 export interface IUserRequest extends NextApiRequest {

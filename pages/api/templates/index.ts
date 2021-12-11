@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import withBodyConversion from "../../../middleware/bodyConversion";
 import withProtection from "../../../middleware/protection";
 import Template from "../../../models/Template";
 import { Roles } from "../../../types";
+import handler from "../../../utils/handler";
 
 /**
  * @swagger
@@ -12,8 +12,10 @@ import { Roles } from "../../../types";
  *     description: Create a new template
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+export default handler
+  .use(withProtection([Roles.Manager, Roles.Admin]))
+  .use(withBodyConversion())
+  .post(async (req, res) => {
     const body = req.body;
     //@ts-ignore
     const companyId = req.companyId;
@@ -31,12 +33,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
-
-export default withProtection(withBodyConversion(handler), [
-  Roles.Manager,
-  Roles.Admin,
-]);
+  });

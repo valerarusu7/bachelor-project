@@ -1,10 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import Template from "../../../models/Template";
 import handleError from "../../../helpers/errorHandler";
 import { Roles } from "../../../types";
 import withBodyConversion from "../../../middleware/bodyConversion";
 import withProtection from "../../../middleware/protection";
 import CustomError from "../../../helpers/CustomError";
+import handler from "../../../utils/handler";
 
 /**
  * @swagger
@@ -29,11 +29,12 @@ import CustomError from "../../../helpers/CustomError";
  *        description: UUID string of the template to delete
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id } = req.query;
-  const body = req.body;
-
-  if (req.method === "PUT") {
+export default handler
+  .use(withProtection([Roles.Manager, Roles.Admin]))
+  .use(withBodyConversion())
+  .put(async (req, res) => {
+    const { id } = req.query;
+    const body = req.body;
     try {
       let template = new Template(body);
 
@@ -56,9 +57,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  if (req.method === "DELETE") {
+  })
+  .delete(async (req, res) => {
+    const { id } = req.query;
     try {
       await Template.findByIdAndDelete(id);
 
@@ -69,14 +70,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res
-    .status(405)
-    .json({ error: "Only PUT and DELETE requests are allowed." });
-};
-
-export default withProtection(withBodyConversion(handler), [
-  Roles.Manager,
-  Roles.Admin,
-]);
+  });
