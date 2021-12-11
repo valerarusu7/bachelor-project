@@ -5,6 +5,7 @@ import Candidate from "../../../models/Candidate";
 import withValidation from "../../../middleware/validation";
 import { favoriteSchema } from "../../../models/api/Candidate";
 import withProtection from "../../../middleware/protection";
+import CustomError from "../../../helpers/CustomError";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "PATCH") {
@@ -17,7 +18,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         // @ts-ignore
         { favorite: favorite },
         { runValidators: true }
-      );
+      ).then((raw) => {
+        if (!raw) {
+          throw CustomError("400", "Candidate id does not exist.");
+        }
+      });
 
       return res.status(200).json({
         success:
