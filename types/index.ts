@@ -117,7 +117,7 @@ export interface ICandidateDetailsProps {
   candidate: ICandidate;
   videoInterview: ICandidateVideoInterview;
   comments: ICandidateComment[];
-  interviews: [ITaskWithAnswers[]];
+  interviews: ITemplate[];
   idx?: number;
 }
 
@@ -228,11 +228,6 @@ export interface ITemplateObject {
   template: ITemplate;
 }
 
-export interface ITaskWithAnswers {
-  question: string;
-  answer: string;
-}
-
 export interface ITask {
   _id?: string;
   question: string;
@@ -240,6 +235,7 @@ export interface ITask {
   order: number;
   choices?: IChoice[];
   templateId?: string;
+  answer?: string | string[];
 }
 
 export interface ITaskType {

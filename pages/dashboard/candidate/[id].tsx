@@ -16,6 +16,7 @@ function CandidateDetails({
   comments,
   interviews,
 }: ICandidateDetailsProps) {
+  console.log(interviews);
   return (
     <Layout header="Candidate Details">
       <div className="grid grid-cols-6 mt-10 ">
@@ -70,37 +71,52 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let jobIds = candidate.interviews.map((interview) => interview.jobId);
 
   const templates = await Template.find({ jobId: { $in: jobIds } }).lean();
+
   const interviews = templates.map((template) => {
     const interview = candidate.interviews.find(
       (interview) => interview.jobId === template.jobId
     );
-    return template.tasks.map((task) => {
-      const answer = interview?.answers.find(
-        (answer) => answer.taskId.toString() === task._id.toString()
-      );
 
-      if (!answer) {
-        return {
-          question: task.question,
-          answer: "No answer found",
-        };
-      }
+    return {
+      name: template.name,
+      region: interview?.region,
+      countryCode: interview?.countryCode,
+      completed: interview?.completed,
+      time: interview?.time,
+      score: interview?.score,
+      completedUtc: interview?.completedUtc.toString(),
+      startedUtc: interview?.startedUtc.toString(),
+      tasks: template.tasks.map((task) => {
+        const answer = interview?.answers.find(
+          (answer) => answer.taskId.toString() === task._id.toString()
+        );
 
-      if (task.choices.length !== 0) {
-        return {
-          question: task.question,
-          answer: task.choices
-            //@ts-ignore
-            .filter((choice) => answer.choices.includes(choice._id))
-            .map((choice) => choice.value),
-        };
-      } else {
-        return {
-          question: task.question,
-          answer: answer.answer,
-        };
-      }
-    });
+        if (!answer) {
+          return {
+            question: task.question,
+            taskType: task.taskType,
+            answer: "No answer found",
+          };
+        }
+
+        if (task.choices.length !== 0) {
+          return {
+            question: task.question,
+            taskType: task.taskType,
+            answer: task.choices
+              //@ts-ignore
+              .filter((choice) => answer.choices.includes(choice._id))
+              .map((choice) => choice.value),
+          };
+        } else {
+          return {
+            question: task.question,
+            taskType: task.taskType,
+            answer: answer.answer,
+          };
+        }
+      }),
+    };
   });
 
   return {
