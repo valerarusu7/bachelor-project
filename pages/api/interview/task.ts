@@ -1,11 +1,11 @@
 import Template from "../../../models/Template";
-import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import Candidate from "../../../models/Candidate";
 import { TaskTypes } from "../../../types";
 import withInterviewProtection from "../../../middleware/interviewProtection";
 import withValidation from "../../../middleware/validation";
 import { taskSchema } from "../../../models/api/Interview";
+import handler from "../../../utils/handler";
 
 /**
  * @swagger
@@ -14,8 +14,10 @@ import { taskSchema } from "../../../models/api/Interview";
  *     description: Create a new template
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+export default handler
+  .use(withValidation(taskSchema))
+  .use(withInterviewProtection())
+  .post(async (req, res) => {
     const { order } = req.query;
     //@ts-ignore
     const interviewId = req.interviewId;
@@ -94,9 +96,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
-
-export default withValidation(taskSchema, withInterviewProtection(handler));
+  });

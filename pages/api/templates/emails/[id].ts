@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../../helpers/errorHandler";
 import { sendInterviewEmail } from "../../../../helpers/mailer";
 import jwt from "jsonwebtoken";
@@ -9,6 +8,7 @@ import { Roles } from "../../../../types";
 import withProtection from "../../../../middleware/protection";
 import { emailsSchema } from "../../../../models/api/Email";
 import withValidation from "../../../../middleware/validation";
+import handler from "../../../../utils/handler";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -19,8 +19,10 @@ const { INTERVIEW_PRIVATE_KEY } = process.env;
  *     description: Create a new template
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+export default handler
+  .use(withValidation(emailsSchema))
+  .use(withProtection([Roles.Manager, Roles.Admin]))
+  .post(async (req, res) => {
     const { id } = req.query;
     const body = req.body;
     // @ts-ignore
@@ -79,12 +81,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
-
-export default withValidation(
-  emailsSchema,
-  withProtection(handler, [Roles.Manager, Roles.Admin])
-);
+  });

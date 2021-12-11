@@ -1,13 +1,13 @@
-import next, { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
+import { NextHandler } from "next-connect";
 import { AnySchema } from "yup";
-import { AsyncRequestHandler } from "../types";
 
-const withValidation = (
-  schema: AnySchema,
-  handler: AsyncRequestHandler,
-  queryParam: boolean = false
-) => {
-  return async (req: NextApiRequest, res: NextApiResponse) => {
+const withValidation = (schema: AnySchema, queryParam: boolean = false) => {
+  return async (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    next: NextHandler
+  ) => {
     if (req.body && req.body.constructor !== Object) {
       req.body = JSON.parse(req.body);
     }
@@ -20,7 +20,7 @@ const withValidation = (
       return res.status(400).json({ error: (error as Error).message });
     }
 
-    return handler(req, res);
+    return next();
   };
 };
 

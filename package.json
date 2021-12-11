@@ -36,6 +36,7 @@
     "mongoose": "^6.0.12",
     "next": "^11.1.2",
     "next-absolute-url": "^1.2.2",
+    "next-connect": "^0.11.0",
     "next-redux-wrapper": "^7.0.5",
     "next-swagger-doc": "^0.1.10",
     "nodemailer": "^6.7.1",

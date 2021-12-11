@@ -42,6 +42,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const id = context.params?.id;
 
+  console.log(id);
+
   // @ts-ignore
   const [candidate, videoInterview, comments]: [
     ICandidate,
@@ -52,7 +54,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   ] = await Promise.all([
     Candidate.findById(id).lean(),
     CandidateVideoInterview.findOne({ candidateId: id }).lean(),
-    CandidateComment.find({ candidateId: id }).lean(),
+    CandidateComment.find({ candidateId: id })
+      .populate("userId", "firstName lastName")
+      .lean(),  
   ]);
 
   console.log(candidate);
