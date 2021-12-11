@@ -4,7 +4,7 @@ import Canvas from "../components/Landing Page/canvas/canvas";
 
 function Welcome() {
   return (
-    <div className="h-screen w-full bg-white mx-auto text-center">
+    <div className="h-screen w-full bg-white mx-auto text-center overflow-hidden">
       <NavBar></NavBar>
       <div className=" inline-flex ">
         <div className="float-right pt-24  px-16 ">

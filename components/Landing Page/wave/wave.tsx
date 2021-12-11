@@ -3,7 +3,7 @@ import { useCanvasContext } from "../hooks/useCanvas";
 import useResponsiveSize from "../hooks/useResponsiveSize";
 import { default as WaveObj } from "../lib/wave";
 
-var Wave = function () {
+const Wave: FC = () => {
   const { context } = useCanvasContext();
   const { width, height } = useResponsiveSize();
   let frequency = 0.013;
@@ -15,7 +15,7 @@ var Wave = function () {
   const render = () => {
     context?.clearRect(0, 0, width, height);
     Object.entries(waves).forEach(([, wave]) => {
-      wave.draw(context, width, 450, frequency);
+      wave.draw(context!, width, height - 500, frequency);
     });
     frequency += 0.005;
     requestAnimationFrame(render);

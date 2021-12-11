@@ -49,7 +49,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-white mx-auto text-center">
+    <div className="h-screen w-full bg-white mx-auto text-center overflow-hidden">
       <NavBar></NavBar>
       <link
         rel="stylesheet"
