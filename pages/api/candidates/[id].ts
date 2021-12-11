@@ -44,8 +44,11 @@ export default handler
   .delete(async (req, res) => {
     try {
       const { id } = req.query;
-      console.log("delete");
-      // await Candidate.findByIdAndDelete(id);
+      await Candidate.findByIdAndDelete(id).then((raw) => {
+        if (!raw) {
+          throw CustomError("400", "Candidate id does not exist.");
+        }
+      });
 
       return res
         .status(200)

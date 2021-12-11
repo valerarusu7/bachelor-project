@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { ICandidate, ICandidateProps } from "../../../types";
+import { ICandidate, ICandidateDetailsProps } from "../../../types";
 
 import Candidate from "../../../models/Candidate";
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
@@ -8,8 +8,14 @@ import Layout from "../../../components/Layout/Layout";
 import protect from "../../../helpers/protect";
 import CandidateVideoInterview from "../../../models/CandidateVideoInterview";
 import CandidateComment from "../../../models/CandidateComment";
+import Template from "../../../models/Template";
 
-function CandidateDetails({ candidate }: ICandidateProps) {
+function CandidateDetails({
+  candidate,
+  videoInterview,
+  comments,
+  interviews,
+}: ICandidateDetailsProps) {
   return (
     <Layout header="Candidate Details">
       <div className="grid grid-cols-6 mt-10 ">
@@ -61,12 +67,48 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       .populate("userId", "firstName lastName")
       .lean(),
   ]);
+  let jobIds = candidate.interviews.map((interview) => interview.jobId);
+
+  const templates = await Template.find({ jobId: { $in: jobIds } }).lean();
+  const interviews = templates.map((template) => {
+    const interview = candidate.interviews.find(
+      (interview) => interview.jobId === template.jobId
+    );
+    return template.tasks.map((task) => {
+      const answer = interview?.answers.find(
+        (answer) => answer.taskId.toString() === task._id.toString()
+      );
+
+      if (!answer) {
+        return {
+          question: task.question,
+          answer: "No answer found",
+        };
+      }
+
+      if (task.choices.length !== 0) {
+        return {
+          question: task.question,
+          answer: task.choices
+            //@ts-ignore
+            .filter((choice) => answer.choices.includes(choice._id))
+            .map((choice) => choice.value),
+        };
+      } else {
+        return {
+          question: task.question,
+          answer: answer.answer,
+        };
+      }
+    });
+  });
 
   return {
     props: {
       candidate: Candidate.toClientObject(candidate),
       videoInterview: CandidateVideoInterview.toClientObject(videoInterview),
       comments: CandidateComment.toClientArray(comments),
+      interviews: interviews,
     },
   };
 };

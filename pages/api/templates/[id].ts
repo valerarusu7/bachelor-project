@@ -61,7 +61,11 @@ export default handler
   .delete(async (req, res) => {
     const { id } = req.query;
     try {
-      await Template.findByIdAndDelete(id);
+      await Template.findByIdAndDelete(id).then((raw) => {
+        if (!raw) {
+          throw CustomError("400", "Template id does not exist.");
+        }
+      });
 
       return res
         .status(200)

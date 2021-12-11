@@ -113,6 +113,14 @@ export interface IRegions {
   code?: string;
 }
 
+export interface ICandidateDetailsProps {
+  candidate: ICandidate;
+  videoInterview: ICandidateVideoInterview;
+  comments: ICandidateComment[];
+  interviews: [ITaskWithAnswers[]];
+  idx?: number;
+}
+
 export interface ICandidateProps {
   candidate: ICandidate;
   idx?: number;
@@ -218,6 +226,11 @@ export interface ITemplatesProps {
 
 export interface ITemplateObject {
   template: ITemplate;
+}
+
+export interface ITaskWithAnswers {
+  question: string;
+  answer: string;
 }
 
 export interface ITask {
