@@ -16,9 +16,7 @@ import InterviewHeader from "../../components/Interview/InterviewHeader";
 import InterviewSidebar from "../../components/Interview/InterviewSidebar";
 
 function Interview({ companyName, template, tasksLength }: IInterviewProps) {
-  console.log(companyName);
-  console.log(template);
-  console.log(tasksLength);
+  // console.log(template, "template");
   const [emailCount, setEmailCount] = useState(0);
   const [showTasks, setShowTasks] = useState(false);
   const [showEmails, setShowEmails] = useState(false);
@@ -52,18 +50,13 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
 
   function addOrDeleteChoice(newItem: any) {
     let newChoices = [...choices];
-
     let contains = newChoices.includes(newItem);
     if (!contains) {
-      console.log("does not contain", newItem);
       newChoices.push(newItem);
     }
     if (contains) {
-      console.log("contains", newItem);
       newChoices = arrayRemove(newChoices, newItem);
     }
-
-    console.log(newChoices);
     setChoices(newChoices);
   }
 
@@ -93,7 +86,7 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
         }),
       });
       const data = await response.json();
-      console.log(data);
+      console.log(data, "next task");
       dispatch(setCurrentTask(data));
       setShowEmails(false);
       setShowTasks(false);
