@@ -27,7 +27,8 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
   const router = useRouter();
   const [interviewStarted, setInterviewStarted] = useState(false);
   const [choices, setChoices] = useState<any>([]);
-
+  const [finished, setFinished] = useState(false);
+  const [completed, setCompleted] = useState(false);
   useEffect(() => {
     dispatch(setCurrentTask(template.tasks[0]));
     if (template.tasks[0].taskType === "Email") {
@@ -98,6 +99,12 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
         setEmailCount(0);
         setTaskCount(1);
       }
+      if (data.finished) {
+        setEmailCount(0);
+        setTaskCount(0);
+
+        setFinished(true);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -126,91 +133,124 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
       });
   }
 
+  function onSubmit() {
+    fetch(`/api/interview/complete`, {
+      method: "POST",
+      headers: new Headers({
+        Authorization: `Bearer ${router.query.token}`,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log(response);
+          if (response.ok) {
+            setCompleted(true);
+          }
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+      })
+      .catch((error) => {
+        //Handle error
+        console.log(error);
+      });
+  }
+
   return (
     <>
-      {interviewStarted ? (
-        <div
-          className={`${
-            interviewStarted ? "opacity-100" : "opacity-0"
-          } h-screen bg-gradient-to-r from-gray-100 to-white transition transform duration-1000`}
-        >
-          <InterviewHeader
-            companyName={companyName}
-            templateName={template.name}
-            openEmails={() => openEmails()}
-            openTasks={() => openTasks()}
-            emailCount={emailCount}
-            taskCount={taskCount}
-            showEmails={showEmails}
-            showTasks={showTasks}
-          />
-          <div className="flex h-screen">
-            <InterviewSidebar template={template} />
-            {showTasks ? (
-              <div className="w-full bg-gray-100 flex flex-col justify-center ">
-                <div className="mr-10 ml-10 p-10 ">
-                  <div className="border border-gray-300 bg-white rounded-md p-4 shadow-lg">
-                    <div>
-                      <p className="text-xl font-semibold mb-2">{currentTask?.question}</p>
-                      <textarea
-                        className="mt-1 w-full resize-none rounded-lg"
-                        rows={5}
-                        placeholder="Answer here"
-                        onChange={(e) => setAnswer(e.target.value)}
-                      ></textarea>
-                      <div className="flex justify-end mt-2">
-                        <CustomButton color="blue" onClick={() => getNextTask()}>
-                          <p>Next</p>
-                        </CustomButton>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            {showEmails ? (
-              <div className="w-full bg-gray-100 flex flex-col justify-center ">
-                <div className="mr-10 ml-10 p-10 ">
-                  <div className="border border-gray-300 bg-white rounded-md p-4 shadow-lg">
-                    <div>
-                      <p className="text-xl font-semibold mb-2">{currentTask?.question}</p>
-                      {currentTask !== undefined && currentTask?.choices?.length !== 0 ? (
-                        <div className="flex justify-evenly items-center">
-                          {currentTask?.choices?.map((choice) => (
-                            <CustomButton
-                              color="blue"
-                              key={choice._id}
-                              customStyles={`${choices.includes(choice?._id) ? "opacity-100" : "opacity-50"}`}
-                              onClick={() => addOrDeleteChoice(choice?._id)}
-                            >
-                              {choice.value}
-                            </CustomButton>
-                          ))}
-                        </div>
-                      ) : (
-                        <textarea
-                          className="mt-1 w-full resize-none rounded-lg"
-                          rows={5}
-                          placeholder="Answer here"
-                          onChange={(e) => setAnswer(e.target.value)}
-                        ></textarea>
-                      )}
-                      <div className="flex justify-end mt-2">
-                        <CustomButton color="blue" onClick={() => getNextTask()}>
-                          <p>Next</p>
-                        </CustomButton>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </div>
+      {completed ? (
+        <div>Completed</div>
       ) : (
-        <div>
-          <button onClick={() => startInterview()}>Start Interview</button>
-        </div>
+        <>
+          {interviewStarted ? (
+            <div
+              className={`${
+                interviewStarted ? "opacity-100" : "opacity-0"
+              } h-screen bg-gradient-to-r from-gray-100 to-white transition transform duration-1000`}
+            >
+              <InterviewHeader
+                companyName={companyName}
+                templateName={template.name}
+                openEmails={() => openEmails()}
+                openTasks={() => openTasks()}
+                emailCount={emailCount}
+                taskCount={taskCount}
+                showEmails={showEmails}
+                showTasks={showTasks}
+                finished={finished}
+                onSubmit={() => onSubmit()}
+              />
+              <div className="flex h-screen">
+                <InterviewSidebar template={template} />
+                {showTasks ? (
+                  <div className="w-full bg-gray-100 flex flex-col justify-center ">
+                    <div className="mr-10 ml-10 p-10 ">
+                      <div className="border border-gray-300 bg-white rounded-md p-4 shadow-lg">
+                        <div>
+                          <p className="text-xl font-semibold mb-2">{currentTask?.question}</p>
+                          <textarea
+                            className="mt-1 w-full resize-none rounded-lg"
+                            rows={5}
+                            placeholder="Answer here"
+                            onChange={(e) => setAnswer(e.target.value)}
+                          ></textarea>
+                          <div className="flex justify-end mt-2">
+                            <CustomButton color="blue" onClick={() => getNextTask()}>
+                              <p>Next</p>
+                            </CustomButton>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+                {showEmails ? (
+                  <div className="w-full bg-gray-100 flex flex-col justify-center ">
+                    <div className="mr-10 ml-10 p-10 ">
+                      <div className="border border-gray-300 bg-white rounded-md p-4 shadow-lg">
+                        <div>
+                          <p className="text-xl font-semibold mb-2">{currentTask?.question}</p>
+                          {currentTask !== undefined && currentTask?.choices?.length !== 0 ? (
+                            <div className="flex justify-evenly items-center">
+                              {currentTask?.choices?.map((choice) => (
+                                <CustomButton
+                                  color="blue"
+                                  key={choice._id}
+                                  customStyles={`${choices.includes(choice?._id) ? "opacity-100" : "opacity-50"}`}
+                                  onClick={() => addOrDeleteChoice(choice?._id)}
+                                >
+                                  {choice.value}
+                                </CustomButton>
+                              ))}
+                            </div>
+                          ) : (
+                            <textarea
+                              className="mt-1 w-full resize-none rounded-lg"
+                              rows={5}
+                              placeholder="Answer here"
+                              onChange={(e) => setAnswer(e.target.value)}
+                            ></textarea>
+                          )}
+                          <div className="flex justify-end mt-2">
+                            <CustomButton color="blue" onClick={() => getNextTask()}>
+                              <p>Next</p>
+                            </CustomButton>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <button onClick={() => startInterview()}>Start Interview</button>
+            </div>
+          )}
+        </>
       )}
     </>
   );
