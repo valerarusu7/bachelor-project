@@ -6,6 +6,7 @@ import handleError from "../../../helpers/errorHandler";
 import withProtection from "../../../middleware/protection";
 import { websiteSchema } from "../../../models/api/Company";
 import withValidation from "../../../middleware/validation";
+import CustomError from "../../../helpers/CustomError";
 
 /**
  * @swagger
@@ -29,7 +30,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
 
     try {
-      await Company.findByIdAndUpdate(id, { website: body.website });
+      await Company.findByIdAndUpdate(id, { website: body.website }).then(
+        (raw) => {
+          if (!raw) {
+            throw CustomError("400", "Company id does not exist.");
+          }
+        }
+      );
 
       return res
         .status(200)

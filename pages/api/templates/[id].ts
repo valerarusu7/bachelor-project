@@ -4,6 +4,7 @@ import handleError from "../../../helpers/errorHandler";
 import { Roles } from "../../../types";
 import withBodyConversion from "../../../middleware/bodyConversion";
 import withProtection from "../../../middleware/protection";
+import CustomError from "../../../helpers/CustomError";
 
 /**
  * @swagger
@@ -40,7 +41,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         task.order = index;
       });
 
-      await Template.findByIdAndUpdate(id, template, { runValidators: true });
+      await Template.findByIdAndUpdate(id, template, {
+        runValidators: true,
+      }).then((raw) => {
+        if (!raw) {
+          throw CustomError("400", "Template id does not exist.");
+        }
+      });
 
       return res
         .status(200)
