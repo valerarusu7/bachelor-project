@@ -42,8 +42,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const id = context.params?.id;
 
-  console.log(id);
-
   // @ts-ignore
   const [candidate, videoInterview, comments]: [
     ICandidate,
@@ -52,20 +50,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // @ts-ignore
     ICandidateComment[]
   ] = await Promise.all([
-    Candidate.findById(id).lean(),
-    CandidateVideoInterview.findOne({ candidateId: id }).lean(),
+    Candidate.findById(id)
+      .select("firstName lastName email favorite interviews")
+      .lean(),
+    CandidateVideoInterview.findOne({ candidateId: id })
+      .select("answers createdAt")
+      .lean(),
     CandidateComment.find({ candidateId: id })
+      .select("comment userId createdAt")
       .populate("userId", "firstName lastName")
-      .lean(),  
+      .lean(),
   ]);
-
-  console.log(candidate);
-  console.log(videoInterview);
-  console.log(comments);
 
   return {
     props: {
       candidate: Candidate.toClientObject(candidate),
+      videoInterview: CandidateVideoInterview.toClientObject(videoInterview),
+      comments: CandidateComment.toClientArray(comments),
     },
   };
 };

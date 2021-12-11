@@ -1,8 +1,10 @@
 import { Schema, model, models } from "mongoose";
 import {
+  ICandidateVideoInterview,
   ICandidateVideoInterviewAnswer,
   ICandidateVideoInterviewAnswerDocument,
   ICandidateVideoInterviewDocument,
+  ICandidateVideoInterviewModel,
 } from "../types";
 
 const CandidateVideoInterviewAnswerSchema =
@@ -45,6 +47,16 @@ const CandidateVideoInterviewSchema =
     }
   );
 
+CandidateVideoInterviewSchema.statics.toClientObject = function (
+  candidateVideoInterview: ICandidateVideoInterview
+) {
+  candidateVideoInterview._id = candidateVideoInterview._id.toString();
+  candidateVideoInterview.createdAt =
+    candidateVideoInterview.createdAt.toString();
+
+  return candidateVideoInterview;
+};
+
 CandidateVideoInterviewSchema.pre("validate", function validate(next) {
   var unique = [];
 
@@ -61,8 +73,8 @@ CandidateVideoInterviewSchema.pre("validate", function validate(next) {
   next();
 });
 
-export default models.CandidateVideoInterview ||
-  model<ICandidateVideoInterviewDocument>(
+export default (models.CandidateVideoInterview as ICandidateVideoInterviewModel) ||
+  model<ICandidateVideoInterviewDocument, ICandidateVideoInterviewModel>(
     "CandidateVideoInterview",
     CandidateVideoInterviewSchema
   );
