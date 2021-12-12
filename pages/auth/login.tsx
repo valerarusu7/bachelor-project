@@ -35,6 +35,7 @@ const Login: React.FC = () => {
     })
       .then((response) => {
         if (response.ok) {
+          console.log(response);
           router.push("/dashboard");
         } else {
           return response.text().then((text) => {
@@ -51,18 +52,12 @@ const Login: React.FC = () => {
   return (
     <div className="h-screen w-full bg-white mx-auto text-center overflow-hidden">
       <NavBar />
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
-      />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
       <div className="flex">
         <div className="flex-col flex ml-auto mr-auto items-center w-full lg:w-2/3 md:w-3/5">
           <h1 className="font-bold text-2xl my-10 mt-16 text-black"> Login </h1>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mt-2 flex flex-col lg:w-1/2 w-8/12"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-2 flex flex-col lg:w-1/2 w-8/12">
             <div className="flex flex-wrap items-stretch w-auto mb-4 relative h-15 bg-white items-center rounded mb-6 pr-10">
               <div className="flex -mr-px justify-center w-15 p-4">
                 <span className="flex items-center leading-normal bg-white px-3 border-0 rounded rounded-r-none text-2xl text-gray-600">
