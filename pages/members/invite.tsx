@@ -40,6 +40,7 @@ const Invite: React.FC = () => {
   const [error, setError] = useState<string>("");
 
   function invite() {
+    setIsLoading(false);
     console.log(emails + " sent");
     let body = { emails };
     if (!emails.length) {
@@ -53,15 +54,17 @@ const Invite: React.FC = () => {
         if (response.ok) {
           // emails = [];
           setEmails([]);
-          setIsLoading(false);
+          setIsLoading(true);
         } else {
           return response.text().then((text) => {
             throw new Error(text);
+            setIsLoading(true);
           });
         }
       })
       .catch((error) => {
         //Handle error
+        setIsLoading(true);
         console.log(error);
       });
   }
@@ -195,7 +198,7 @@ const Invite: React.FC = () => {
               </button>
             </div>
           ))}
-          <div className={false ? "loading" : undefined}>
+          <div className={isLoading ? "invisible" : undefined}>
             <div className="flex justify-center items-center">
               <div className="animate-spin  m-8 rounded-full h-16 w-16 border-b-2 border-blue-400"></div>
             </div>
