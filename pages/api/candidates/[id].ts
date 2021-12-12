@@ -5,18 +5,18 @@ import withValidation from "../../../middleware/validation";
 import { favoriteSchema } from "../../../models/api/Candidate";
 import withProtection from "../../../middleware/protection";
 import CustomError from "../../../helpers/CustomError";
-import handler from "../../../utils/handler";
 import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const validation = nextConnect().patch(
   "/api/candidates/:id",
   withValidation(favoriteSchema, true)
 );
 
-export default handler
+export default nextConnect()
   .use(validation)
   .use(withProtection([Roles.Manager, Roles.Admin]))
-  .patch(async (req, res) => {
+  .patch(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { id, favorite } = req.query;
       await Candidate.findByIdAndUpdate(
@@ -41,7 +41,7 @@ export default handler
       return res.status(result.code).json({ error: result.error });
     }
   })
-  .delete(async (req, res) => {
+  .delete(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { id } = req.query;
       await Candidate.findByIdAndDelete(id).then((raw) => {

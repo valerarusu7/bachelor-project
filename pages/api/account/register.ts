@@ -3,12 +3,13 @@ import withRegistrationProtection from "../../../middleware/registrationProtecti
 import withValidation from "../../../middleware/validation";
 import { registrationSchema } from "../../../models/api/User";
 import User from "../../../models/User";
-import handler from "../../../utils/handler";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
-export default handler
+export default nextConnect()
   .use(withValidation(registrationSchema))
   .use(withRegistrationProtection())
-  .post(async (req, res) => {
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const companyId = req.companyId;

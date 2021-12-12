@@ -5,7 +5,7 @@ import User from "../../../models/User";
 import { Roles } from "../../../types";
 import withValidation from "../../../middleware/validation";
 import { registrationSchema, websiteSchema } from "../../../models/api/Company";
-import handler from "../../../utils/handler";
+import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
 import withProtection from "../../../middleware/protection";
 import CustomError from "../../../helpers/CustomError";
@@ -34,10 +34,10 @@ const protection = nextConnect().patch(
   withProtection([Roles.Manager, Roles.Admin])
 );
 
-export default handler
+export default nextConnect()
   .use(validation)
   .use(protection)
-  .post(async (req, res) => {
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
@@ -63,7 +63,7 @@ export default handler
       return res.status(result.code).json({ error: result.error });
     }
   })
-  .patch(async (req, res) => {
+  .patch(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const companyId = req.companyId;

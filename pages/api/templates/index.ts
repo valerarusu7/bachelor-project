@@ -3,7 +3,8 @@ import withBodyConversion from "../../../middleware/bodyConversion";
 import withProtection from "../../../middleware/protection";
 import Template from "../../../models/Template";
 import { Roles } from "../../../types";
-import handler from "../../../utils/handler";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
 /**
  * @swagger
@@ -12,10 +13,10 @@ import handler from "../../../utils/handler";
  *     description: Create a new template
  */
 
-export default handler
+export default nextConnect()
   .use(withProtection([Roles.Manager, Roles.Admin]))
   .use(withBodyConversion())
-  .post(async (req, res) => {
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     //@ts-ignore
     const companyId = req.companyId;

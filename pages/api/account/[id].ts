@@ -5,12 +5,13 @@ import withProtection from "../../../middleware/protection";
 import withValidation from "../../../middleware/validation";
 import { roleSchema } from "../../../models/api/User";
 import CustomError from "../../../helpers/CustomError";
-import handler from "../../../utils/handler";
+import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default handler
+export default nextConnect()
   .use(withValidation(roleSchema, true))
   .use(withProtection([Roles.Admin]))
-  .patch(async (req, res) => {
+  .patch(async (req: NextApiRequest, res: NextApiResponse) => {
     const { id, role } = req.query;
     // @ts-ignore
     const userId = req.id;

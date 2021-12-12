@@ -1,4 +1,5 @@
 import { BellIcon } from "@heroicons/react/outline";
+import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { stringAvatar } from "../../helpers/stringAvatar";
 import { useAppSelector } from "../../store/hooks";
@@ -9,6 +10,7 @@ export interface HeaderProps {
 }
 
 function Header({ header }: HeaderProps) {
+  const router = useRouter();
   const { user } = useAppSelector(selectAuth);
   const dispatch = useDispatch();
 
@@ -18,6 +20,7 @@ function Header({ header }: HeaderProps) {
     })
       .then((response) => {
         if (response.ok) {
+          router.push("/");
           console.log(response);
           dispatch(setUser(undefined));
         } else {
