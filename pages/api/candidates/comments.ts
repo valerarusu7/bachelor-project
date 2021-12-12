@@ -19,14 +19,14 @@ export default nextConnect()
 
     try {
       // @ts-ignore
-      await candidateComment.save();
+      await candidateComment
+        .save()
+        .then((comment) => comment.populate("userId", "firstName lastName"));
 
-      return res
-        .status(201)
-        .json({
-          success: "Successfully added comment.",
-          comment: candidateComment,
-        });
+      return res.status(201).json({
+        success: "Successfully added comment.",
+        comment: candidateComment,
+      });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
