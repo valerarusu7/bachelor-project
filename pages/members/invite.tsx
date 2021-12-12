@@ -180,10 +180,10 @@ const Invite: React.FC = () => {
           </p>
           {emails.map((email) => (
             <div
-              className="bg-gray-200 text-base rounded-3xl h-14 align-center p-4 m-2 inline-flex text-sm items-center"
+              className="invite-emails bg-gray-200 text-base rounded-3xl h-14 align-center p-4 m-2 inline-flex text-sm items-center"
               key={email}
             >
-              {email}
+              <span>{email}</span>
               <button
                 type="button"
                 className="bg-white w-5 h-5 cursor-pointer ml-2 font-bold p-0 leading-none flex items-center justify-center rounded-3xl "
