@@ -1,9 +1,5 @@
-import { mixed, object, array, string, number } from "yup";
+import { lazy, object, array, string, number } from "yup";
 
 export const taskSchema = object({
-  answer: mixed().when("isArray", {
-    is: Array.isArray,
-    then: array().of(number()),
-    otherwise: string(),
-  }),
+  answer: lazy((val) => (Array.isArray(val) ? array().of(number()) : string())),
 });

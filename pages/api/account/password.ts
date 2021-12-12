@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import User from "../../../models/User";
 import withValidation from "../../../middleware/validation";
 import withProtection from "../../../middleware/protection";
 import { changePasswordSchema } from "../../../models/api/User";
+import handler from "../../../utils/handler";
 
 /**
  * @swagger
@@ -12,8 +12,10 @@ import { changePasswordSchema } from "../../../models/api/User";
  *     description: Create a new template
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "PATCH") {
+export default handler
+  .use(withValidation(changePasswordSchema))
+  .use(withProtection())
+  .patch(async (req, res) => {
     const body = req.body;
     // @ts-ignore
     const id = req.id;
@@ -37,9 +39,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only PATCH requests are allowed." });
-};
-
-export default withValidation(changePasswordSchema, withProtection(handler));
+  });

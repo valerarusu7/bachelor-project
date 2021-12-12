@@ -1,5 +1,9 @@
 import { Schema, model, models } from "mongoose";
-import { ICandidateCommentDocument } from "../types";
+import {
+  ICandidateCommentDocument,
+  ICandidateCommentModel,
+  ICandidateComment,
+} from "../types";
 
 const CandidateCommentSchema = new Schema<ICandidateCommentDocument>(
   {
@@ -24,5 +28,23 @@ const CandidateCommentSchema = new Schema<ICandidateCommentDocument>(
   }
 );
 
-export default models.CandidateComment ||
-  model<ICandidateCommentDocument>("CandidateComment", CandidateCommentSchema);
+CandidateCommentSchema.statics.toClientArray = function (
+  candidateComments: ICandidateComment[]
+) {
+  return candidateComments.map((candidateComment) => {
+    candidateComment._id = candidateComment._id.toString();
+    candidateComment.createdAt = candidateComment.createdAt.toString();
+    //@ts-ignore
+    if (candidateComment.userId._id) {
+      //@ts-ignore
+      candidateComment.userId._id = candidateComment.userId._id.toString();
+    }
+    return candidateComment;
+  });
+};
+
+export default (models.CandidateComment as ICandidateCommentModel) ||
+  model<ICandidateCommentDocument, ICandidateCommentModel>(
+    "CandidateComment",
+    CandidateCommentSchema
+  );

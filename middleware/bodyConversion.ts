@@ -1,13 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { AsyncRequestHandler } from "../types";
+import { NextHandler } from "next-connect";
 
-const withBodyConversion = (handler: AsyncRequestHandler) => {
-  return async (req: NextApiRequest, res: NextApiResponse) => {
+const withBodyConversion = () => {
+  return async (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    next: NextHandler
+  ) => {
     if (req.body && req.body.constructor !== Object) {
       req.body = JSON.parse(req.body);
     }
 
-    return handler(req, res);
+    return next();
   };
 };
 export default withBodyConversion;
