@@ -24,13 +24,7 @@ import { TaskTypes } from "../../types";
 
 function TaskModalContent() {
   const dispatch = useAppDispatch();
-  const {
-    templateChoices,
-    templateTasks,
-    templateTaskType,
-    templateTask,
-    edit,
-  } = useAppSelector(selectTemplate);
+  const { templateChoices, templateTasks, templateTaskType, templateTask, edit } = useAppSelector(selectTemplate);
   const [question, setQuestion] = useState("");
   const [textAnswer, setTextAnswer] = useState(true);
   const [color, setColor] = useState("");
@@ -64,10 +58,10 @@ function TaskModalContent() {
         {
           taskType: templateTaskType,
           order: templateTasks.length,
-          choices: templateTaskType === TaskTypes.Single ? [] : templateChoices,
+          choices: templateTaskType === TaskTypes.Single || textAnswer ? [] : templateChoices,
           question: question,
         },
-      ])
+      ]),
     );
     dispatch(setShow(false));
   }
@@ -114,10 +108,7 @@ function TaskModalContent() {
         </div>
         <div className="w-full mt-2 p-2">
           <div>
-            <label
-              htmlFor="task"
-              className="block text-md font-medium text-gray-700"
-            >
+            <label htmlFor="task" className="block text-md font-medium text-gray-700">
               Task
             </label>
             <div className="mt-1 flex rounded-md shadow-sm">
@@ -135,31 +126,19 @@ function TaskModalContent() {
             <div>
               <div className="mt-6 flex items-center">
                 <div className="w-1/3">
-                  <label
-                    htmlFor="company-website"
-                    className="block text-md font-medium text-gray-700"
-                  >
+                  <label htmlFor="company-website" className="block text-md font-medium text-gray-700">
                     Answer
                   </label>
                 </div>
 
                 <div className="flex justify-end items-center w-2/3">
-                  <CustomButton
-                    disabled={!textAnswer}
-                    color={color}
-                    onClick={() => setTextAnswer(true)}
-                    customStyles="mr-2"
-                  >
+                  <CustomButton disabled={!textAnswer} color={color} onClick={() => setTextAnswer(true)} customStyles="mr-2">
                     <div className="flex">
                       <BiText className="h-6 w-6" />
                       <p>Text answer</p>
                     </div>
                   </CustomButton>
-                  <CustomButton
-                    disabled={textAnswer}
-                    color={color}
-                    onClick={() => setTextAnswer(false)}
-                  >
+                  <CustomButton disabled={textAnswer} color={color} onClick={() => setTextAnswer(false)}>
                     <div className="flex">
                       <VscTasklist className="h-6 w-6 mr-1" />
                       <p>Choice answer</p>
@@ -170,30 +149,18 @@ function TaskModalContent() {
               {!textAnswer ? (
                 <div className="mt-4">
                   {edit
-                    ? templateTask?.choices?.map((choice, idx) => (
-                        <EmailChoice key={idx} id={idx + 1} />
-                      ))
-                    : templateChoices.map((choice, idx) => (
-                        <EmailChoice key={idx} id={idx + 1} />
-                      ))}
-                  {edit &&
-                  templateTask.choices !== undefined &&
-                  templateTask.choices.length <= 4 ? (
+                    ? templateTask?.choices?.map((choice, idx) => <EmailChoice key={idx} id={idx + 1} />)
+                    : templateChoices.map((choice, idx) => <EmailChoice key={idx} id={idx + 1} />)}
+                  {edit && templateTask.choices !== undefined && templateTask.choices.length <= 4 ? (
                     <div className="mt-2">
-                      <CustomButton
-                        color={color}
-                        onClick={() => dispatch(addTaskChoice())}
-                      >
+                      <CustomButton color={color} onClick={() => dispatch(addTaskChoice())}>
                         Add choice
                       </CustomButton>
                     </div>
                   ) : null}
                   {!edit && templateChoices.length <= 4 ? (
                     <div className="mt-2">
-                      <CustomButton
-                        color={color}
-                        onClick={() => dispatch(addChoice())}
-                      >
+                      <CustomButton color={color} onClick={() => dispatch(addChoice())}>
                         Add choice
                       </CustomButton>
                     </div>
@@ -205,30 +172,18 @@ function TaskModalContent() {
             <div>
               <div className="mt-4">
                 {edit
-                  ? templateTask?.choices?.map((choice, idx) => (
-                      <EmailChoice key={idx} id={idx + 1} />
-                    ))
-                  : templateChoices.map((choice, idx) => (
-                      <EmailChoice key={idx} id={idx + 1} />
-                    ))}
-                {edit &&
-                templateTask.choices !== undefined &&
-                templateTask.choices.length <= 4 ? (
+                  ? templateTask?.choices?.map((choice, idx) => <EmailChoice key={idx} id={idx + 1} />)
+                  : templateChoices.map((choice, idx) => <EmailChoice key={idx} id={idx + 1} />)}
+                {edit && templateTask.choices !== undefined && templateTask.choices.length <= 4 ? (
                   <div className="mt-2">
-                    <CustomButton
-                      color={color}
-                      onClick={() => dispatch(addTaskChoice())}
-                    >
+                    <CustomButton color={color} onClick={() => dispatch(addTaskChoice())}>
                       Add choice
                     </CustomButton>
                   </div>
                 ) : null}
                 {!edit && templateChoices.length <= 4 ? (
                   <div className="mt-2">
-                    <CustomButton
-                      color={color}
-                      onClick={() => dispatch(addChoice())}
-                    >
+                    <CustomButton color={color} onClick={() => dispatch(addChoice())}>
                       Add choice
                     </CustomButton>
                   </div>

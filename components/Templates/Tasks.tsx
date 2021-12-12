@@ -31,7 +31,6 @@ function Tasks({ setStateTasks }: ITasks) {
                 <th className="py-3 px-6 text-left">Question</th>
                 <th className="py-3 px-6 text-center">Type</th>
                 <th className="py-3 px-6 text-center">Correct answers</th>
-                <th className="py-3 px-6 text-center">Score</th>
                 <th className="py-3 px-6 text-center">Options</th>
               </tr>
             </thead>
