@@ -7,6 +7,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { setUser } from "../../store/reducers/authSlice";
+import { useDispatch } from "react-redux";
 
 type UserSubmitForm = {
   email: string;
@@ -14,6 +16,7 @@ type UserSubmitForm = {
 };
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required").email("Email is invalid"),
   });
@@ -35,7 +38,9 @@ const Login: React.FC = () => {
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
+          response.json().then((data) => {
+            dispatch(setUser(data.user));
+          });
           router.push("/dashboard");
         } else {
           return response.text().then((text) => {

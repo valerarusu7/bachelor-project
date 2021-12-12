@@ -6,9 +6,39 @@ import { stringAvatar } from "../../../helpers/stringAvatar";
 import { ICandidateProps } from "../../../types";
 import CustomButton from "../../common/CustomButton";
 import moment from "moment";
+import { useAppSelector } from "../../../store/hooks";
+import { selectAuth } from "../../../store/reducers/authSlice";
+import { useState } from "react";
 
 function CandidateTimeline({ candidate, videoInterview, comments, interviews }: ICandidateProps) {
-  console.log(comments);
+  const { user } = useAppSelector(selectAuth);
+  //  commnet candidateId
+  const [newComment, setNewComment] = useState("");
+
+  function addComment() {
+    let body = {
+      commnet: newComment,
+      candidateId: candidate._id,
+    };
+    fetch("/api/candidates/comment", {
+      method: "POST",
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log(response);
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+      })
+      .catch((error) => {
+        //Handle error
+        console.log(error);
+      });
+  }
+
   return (
     <div className="flex justify-start h-full">
       <div className="flex flex-col w-full ">
@@ -67,14 +97,16 @@ function CandidateTimeline({ candidate, videoInterview, comments, interviews }: 
         <Separator />
         <div className="flex">
           <div className="h-10 w-10 text-white rounded-full bg-gradient-to-tr from-gray-700 to-gray-400 p-1 items-center flex flex-col justify-center mr-2">
-            <p className="font-semibold">{stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}</p>
+            <p className="font-semibold">{stringAvatar(user !== undefined ? user.name : "Logged User")}</p>
           </div>
           <input
             type="text"
             className="focus:ring-blue-500 focus:border-blue-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300 mr-2"
             placeholder="Leave a comment"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
           />
-          <CustomButton type="submit" color="blue">
+          <CustomButton type="submit" color="blue" onClick={() => addComment()}>
             <p>Comment</p>
           </CustomButton>
         </div>

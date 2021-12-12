@@ -25,7 +25,7 @@ export default handler.use(withValidation(loginSchema)).post(async (req, res) =>
       id: user._id,
     });
 
-    return res.status(200).json({ success: "Successfully logged in.", user: user });
+    return res.status(200).json({ success: "Successfully logged in.", user: login_user });
   } catch (error) {
     const result = handleError(error as Error);
     return res.status(result.code).json({ error: result.error });
