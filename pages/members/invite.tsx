@@ -20,6 +20,7 @@ const Invite: React.FC = () => {
     email: Yup.string().required("Email is required").email("Email is invalid"),
   });
   const [inputs, setInputs] = React.useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     register,
@@ -52,6 +53,7 @@ const Invite: React.FC = () => {
         if (response.ok) {
           // emails = [];
           setEmails([]);
+          setIsLoading(false);
         } else {
           return response.text().then((text) => {
             throw new Error(text);
@@ -193,6 +195,11 @@ const Invite: React.FC = () => {
               </button>
             </div>
           ))}
+          <div className={false ? "loading" : undefined}>
+            <div className="flex justify-center items-center">
+              <div className="animate-spin  m-8 rounded-full h-16 w-16 border-b-2 border-blue-400"></div>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
