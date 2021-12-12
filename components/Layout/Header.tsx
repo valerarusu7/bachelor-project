@@ -1,17 +1,19 @@
 import { BellIcon } from "@heroicons/react/outline";
+import { useRouter } from "next/router";
 
 export interface HeaderProps {
   header: string;
 }
 
 function Header({ header }: HeaderProps) {
+  const router = useRouter();
   function logout() {
     fetch("/api/account/logout", {
       method: "GET",
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
+          router.push("/");
         } else {
           return response.text().then((text) => {
             throw new Error(text);

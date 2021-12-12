@@ -8,7 +8,8 @@ import { Roles } from "../../../../types";
 import withProtection from "../../../../middleware/protection";
 import { emailsSchema } from "../../../../models/api/Email";
 import withValidation from "../../../../middleware/validation";
-import handler from "../../../../utils/handler";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -19,10 +20,10 @@ const { INTERVIEW_PRIVATE_KEY } = process.env;
  *     description: Create a new template
  */
 
-export default handler
+export default nextConnect()
   .use(withValidation(emailsSchema))
   .use(withProtection([Roles.Manager, Roles.Admin]))
-  .post(async (req, res) => {
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
     const body = req.body;
     // @ts-ignore
