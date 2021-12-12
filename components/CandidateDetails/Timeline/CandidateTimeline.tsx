@@ -14,13 +14,14 @@ function CandidateTimeline({ candidate, videoInterview, comments, interviews }: 
   const { user } = useAppSelector(selectAuth);
   //  commnet candidateId
   const [newComment, setNewComment] = useState("");
+  const [localComments, setLocalComments] = useState(comments);
 
   function addComment() {
     let body = {
-      commnet: newComment,
+      comment: newComment,
       candidateId: candidate._id,
     };
-    fetch("/api/candidates/comment", {
+    fetch("/api/candidates/comments", {
       method: "POST",
       body: JSON.stringify(body),
     })
@@ -83,14 +84,14 @@ function CandidateTimeline({ candidate, videoInterview, comments, interviews }: 
         ))}
 
         {/* <TimelineItem Icon={EyeIcon} date="27 sep" helpText="Assessed by" position="Karsten Dehler" color="gray" /> */}
-        {comments.map((comment: any) => (
+        {comments.map((comment: any, i: any) => (
           <TimelineItem
             Icon={ChatAltIcon}
             comment={true}
             manager={comment.userId}
-            time={moment(moment.utc(comment.createdAt), "YYYYMMDD").startOf("hour").fromNow().toString()}
+            time={moment(moment.utc(comment.createdAt).toDate(), "YYYYMMDD").local().calendar()}
             commentText={comment.comment}
-            show={false}
+            show={i !== comments.length - 1 ? true : false}
           />
         ))}
         {/* <TimelineItem Icon={StarIcon} date="27 sep" helpText="Added to favorites by" position="Karsten Dehler" color="yellow" show={true} /> */}
