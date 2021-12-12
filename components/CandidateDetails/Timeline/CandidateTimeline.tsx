@@ -27,7 +27,14 @@ function CandidateTimeline({ candidate, videoInterview, comments, interviews }: 
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
+          response.json().then((data) => {
+            console.log(data);
+            let newComments = [...localComments];
+            newComments.push(data.comment);
+            setLocalComments(newComments);
+            console.log(localComments);
+          });
+          setNewComment("");
         } else {
           return response.text().then((text) => {
             throw new Error(text);
