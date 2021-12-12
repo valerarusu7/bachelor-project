@@ -107,6 +107,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
               //@ts-ignore
               .filter((choice) => answer.choices.includes(choice._id))
               .map((choice) => choice.value),
+            choices: task.choices,
           };
         } else {
           return {
