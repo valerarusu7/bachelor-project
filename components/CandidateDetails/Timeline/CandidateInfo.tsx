@@ -7,9 +7,9 @@ import { stringAvatar } from "../../../helpers/stringAvatar";
 
 function CandidateInfo({ candidate }: ICandidateProps) {
   return (
-    <div className=" max-h-80 bg-white rounded-lg shadow-lg mr-4 p-2 flex flex-col border border-gray-300">
+    <div className="max-h-80 bg-white rounded-lg shadow-lg mr-4 p-2 flex flex-col border border-gray-300">
       <div className="flex h-28 w-full">
-        <div className="h-40 w-40 rounded-full bg-gray-300 relative border-8 border-gray-200 ml-8 -top-12 flex justify-center items-center p-1">
+        <div className="h-40 w-40 rounded-full bg-gray-300 relative border-8 border-gray-100 ml-8 -top-12 flex justify-center items-center p-1">
           <p className="text-6xl font-bold text-gray-500">
             {stringAvatar(`${candidate.firstName} ${candidate.lastName}`)}
           </p>
