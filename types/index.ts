@@ -120,6 +120,9 @@ export interface ICandidateDetailsProps {
 
 export interface ICandidateProps {
   candidate: ICandidate;
+  videoInterview?: any;
+  comments?: any;
+  interviews?: any;
   idx?: number;
 }
 
@@ -268,9 +271,10 @@ export interface ITimelineItem {
   date?: string;
   color?: string;
   comment?: boolean;
-  candidate?: ICandidate;
+  manager?: any;
   time?: string;
   show?: boolean;
+  commentText?: string;
 }
 
 export interface IChoice {

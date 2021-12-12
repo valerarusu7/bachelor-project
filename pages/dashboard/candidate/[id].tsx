@@ -14,7 +14,9 @@ import moment from "moment";
 import { CheckIcon, UserIcon, XIcon } from "@heroicons/react/solid";
 
 function CandidateDetails({ candidate, videoInterview, comments, interviews }: ICandidateDetailsProps) {
-  console.log(interviews);
+  console.log(videoInterview, "video");
+  console.log(interviews, "template");
+
   return (
     <Layout header="Candidate Details">
       <div className="grid grid-cols-6 mt-10 ">
@@ -76,8 +78,10 @@ function CandidateDetails({ candidate, videoInterview, comments, interviews }: I
             </div>
           ))}
         </div>
-        <div className="col-span-2 bg-white rounded-lg shadow-lg p-2 border border-gray-300">
-          <CandidateTimeline candidate={candidate} />
+        <div className="col-span-2 ">
+          <div className="bg-white rounded-lg shadow-lg p-2 border border-gray-300">
+            <CandidateTimeline candidate={candidate} videoInterview={videoInterview} comments={comments} interviews={interviews} />
+          </div>
         </div>
       </div>
     </Layout>
