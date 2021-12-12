@@ -38,7 +38,7 @@ export default nextConnect()
 
       return res
         .status(200)
-        .json({ success: "Successfully logged in.", user: user });
+        .json({ success: "Successfully logged in.", user: login_user });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

@@ -1,5 +1,9 @@
 import { BellIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { stringAvatar } from "../../helpers/stringAvatar";
+import { useAppSelector } from "../../store/hooks";
+import { selectAuth, setUser } from "../../store/reducers/authSlice";
 
 export interface HeaderProps {
   header: string;
@@ -7,6 +11,9 @@ export interface HeaderProps {
 
 function Header({ header }: HeaderProps) {
   const router = useRouter();
+  const { user } = useAppSelector(selectAuth);
+  const dispatch = useDispatch();
+
   function logout() {
     fetch("/api/account/logout", {
       method: "GET",
@@ -14,6 +21,8 @@ function Header({ header }: HeaderProps) {
       .then((response) => {
         if (response.ok) {
           router.push("/");
+          console.log(response);
+          dispatch(setUser(undefined));
         } else {
           return response.text().then((text) => {
             throw new Error(text);
@@ -37,10 +46,9 @@ function Header({ header }: HeaderProps) {
             <BellIcon className="h-6 w-6 " />
           </div>
           <div className="flex items-center mr-2">
-            <img
-              src="https://www.cityam.com/wp-content/uploads/2021/01/Manchester-United-v-Manchester-City---Premier-League-1290892183-960x640.jpg"
-              className="mx-auto object-cover rounded-full h-8 w-8 cursor-pointer hover:opacity-90 mr-1"
-            />
+            <div className="h-8 w-8 rounded-full bg-gray-300 relative  border-gray-100 flex justify-center items-center p-1">
+              <p className=" font-bold text-gray-500">{stringAvatar(user !== undefined ? user.name : "Logged User")}</p>
+            </div>
           </div>
           <div
             className="flex justify-center items-center text-gray-600 text-sm font-semibold cursor-pointer hover:opacity-80"

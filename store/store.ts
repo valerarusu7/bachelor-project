@@ -1,17 +1,11 @@
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
+import { persistStore } from "redux-persist";
+import thunk from "redux-thunk";
+import reducer from "./reducer";
 
-import dashboardSlice from "./reducers/dashboardSlice";
-import interviewSlice from "./reducers/interviewSlice";
-import templateSlice from "./reducers/template";
+export const store = configureStore({ reducer: reducer, devTools: false, middleware: [thunk] });
 
-export const store = configureStore({
-  reducer: {
-    dashboard: dashboardSlice,
-    template: templateSlice,
-    interview: interviewSlice,
-  },
-  devTools: false,
-});
+export const persistor = persistStore(store);
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
