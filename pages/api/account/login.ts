@@ -23,12 +23,13 @@ export default handler
           .json({ error: "Email or password is incorrect." });
       }
 
+      const name = user.firstName + " " + user.lastName;
       setTokensInCookie(
         res,
         {
           id: user._id,
           email: user.email,
-          name: user.firstName + " " + user.lastName,
+          name: name,
           companyId: user.companyId,
           role: user.role,
         },
@@ -37,7 +38,9 @@ export default handler
         }
       );
 
-      return res.status(200).json({ success: "Successfully logged in." });
+      return res
+        .status(200)
+        .json({ success: "Successfully logged in.", name: name });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
