@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "cypress:open": "./node_modules/.bin/cypress open"
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",
@@ -25,6 +26,7 @@
     "bcryptjs": "^2.4.3",
     "chart.js": "^3.5.1",
     "cookie": "^0.4.1",
+    "cypress": "^9.1.1",
     "eslint": "^8.1.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
