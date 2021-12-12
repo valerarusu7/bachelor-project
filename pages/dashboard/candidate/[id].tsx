@@ -11,6 +11,7 @@ import CandidateComment from "../../../models/CandidateComment";
 import Template from "../../../models/Template";
 import InfoItem from "../../../components/CandidateDetails/InfoItem";
 import moment from "moment";
+import { CheckIcon, UserIcon, XIcon } from "@heroicons/react/solid";
 
 function CandidateDetails({ candidate, videoInterview, comments, interviews }: ICandidateDetailsProps) {
   console.log(interviews);
@@ -20,25 +21,62 @@ function CandidateDetails({ candidate, videoInterview, comments, interviews }: I
         <div className="col-span-4 flex flex-col ">
           <CandidateInfo candidate={candidate} />
           {interviews.map((interview) => (
-            <div className="bg-white rounded-lg shadow-lg mt-4 mr-4 p-3 flex flex-col border border-gray-300 ">
+            <div key={interview._id} className="bg-white rounded-lg shadow-lg mt-4 mr-4 p-3 flex flex-col border border-gray-300 ">
               <div className=" flex justify-between items-center">
                 <InfoItem label="Template" value={interview.name} />
-                <InfoItem label="Region" value={interview.region} />
+                <InfoItem label="Region" value={interview.region !== undefined ? interview?.region : "Unknown"} />
                 <InfoItem label="Status" value={interview.completed ? "Completed" : "Pending"} />
                 <InfoItem label="Completion Date" value={moment(interview.completedUtc).format("DD/MM/YYYY")} />
               </div>
-              <div>
-                <p>Tasks</p>
+              <div className="p-1">
+                <p className="text-gray-500 font-bold mt-3 uppercase">Tasks</p>
                 {interview.tasks.map((task) => (
-                  <div>
-                    <p>{task.answer}</p>
+                  <div key={task._id} className="grid grid-cols-2 items-center justify-center border-b border-gray-300  pt-3 pb-3">
+                    <div className="col-span-1 ">
+                      <p className="font-semibold pr-3">{task.question}</p>
+                    </div>
+                    <div className="col-span-1 flex flex-col justify-center items-center w-full">
+                      {task?.choices?.length !== 0 ? (
+                        <div className="w-full ">
+                          {task?.choices ? (
+                            task.choices?.map((choice) => (
+                              <div
+                                key={choice._id}
+                                className="flex justify-between items-center text-sm w-full border rounded-lg mb-2 p-1 border-gray-400"
+                              >
+                                <div>
+                                  <p className={`${choice.isCorrect ? "text-green-600" : "text-red-600"} font-semibold text-left`}>
+                                    {choice.value}
+                                  </p>
+                                </div>
+                                <div className="flex justify-center items-center ">
+                                  <div className="flex justify-center items-center w-5 h-5">
+                                    {task?.answer?.includes(choice.value) ? <UserIcon className="w-5 h-5 text-gray-600" /> : null}
+                                  </div>
+
+                                  <div className="flex justify-center items-center  w-6 h-6 ">
+                                    {choice.isCorrect ? (
+                                      <CheckIcon className="w-6 h-6 text-green-600" />
+                                    ) : (
+                                      <XIcon className="w-6 h-6 text-red-600" />
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div>{task.answer}</div>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           ))}
         </div>
-        <div className="col-span-2 bg-white rounded-lg shadow-lg p-2 h-auto border border-gray-300">
+        <div className="col-span-2 bg-white rounded-lg shadow-lg p-2 border border-gray-300">
           <CandidateTimeline candidate={candidate} />
         </div>
       </div>
