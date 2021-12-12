@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { ICandidate, ICandidateProps } from "../../../types";
+import { ICandidate, ICandidateDetailsProps } from "../../../types";
 
 import Candidate from "../../../models/Candidate";
 import CandidateInfo from "../../../components/CandidateDetails/Timeline/CandidateInfo";
@@ -8,8 +8,15 @@ import Layout from "../../../components/Layout/Layout";
 import protect from "../../../helpers/protect";
 import CandidateVideoInterview from "../../../models/CandidateVideoInterview";
 import CandidateComment from "../../../models/CandidateComment";
+import Template from "../../../models/Template";
 
-function CandidateDetails({ candidate }: ICandidateProps) {
+function CandidateDetails({
+  candidate,
+  videoInterview,
+  comments,
+  interviews,
+}: ICandidateDetailsProps) {
+  console.log(interviews);
   return (
     <Layout header="Candidate Details">
       <div className="grid grid-cols-6 mt-10 ">
@@ -50,18 +57,74 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // @ts-ignore
     ICandidateComment[]
   ] = await Promise.all([
-    Candidate.findById(id).lean(),
-    CandidateVideoInterview.findOne({ candidateId: id }).lean(),
-    CandidateComment.find({ candidateId: id }).lean(),
+    Candidate.findById(id)
+      .select("firstName lastName email favorite interviews")
+      .lean(),
+    CandidateVideoInterview.findOne({ candidateId: id })
+      .select("answers createdAt")
+      .lean(),
+    CandidateComment.find({ candidateId: id })
+      .select("comment userId createdAt")
+      .populate("userId", "firstName lastName")
+      .lean(),
   ]);
+  let jobIds = candidate.interviews.map((interview) => interview.jobId);
 
-  console.log(candidate);
-  console.log(videoInterview);
-  console.log(comments);
+  const templates = await Template.find({ jobId: { $in: jobIds } }).lean();
+
+  const interviews = templates.map((template) => {
+    const interview = candidate.interviews.find(
+      (interview) => interview.jobId === template.jobId
+    );
+
+    return {
+      name: template.name,
+      region: interview?.region,
+      countryCode: interview?.countryCode,
+      completed: interview?.completed,
+      time: interview?.time,
+      score: interview?.score,
+      completedUtc: interview?.completedUtc.toString(),
+      startedUtc: interview?.startedUtc.toString(),
+      tasks: template.tasks.map((task) => {
+        const answer = interview?.answers.find(
+          (answer) => answer.taskId.toString() === task._id.toString()
+        );
+
+        if (!answer) {
+          return {
+            question: task.question,
+            taskType: task.taskType,
+            answer: "No answer found",
+          };
+        }
+
+        if (task.choices.length !== 0) {
+          return {
+            question: task.question,
+            taskType: task.taskType,
+            answer: task.choices
+              //@ts-ignore
+              .filter((choice) => answer.choices.includes(choice._id))
+              .map((choice) => choice.value),
+          };
+        } else {
+          return {
+            question: task.question,
+            taskType: task.taskType,
+            answer: answer.answer,
+          };
+        }
+      }),
+    };
+  });
 
   return {
     props: {
       candidate: Candidate.toClientObject(candidate),
+      videoInterview: CandidateVideoInterview.toClientObject(videoInterview),
+      comments: CandidateComment.toClientArray(comments),
+      interviews: interviews,
     },
   };
 };

@@ -2,13 +2,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import { Error } from "mongoose";
 import handleError from "../helpers/errorHandler";
-import { AsyncRequestHandler, IRegistrationTokenPayload } from "../types";
+import { IRegistrationTokenPayload } from "../types";
 import connectDB from "../utils/mongodb";
+import { NextHandler } from "next-connect";
 
 const { ACCOUNT_PRIVATE_KEY } = process.env;
 
-const withRegistrationProtection = (handler: AsyncRequestHandler) => {
-  return async (req: NextApiRequest, res: NextApiResponse) => {
+const withRegistrationProtection = () => {
+  return async (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    next: NextHandler
+  ) => {
     const authValue = req.headers.authorization;
 
     if (!authValue) {
@@ -32,7 +37,7 @@ const withRegistrationProtection = (handler: AsyncRequestHandler) => {
       req.companyName = companyName;
 
       await connectDB();
-      return handler(req, res);
+      return next();
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

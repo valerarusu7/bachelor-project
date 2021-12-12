@@ -1,6 +1,6 @@
+import Canvas from "../components/Landing Page/canvas/canvas";
 import Link from "next/link";
 import NavBar from "../components/Landing Page/navbar";
-import Canvas from "../components/Landing Page/canvas/canvas";
 
 function Welcome() {
   return (

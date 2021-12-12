@@ -2,13 +2,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import { Error } from "mongoose";
 import handleError from "../helpers/errorHandler";
-import { AsyncRequestHandler, IInterviewTokenPayload } from "../types";
+import { IInterviewTokenPayload } from "../types";
 import connectDB from "../utils/mongodb";
+import { NextHandler } from "next-connect";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
-const withInterviewProtection = (handler: AsyncRequestHandler) => {
-  return async (req: NextApiRequest, res: NextApiResponse) => {
+const withInterviewProtection = () => {
+  return async (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    next: NextHandler
+  ) => {
     const authValue = req.headers.authorization;
     const { started } = req.cookies;
 
@@ -30,7 +35,7 @@ const withInterviewProtection = (handler: AsyncRequestHandler) => {
       req.started = started;
 
       await connectDB();
-      return handler(req, res);
+      return next();
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
