@@ -3,10 +3,9 @@ import Canvas from "../../components/Landing Page/canvas/canvas";
 import FormInput from "../../components/Landing Page/FormInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-
-import React from "react";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
+import React, { useState } from "react";
 
 type UserSubmitForm = {
   email: string;
@@ -18,6 +17,9 @@ const Login: React.FC = () => {
     email: Yup.string().required("Email is required").email("Email is invalid"),
   });
   const router = useRouter();
+  const [error, setError] = useState<string>("");
+  setError("");
+  setError("Email or password is incorrect.");
 
   const {
     register,
@@ -89,7 +91,11 @@ const Login: React.FC = () => {
                 {...register("password")}
               />
             </div>
+
             <div className="w-full relative h-15 bg-white items-center rounded mb-4">
+              <p className="items-center font-medium tracking-wide text-red-500 text-s mt-1 ml-2">
+                {error}
+              </p>
               {false ? (
                 "Loading..."
               ) : (
