@@ -190,7 +190,7 @@ function BecomeACustomer() {
           ) : (
             <button
               type="submit"
-              className="bg-blue-300 w-32 cursor-pointer rounded-lg shadow-md p-1 font-semibold"
+              className="submit bg-blue-300 w-32 cursor-pointer rounded-lg shadow-md p-1 font-semibold"
             >
               Register
             </button>

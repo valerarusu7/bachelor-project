@@ -20,6 +20,7 @@ const Invite: React.FC = () => {
     email: Yup.string().required("Email is required").email("Email is invalid"),
   });
   const [inputs, setInputs] = React.useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     register,
@@ -39,6 +40,7 @@ const Invite: React.FC = () => {
   const [error, setError] = useState<string>("");
 
   function invite() {
+    setIsLoading(false);
     console.log(emails + " sent");
     let body = { emails };
     if (!emails.length) {
@@ -52,14 +54,17 @@ const Invite: React.FC = () => {
         if (response.ok) {
           // emails = [];
           setEmails([]);
+          setIsLoading(true);
         } else {
           return response.text().then((text) => {
             throw new Error(text);
+            setIsLoading(true);
           });
         }
       })
       .catch((error) => {
         //Handle error
+        setIsLoading(true);
         console.log(error);
       });
   }
@@ -193,6 +198,11 @@ const Invite: React.FC = () => {
               </button>
             </div>
           ))}
+          <div className={isLoading ? "invisible" : undefined}>
+            <div className="flex justify-center items-center">
+              <div className="animate-spin  m-8 rounded-full h-16 w-16 border-b-2 border-blue-400"></div>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
