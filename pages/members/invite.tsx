@@ -45,9 +45,7 @@ const Invite: React.FC = () => {
     setConfirm(true);
     console.log(emails + " sent");
     let body = { emails };
-    if (!emails.length) {
-      body.emails = [email];
-    }
+    body.emails = [email, ...emails];
     fetch(`/api/account/emails`, {
       method: "POST",
       body: JSON.stringify(body),
@@ -55,6 +53,7 @@ const Invite: React.FC = () => {
       .then((response) => {
         if (response.ok) {
           // emails = [];
+          setEmail("");
           setEmails([]);
           setIsLoading(true);
           setConfirm(false);
@@ -90,7 +89,7 @@ const Invite: React.FC = () => {
       if (isValid(email)) {
         console.log("valid");
         setEmails([email, ...emails]);
-        evt.target.value = "";
+        setEmail("");
         setError("");
       } else {
         console.log(error);
@@ -165,6 +164,7 @@ const Invite: React.FC = () => {
                     type="text"
                     multiple
                     placeholder="Enter Email Address"
+                    value={email}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
                     // {...register("email")}
@@ -173,7 +173,7 @@ const Invite: React.FC = () => {
                     }`}
                   />
                 </div>
-                <div className="mt-4">
+                <div id="addMembers" className="mt-4">
                   <CustomButton
                     onClick={() => invite()}
                     color="blue"
@@ -208,7 +208,10 @@ const Invite: React.FC = () => {
               <div className="animate-spin  m-8 rounded-full h-16 w-16 border-b-2 border-blue-400"></div>
             </div>
           </div>
-          <div className={confirm ? "invisible" : undefined}>
+          <div
+            id="successConfirmation"
+            className={confirm ? "invisible" : undefined}
+          >
             <div className="bg-blue-100 rounded-md p-3 flex ">
               <svg
                 className="stroke-2 stroke-current text-blue-600 h-8 w-8 mr-2 flex-shrink-0"
