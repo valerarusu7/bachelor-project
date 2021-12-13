@@ -2,12 +2,12 @@ import * as Yup from "yup";
 import Canvas from "../../components/Landing Page/canvas/canvas";
 import FormInput from "../../components/Landing Page/FormInput";
 import NavBar from "../../components/Landing Page/navbar";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { setUser } from "../../store/reducers/authSlice";
 import { useDispatch } from "react-redux";
-import React, { useState } from "react";
 
 type UserSubmitForm = {
   email: string;
@@ -21,8 +21,6 @@ const Login: React.FC = () => {
   });
   const router = useRouter();
   const [error, setError] = useState<string>("");
-  setError("");
-  setError("Email or password is incorrect.");
 
   const {
     register,
@@ -34,6 +32,7 @@ const Login: React.FC = () => {
   });
 
   const onSubmit = (data: UserSubmitForm) => {
+    setError("");
     fetch("/api/account/login", {
       method: "POST",
       body: JSON.stringify(data),
@@ -46,6 +45,7 @@ const Login: React.FC = () => {
           router.push("/dashboard");
         } else {
           return response.text().then((text) => {
+            setError("Email or password is incorrect.");
             throw new Error(text);
           });
         }
@@ -97,11 +97,10 @@ const Login: React.FC = () => {
                 {...register("password")}
               />
             </div>
-
+            <p className="items-center font-medium tracking-wide text-red-500 text-s mt-1 ml-2">
+              {error}
+            </p>
             <div className="w-full relative h-15 bg-white items-center rounded mb-4">
-              <p className="items-center font-medium tracking-wide text-red-500 text-s mt-1 ml-2">
-                {error}
-              </p>
               {false ? (
                 "Loading..."
               ) : (
