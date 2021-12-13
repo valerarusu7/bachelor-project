@@ -21,6 +21,7 @@ const Invite: React.FC = () => {
   });
   const [inputs, setInputs] = React.useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [confirm, setConfirm] = useState(true);
 
   const {
     register,
@@ -41,11 +42,10 @@ const Invite: React.FC = () => {
 
   function invite() {
     setIsLoading(false);
+    setConfirm(true);
     console.log(emails + " sent");
     let body = { emails };
-    if (!emails.length) {
-      body.emails = [email];
-    }
+    body.emails = [email, ...emails];
     fetch(`/api/account/emails`, {
       method: "POST",
       body: JSON.stringify(body),
@@ -53,12 +53,16 @@ const Invite: React.FC = () => {
       .then((response) => {
         if (response.ok) {
           // emails = [];
+          setEmail("");
           setEmails([]);
           setIsLoading(true);
+          setConfirm(false);
+          setTimeout(() => {
+            setConfirm(true);
+          }, 10000);
         } else {
           return response.text().then((text) => {
             throw new Error(text);
-            setIsLoading(true);
           });
         }
       })
@@ -85,7 +89,7 @@ const Invite: React.FC = () => {
       if (isValid(email)) {
         console.log("valid");
         setEmails([email, ...emails]);
-        evt.target.value = "";
+        setEmail("");
         setError("");
       } else {
         console.log(error);
@@ -160,6 +164,7 @@ const Invite: React.FC = () => {
                     type="text"
                     multiple
                     placeholder="Enter Email Address"
+                    value={email}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
                     // {...register("email")}
@@ -168,7 +173,7 @@ const Invite: React.FC = () => {
                     }`}
                   />
                 </div>
-                <div className="mt-4">
+                <div id="addMembers" className="mt-4">
                   <CustomButton
                     onClick={() => invite()}
                     color="blue"
@@ -201,6 +206,31 @@ const Invite: React.FC = () => {
           <div className={isLoading ? "invisible" : undefined}>
             <div className="flex justify-center items-center">
               <div className="animate-spin  m-8 rounded-full h-16 w-16 border-b-2 border-blue-400"></div>
+            </div>
+          </div>
+          <div
+            id="successConfirmation"
+            className={confirm ? "invisible" : undefined}
+          >
+            <div className="bg-blue-100 rounded-md p-3 flex ">
+              <svg
+                className="stroke-2 stroke-current text-blue-600 h-8 w-8 mr-2 flex-shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M0 0h24v24H0z" stroke="none" />
+                <circle cx="12" cy="12" r="9" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+
+              <div className="text-blue-700">
+                <div className="font-bold text-xl">
+                  Your invite has been sent!
+                </div>
+                Note that the invite link will expire in 1 day.
+              </div>
             </div>
           </div>
         </div>

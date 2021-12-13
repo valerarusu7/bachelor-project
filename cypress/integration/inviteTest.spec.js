@@ -4,6 +4,7 @@ describe("test input field for", () => {
     cy.visit("http://localhost:3000/members/invite");
     cy.get("#member").type(validEmail + "{enter}");
     cy.get(".invite-emails:first span").should("have.text", validEmail);
+    cy.get("#addMembers button:first").click({ force: true });
   });
   it(" invite incorrect email ", () => {
     let invalidEmail = "viktoria";
