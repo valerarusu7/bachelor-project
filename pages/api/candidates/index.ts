@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import Candidate from "../../../models/Candidate";
 import {
   ICandidateVideoInterviewAnswer,
@@ -11,6 +10,8 @@ import { Types } from "mongoose";
 import CustomError from "../../../helpers/CustomError";
 import withValidation from "../../../middleware/validation";
 import { answersSchema } from "../../../models/api/Candidate";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
 /**
  * @swagger
@@ -32,8 +33,9 @@ import { answersSchema } from "../../../models/api/Candidate";
  *          description: Internal error
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+export default nextConnect()
+  .use(withValidation(answersSchema))
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
@@ -99,9 +101,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
-
-export default withValidation(answersSchema, handler);
+  });

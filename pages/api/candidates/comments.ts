@@ -1,38 +1,34 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import { Roles } from "../../../types";
 import CandidateComment from "../../../models/CandidateComment";
 import withProtection from "../../../middleware/protection";
-import { commentSchema } from "../../../models/api/Candidate";
-import withValidation from "../../../middleware/validation";
+import withBodyConversion from "../../../middleware/bodyConversion";
+import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
-    const { candidateId } = req.query;
+export default nextConnect()
+  .use(withProtection([Roles.Manager, Roles.Admin]))
+  .use(withBodyConversion())
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const userId = req.id;
 
     let candidateComment = new CandidateComment(body);
-    candidateComment.candidateId = candidateId;
     candidateComment.userId = userId;
 
     try {
       // @ts-ignore
-      await candidateComment.save();
+      await candidateComment
+        .save()
+        .then((comment) => comment.populate("userId", "firstName lastName"));
 
-      return res.status(201).json({ success: "Successfully added comment." });
+      return res.status(201).json({
+        success: "Successfully added comment.",
+        comment: candidateComment,
+      });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
-
-export default withValidation(
-  commentSchema,
-  withProtection(handler, [Roles.Manager, Roles.Admin]),
-  true
-);
+  });

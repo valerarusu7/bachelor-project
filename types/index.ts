@@ -22,10 +22,7 @@ export interface IParams extends ParsedUrlQuery {
   id: string;
 }
 
-export type AsyncRequestHandler = (
-  req: NextApiRequest,
-  res: NextApiResponse
-) => Promise<any>;
+export type AsyncRequestHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<any>;
 
 // Pages
 export interface IDashboardProps {
@@ -63,6 +60,12 @@ export interface ICandidate {
   companyId: string;
   favorite: boolean;
   interviews: ICandidateInterview[];
+}
+
+export interface ICandidateComment {
+  _id: string;
+  comment: string;
+  createdAt: string;
 }
 
 export interface IPosition {
@@ -107,8 +110,19 @@ export interface IRegions {
   code?: string;
 }
 
+export interface ICandidateDetailsProps {
+  candidate: ICandidate;
+  videoInterview: ICandidateVideoInterview;
+  comments: ICandidateComment[];
+  interviews: ITemplate[];
+  idx?: number;
+}
+
 export interface ICandidateProps {
   candidate: ICandidate;
+  videoInterview?: any;
+  comments?: any;
+  interviews?: any;
   idx?: number;
 }
 
@@ -191,6 +205,9 @@ export interface ITemplate {
   code?: boolean;
   tasks: ITask[];
   tasksLength?: number;
+  completed?: boolean;
+  completedUtc?: any;
+  region?: string | undefined;
 }
 
 export interface IInterviewProps {
@@ -221,6 +238,7 @@ export interface ITask {
   order: number;
   choices?: IChoice[];
   templateId?: string;
+  answer?: string | string[];
 }
 
 export interface ITaskType {
@@ -253,9 +271,10 @@ export interface ITimelineItem {
   date?: string;
   color?: string;
   comment?: boolean;
-  candidate?: ICandidate;
+  manager?: any;
   time?: string;
   show?: boolean;
+  commentText?: string;
 }
 
 export interface IChoice {
@@ -289,6 +308,12 @@ export interface IRefreshTokenPayload {
 export interface IProtection {
   status: boolean;
   payload: IAccessTokenPayload | undefined;
+}
+
+export interface ICandidateVideoInterview {
+  _id: string;
+  answers: ICandidateVideoInterviewAnswer[];
+  createdAt: string;
 }
 
 export interface ICandidateVideoInterviewAnswer {
@@ -401,6 +426,10 @@ export interface ICandidateVideoInterviewDocument extends Document {
   answers: ICandidateVideoInterviewAnswerDocument[];
 }
 
+export interface ICandidateVideoInterviewModel extends Model<ICandidateVideoInterviewDocument> {
+  toClientObject(candidateVideoInterview: ICandidateVideoInterview): ICandidateVideoInterview;
+}
+
 export interface IUserModel extends Model<IUserDocument> {
   toClientObject(user: IUser): IUser;
   toClientArray(users: IUser[]): IUser[];
@@ -410,6 +439,10 @@ export interface ICandidateCommentDocument extends Document {
   comment: string;
   candidateId: Types.ObjectId;
   userId: Types.ObjectId;
+}
+
+export interface ICandidateCommentModel extends Model<ICandidateCommentDocument> {
+  toClientArray(comments: ICandidateComment[]): ICandidateComment[];
 }
 
 export interface IUserRequest extends NextApiRequest {

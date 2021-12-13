@@ -1,20 +1,20 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import User from "../../../models/User";
 import handleError from "../../../helpers/errorHandler";
 import { Roles } from "../../../types";
 import withProtection from "../../../middleware/protection";
 import withValidation from "../../../middleware/validation";
 import { roleSchema } from "../../../models/api/User";
+import CustomError from "../../../helpers/CustomError";
+import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "PATCH") {
+export default nextConnect()
+  .use(withValidation(roleSchema, true))
+  .use(withProtection([Roles.Admin]))
+  .patch(async (req: NextApiRequest, res: NextApiResponse) => {
     const { id, role } = req.query;
     // @ts-ignore
     const userId = req.id;
-
-    if (!role) {
-      return res.status(400).json({ error: "Role needs to be specified." });
-    }
 
     if (userId === id) {
       return res
@@ -27,20 +27,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         id,
         { role: role as string },
         { runValidators: true }
-      );
+      ).then((raw) => {
+        if (!raw) {
+          throw CustomError("400", "User id does not exist.");
+        }
+      });
 
       return res.status(200).json({ success: "Role successfully changed." });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only PATCH requests are allowed." });
-};
-
-export default withValidation(
-  roleSchema,
-  withProtection(handler, [Roles.Admin]),
-  true
-);
+  });

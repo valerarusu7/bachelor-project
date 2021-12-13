@@ -1,9 +1,5 @@
 import { bool, object, string, array, number } from "yup";
 
-export const commentSchema = object({
-  candidateId: string().required("Candidate id cannot be empty."),
-});
-
 export const favoriteSchema = object({
   favorite: bool().required("Favorite cannot be empty."),
 });

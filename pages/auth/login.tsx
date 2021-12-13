@@ -1,10 +1,12 @@
-import NavBar from "../../components/Landing Page/navbar";
+import * as Yup from "yup";
 import Canvas from "../../components/Landing Page/canvas/canvas";
 import FormInput from "../../components/Landing Page/FormInput";
-import { yupResolver } from "@hookform/resolvers/yup";
+import NavBar from "../../components/Landing Page/navbar";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { setUser } from "../../store/reducers/authSlice";
+import { useDispatch } from "react-redux";
 import React, { useState } from "react";
 
 type UserSubmitForm = {
@@ -13,6 +15,7 @@ type UserSubmitForm = {
 };
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required").email("Email is invalid"),
   });
@@ -37,6 +40,9 @@ const Login: React.FC = () => {
     })
       .then((response) => {
         if (response.ok) {
+          response.json().then((data) => {
+            dispatch(setUser(data.user));
+          });
           router.push("/dashboard");
         } else {
           return response.text().then((text) => {
@@ -51,8 +57,8 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-white mx-auto text-center">
-      <NavBar></NavBar>
+    <div className="h-screen w-full bg-white mx-auto text-center overflow-hidden">
+      <NavBar />
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"

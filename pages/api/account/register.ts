@@ -1,12 +1,15 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import withRegistrationProtection from "../../../middleware/registrationProtection";
 import withValidation from "../../../middleware/validation";
 import { registrationSchema } from "../../../models/api/User";
 import User from "../../../models/User";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+export default nextConnect()
+  .use(withValidation(registrationSchema))
+  .use(withRegistrationProtection())
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const companyId = req.companyId;
@@ -31,12 +34,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
-
-export default withValidation(
-  registrationSchema,
-  withRegistrationProtection(handler)
-);
+  });

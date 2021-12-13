@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import { sendRegistrationEmail } from "../../../helpers/mailer";
 import jwt from "jsonwebtoken";
@@ -8,6 +7,8 @@ import { Roles } from "../../../types";
 import Company from "../../../models/Company";
 import { emailsSchema } from "../../../models/api/Email";
 import withValidation from "../../../middleware/validation";
+import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const { ACCOUNT_PRIVATE_KEY } = process.env;
 
@@ -18,8 +19,10 @@ const { ACCOUNT_PRIVATE_KEY } = process.env;
  *     description: Create a new template
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+export default nextConnect()
+  .use(withValidation(emailsSchema))
+  .use(withProtection([Roles.Admin]))
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const companyId: string = req.companyId;
@@ -51,12 +54,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
-
-export default withValidation(
-  emailsSchema,
-  withProtection(handler, [Roles.Admin])
-);
+  });

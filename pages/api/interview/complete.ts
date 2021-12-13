@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import handleError from "../../../helpers/errorHandler";
 import Candidate from "../../../models/Candidate";
 import convertToTimeSpan from "../../../helpers/timeFormatter";
@@ -9,6 +8,8 @@ import {
   TaskTypes,
 } from "../../../types";
 import withInterviewProtection from "../../../middleware/interviewProtection";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
 /**
  * @swagger
@@ -68,64 +69,58 @@ function calculateScore(
   );
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
-    //@ts-ignore
-    const interviewId = req.interviewId;
-    //@ts-ignore
-    const started = req.started;
+export default nextConnect().use(withInterviewProtection()).post(async (req: NextApiRequest, res: NextApiResponse) => {
+  //@ts-ignore
+  const interviewId = req.interviewId;
+  //@ts-ignore
+  const started = req.started;
 
-    if (!started) {
-      return res.status(400).json({ error: "Interview has not started yet." });
-    }
-
-    try {
-      const candidate = await Candidate.findOne({
-        "interviews._id": interviewId,
-      })
-        .select("interviews")
-        .lean()
-        .orFail();
-
-      const interview = candidate.interviews.find(
-        (interview) => interview._id.toString() === interviewId
-      );
-
-      const template = await Template.findOne({
-        jobId: interview?.jobId,
-      })
-        .select("tasks")
-        .lean()
-        .orFail();
-
-      let score = calculateScore(
-        template.tasks as ITaskDocument[],
-        interview?.answers as ICandidateAnswerDocument[]
-      );
-
-      let time = convertToTimeSpan(started, new Date().toISOString());
-
-      await Candidate.findOneAndUpdate(
-        { "interviews._id": interviewId },
-        {
-          "interviews.$.startedUtc": started,
-          "interviews.$.completedUtc": new Date(),
-          "interviews.$.time": time,
-          "interviews.$.completed": true,
-          "interviews.$.score": score,
-        },
-        { runValidators: true }
-      );
-      return res
-        .status(201)
-        .json({ success: "Interview successfully completed." });
-    } catch (error) {
-      const result = handleError(error as Error);
-      return res.status(result.code).json({ error: result.error });
-    }
+  if (!started) {
+    return res.status(400).json({ error: "Interview has not started yet." });
   }
 
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
+  try {
+    const candidate = await Candidate.findOne({
+      "interviews._id": interviewId,
+    })
+      .select("interviews")
+      .lean()
+      .orFail();
 
-export default withInterviewProtection(handler);
+    const interview = candidate.interviews.find(
+      (interview) => interview._id.toString() === interviewId
+    );
+
+    const template = await Template.findOne({
+      jobId: interview?.jobId,
+    })
+      .select("tasks")
+      .lean()
+      .orFail();
+
+    let score = calculateScore(
+      template.tasks as ITaskDocument[],
+      interview?.answers as ICandidateAnswerDocument[]
+    );
+
+    let time = convertToTimeSpan(started, new Date().toISOString());
+
+    await Candidate.findOneAndUpdate(
+      { "interviews._id": interviewId },
+      {
+        "interviews.$.startedUtc": started,
+        "interviews.$.completedUtc": new Date(),
+        "interviews.$.time": time,
+        "interviews.$.completed": true,
+        "interviews.$.score": score,
+      },
+      { runValidators: true }
+    );
+    return res
+      .status(201)
+      .json({ success: "Interview successfully completed." });
+  } catch (error) {
+    const result = handleError(error as Error);
+    return res.status(result.code).json({ error: result.error });
+  }
+});

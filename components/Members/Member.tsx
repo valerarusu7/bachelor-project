@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { stringAvatar } from "../../helpers/stringAvatar";
 import { IUserProps, Roles } from "../../types";
+import { useRouter } from "next/router";
 
 function Member({ user, idx }: IUserProps) {
   const [listOfRoles, setRoles] = useState<string[]>(["a"]);
   var list = Object.values(Roles);
-
   useEffect(() => {
     getRoles(list);
   }, []);
@@ -19,6 +19,34 @@ function Member({ user, idx }: IUserProps) {
     });
     uniqueRoles = uniqueRoles.filter((val) => !user.role.includes(val));
     setRoles(uniqueRoles);
+  }
+
+  function updateRole(event: any) {
+    console.log("called");
+    fetch(`/api/account/${user._id}?role=${event.target.value}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        ...user,
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: event.target.value,
+        companyId: user.companyId,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("role changed");
+        } else {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
@@ -46,7 +74,12 @@ function Member({ user, idx }: IUserProps) {
       </td>
       <td className="py-3 px-6 text-left">
         <div className="flex items-center">
-          <select name="roles" id="select-role">
+          <select
+            onChange={() => updateRole(event)}
+            name="roles"
+            id="select-role"
+            className="rounded-2xl"
+          >
             <option value="roles">{user.role}</option>
             {listOfRoles.map((e) => (
               <option value={e} key={e}>

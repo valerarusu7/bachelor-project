@@ -1,11 +1,14 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../utils/mongodb";
 import Company from "../../../models/Company";
 import handleError from "../../../helpers/errorHandler";
 import User from "../../../models/User";
 import { Roles } from "../../../types";
 import withValidation from "../../../middleware/validation";
-import { registrationSchema } from "../../../models/api/Company";
+import { registrationSchema, websiteSchema } from "../../../models/api/Company";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
+import withProtection from "../../../middleware/protection";
+import CustomError from "../../../helpers/CustomError";
 
 /**
  * @swagger
@@ -22,8 +25,19 @@ import { registrationSchema } from "../../../models/api/Company";
  *      - in: body
  */
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+const validation = nextConnect()
+  .post("/api/companies", withValidation(registrationSchema))
+  .patch("/api/companies", withValidation(websiteSchema));
+
+const protection = nextConnect().patch(
+  "/api/companies",
+  withProtection([Roles.Manager, Roles.Admin])
+);
+
+export default nextConnect()
+  .use(validation)
+  .use(protection)
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 
@@ -48,9 +62,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(result.code).json({ error: result.error });
     }
-  }
+  })
+  .patch(async (req: NextApiRequest, res: NextApiResponse) => {
+    const body = req.body;
+    // @ts-ignore
+    const companyId = req.companyId;
 
-  return res.status(405).json({ error: "Only POST requests are allowed." });
-};
+    try {
+      await Company.findByIdAndUpdate(companyId, {
+        website: body.website,
+      }).then((raw) => {
+        if (!raw) {
+          throw CustomError("400", "Company id does not exist.");
+        }
+      });
 
-export default withValidation(registrationSchema, handler);
+      return res
+        .status(200)
+        .json({ success: "Company details successfully changed." });
+    } catch (error) {
+      const result = handleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
+    }
+  });
