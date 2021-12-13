@@ -8,7 +8,6 @@ const { NODEMAILER_EMAIL, NODEMAILER_PASSWORD } = process.env;
 const createTransporter = async () => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
-    host: "smtp.gmail.com",
     auth: {
       user: NODEMAILER_EMAIL,
       pass: NODEMAILER_PASSWORD,
