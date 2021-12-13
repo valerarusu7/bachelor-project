@@ -8,7 +8,8 @@ import {
   TaskTypes,
 } from "../../../types";
 import withInterviewProtection from "../../../middleware/interviewProtection";
-import handler from "../../../utils/handler";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
 /**
  * @swagger
@@ -68,7 +69,7 @@ function calculateScore(
   );
 }
 
-export default handler.use(withInterviewProtection()).post(async (req, res) => {
+export default nextConnect().use(withInterviewProtection()).post(async (req: NextApiRequest, res: NextApiResponse) => {
   //@ts-ignore
   const interviewId = req.interviewId;
   //@ts-ignore

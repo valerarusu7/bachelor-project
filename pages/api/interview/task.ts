@@ -5,7 +5,8 @@ import { TaskTypes } from "../../../types";
 import withInterviewProtection from "../../../middleware/interviewProtection";
 import withValidation from "../../../middleware/validation";
 import { taskSchema } from "../../../models/api/Interview";
-import handler from "../../../utils/handler";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
 /**
  * @swagger
@@ -14,10 +15,10 @@ import handler from "../../../utils/handler";
  *     description: Create a new template
  */
 
-export default handler
+export default nextConnect()
   .use(withValidation(taskSchema))
   .use(withInterviewProtection())
-  .post(async (req, res) => {
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const { order } = req.query;
     //@ts-ignore
     const interviewId = req.interviewId;

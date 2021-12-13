@@ -4,7 +4,8 @@ import { Roles } from "../../../types";
 import withBodyConversion from "../../../middleware/bodyConversion";
 import withProtection from "../../../middleware/protection";
 import CustomError from "../../../helpers/CustomError";
-import handler from "../../../utils/handler";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
 /**
  * @swagger
@@ -29,10 +30,10 @@ import handler from "../../../utils/handler";
  *        description: UUID string of the template to delete
  */
 
-export default handler
+export default nextConnect()
   .use(withProtection([Roles.Manager, Roles.Admin]))
   .use(withBodyConversion())
-  .put(async (req, res) => {
+  .put(async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
     const body = req.body;
     try {
@@ -58,7 +59,7 @@ export default handler
       return res.status(result.code).json({ error: result.error });
     }
   })
-  .delete(async (req, res) => {
+  .delete(async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
     try {
       await Template.findByIdAndDelete(id).then((raw) => {

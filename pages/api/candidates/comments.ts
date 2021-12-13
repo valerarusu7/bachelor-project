@@ -3,12 +3,13 @@ import { Roles } from "../../../types";
 import CandidateComment from "../../../models/CandidateComment";
 import withProtection from "../../../middleware/protection";
 import withBodyConversion from "../../../middleware/bodyConversion";
-import handler from "../../../utils/handler";
+import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default handler
+export default nextConnect()
   .use(withProtection([Roles.Manager, Roles.Admin]))
   .use(withBodyConversion())
-  .post(async (req, res) => {
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const userId = req.id;
@@ -18,9 +19,14 @@ export default handler
 
     try {
       // @ts-ignore
-      await candidateComment.save();
+      await candidateComment
+        .save()
+        .then((comment) => comment.populate("userId", "firstName lastName"));
 
-      return res.status(201).json({ success: "Successfully added comment." });
+      return res.status(201).json({
+        success: "Successfully added comment.",
+        comment: candidateComment,
+      });
     } catch (error) {
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });

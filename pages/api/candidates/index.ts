@@ -10,7 +10,8 @@ import { Types } from "mongoose";
 import CustomError from "../../../helpers/CustomError";
 import withValidation from "../../../middleware/validation";
 import { answersSchema } from "../../../models/api/Candidate";
-import handler from "../../../utils/handler";
+import { NextApiRequest, NextApiResponse } from "next";
+import nextConnect from "next-connect";
 
 /**
  * @swagger
@@ -32,9 +33,9 @@ import handler from "../../../utils/handler";
  *          description: Internal error
  */
 
-export default handler
+export default nextConnect()
   .use(withValidation(answersSchema))
-  .post(async (req, res) => {
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
     const body = req.body;
 

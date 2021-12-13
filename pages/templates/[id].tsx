@@ -1,12 +1,5 @@
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import {
-  IPosition,
-  ITemplate,
-  ITemplateProps,
-  IParams,
-  ICandidate,
-  IAccessTokenPayload,
-} from "../../types";
+import { IPosition, ITemplate, ITemplateProps, IParams, ICandidate, IAccessTokenPayload } from "../../types";
 import {
   resetTask,
   selectTemplate,
@@ -33,21 +26,13 @@ import Candidate from "../../models/Candidate";
 import { useRouter } from "next/router";
 import protect from "../../helpers/protect";
 
-function TemplatePage({
-  template,
-  positions,
-  selectedPosition,
-  candidates,
-}: ITemplateProps) {
+function TemplatePage({ template, positions, selectedPosition, candidates }: ITemplateProps) {
   const dispatch = useAppDispatch();
-  const { templateTasks, showModal, invitedCandidates, showInviteModal } =
-    useAppSelector(selectTemplate);
+  const { templateTasks, showModal, invitedCandidates, showInviteModal } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
   const [position, setSelectedPosition] = useState(selectedPosition);
   const [templateName, setTemplateName] = useState(template.name);
-  const [templateDescription, setTemplateDescription] = useState(
-    template.description
-  );
+  const [templateDescription, setTemplateDescription] = useState(template.description);
 
   const router = useRouter();
 
@@ -86,13 +71,13 @@ function TemplatePage({
         if (response.ok) {
           router.push("/templates");
         } else {
-          return response.text().then((text) => {
-            throw new Error(text);
+          return response.json().then((text) => {
+            throw new Error(text.error[0]);
           });
         }
       })
       .catch((error) => {
-        console.log(error);
+        alert(error);
       });
   }
 
@@ -139,7 +124,9 @@ function TemplatePage({
         console.log(error);
       });
   }
-
+  {
+    console.log(templateTasks);
+  }
   return (
     <Layout header={template.name}>
       <div className="m-2">
@@ -166,10 +153,7 @@ function TemplatePage({
         <CustomButton color="red" onClick={() => deleteTemplate()}>
           <p>Delete</p>
         </CustomButton>
-        <CustomButton
-          color="blue"
-          onClick={() => dispatch(setShowInvite(true))}
-        >
+        <CustomButton color="blue" onClick={() => dispatch(setShowInvite(true))}>
           <p>Invite candidates</p>
         </CustomButton>
         <CustomButton color="green" onClick={() => updateTemplate()}>
@@ -183,10 +167,7 @@ function TemplatePage({
 export default TemplatePage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const protection = await protect(
-    context.req as NextApiRequest,
-    context.res as NextApiResponse
-  );
+  const protection = await protect(context.req as NextApiRequest, context.res as NextApiResponse);
   if (!protection.status && !protection.payload) {
     return {
       redirect: {
@@ -200,9 +181,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // @ts-ignore
   const [template, jobPositions]: [ITemplate, IPosition[]] = await Promise.all([
-    Template.findById(id)
-      .select("_id name description tasks companyId jobId createdAt")
-      .lean(),
+    Template.findById(id).select("_id name description tasks companyId jobId createdAt").lean(),
     JobPosition.find({
       companyId: (protection.payload as IAccessTokenPayload).companyId,
     })
@@ -220,9 +199,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   console.log(candidates);
 
-  const selectedPosition = jobPositions.find(
-    (jobPosition) => jobPosition._id === template.jobId
-  );
+  const selectedPosition = jobPositions.find((jobPosition) => jobPosition._id === template.jobId);
 
   return {
     props: {

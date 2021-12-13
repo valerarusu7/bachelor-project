@@ -3,7 +3,8 @@ import User from "../../../models/User";
 import withValidation from "../../../middleware/validation";
 import withProtection from "../../../middleware/protection";
 import { changePasswordSchema } from "../../../models/api/User";
-import handler from "../../../utils/handler";
+import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * @swagger
@@ -12,10 +13,10 @@ import handler from "../../../utils/handler";
  *     description: Create a new template
  */
 
-export default handler
+export default nextConnect()
   .use(withValidation(changePasswordSchema))
   .use(withProtection())
-  .patch(async (req, res) => {
+  .patch(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const id = req.id;

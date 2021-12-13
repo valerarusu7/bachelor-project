@@ -1,12 +1,13 @@
 import * as Yup from "yup";
-
 import Canvas from "../../components/Landing Page/canvas/canvas";
 import FormInput from "../../components/Landing Page/FormInput";
 import NavBar from "../../components/Landing Page/navbar";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { setUser } from "../../store/reducers/authSlice";
+import { useDispatch } from "react-redux";
 
 type UserSubmitForm = {
   email: string;
@@ -14,10 +15,12 @@ type UserSubmitForm = {
 };
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required").email("Email is invalid"),
   });
   const router = useRouter();
+  const [error, setError] = useState<string>("");
 
   const {
     register,
@@ -29,15 +32,20 @@ const Login: React.FC = () => {
   });
 
   const onSubmit = (data: UserSubmitForm) => {
+    setError("");
     fetch("/api/account/login", {
       method: "POST",
       body: JSON.stringify(data),
     })
       .then((response) => {
         if (response.ok) {
+          response.json().then((data) => {
+            dispatch(setUser(data.user));
+          });
           router.push("/dashboard");
         } else {
           return response.text().then((text) => {
+            setError("Email or password is incorrect.");
             throw new Error(text);
           });
         }
@@ -89,6 +97,9 @@ const Login: React.FC = () => {
                 {...register("password")}
               />
             </div>
+            <p className="items-center font-medium tracking-wide text-red-500 text-s mt-1 ml-2">
+              {error}
+            </p>
             <div className="w-full relative h-15 bg-white items-center rounded mb-4">
               {false ? (
                 "Loading..."

@@ -7,7 +7,8 @@ import { Roles } from "../../../types";
 import Company from "../../../models/Company";
 import { emailsSchema } from "../../../models/api/Email";
 import withValidation from "../../../middleware/validation";
-import handler from "../../../utils/handler";
+import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const { ACCOUNT_PRIVATE_KEY } = process.env;
 
@@ -18,10 +19,10 @@ const { ACCOUNT_PRIVATE_KEY } = process.env;
  *     description: Create a new template
  */
 
-export default handler
+export default nextConnect()
   .use(withValidation(emailsSchema))
   .use(withProtection([Roles.Admin]))
-  .post(async (req, res) => {
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body;
     // @ts-ignore
     const companyId: string = req.companyId;
