@@ -5,7 +5,7 @@
     "build": "next build",
     "start": "next start",
     "cypress:open": "./node_modules/.bin/cypress open",
-    "test": "jest"
+    "test": "jest --detectOpenHandles"
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",

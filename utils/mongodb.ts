@@ -1,5 +1,7 @@
 import mongoose, { ConnectOptions } from "mongoose";
-const { MONGO_URL, MONGO_URL_TEST } = process.env;
+import { MongoMemoryServer } from "mongodb-memory-server";
+
+const { MONGO_URL } = process.env;
 
 async function connectToNewDBConnection(uri: string) {
   await mongoose
@@ -23,10 +25,16 @@ async function connectDB(isTest = false) {
 
   // Use new db connection
   if (isTest) {
-    await connectToNewDBConnection(MONGO_URL_TEST as string);
+    let mongoMemoryServer = await MongoMemoryServer.create();
+    let uri = await mongoMemoryServer.getUri();
+    await connectToNewDBConnection(uri);
   } else {
     await connectToNewDBConnection(MONGO_URL as string);
   }
+}
+
+export async function closeDB() {
+  await mongoose.disconnect();
 }
 
 export default connectDB;

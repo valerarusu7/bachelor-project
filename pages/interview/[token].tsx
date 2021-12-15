@@ -16,7 +16,6 @@ import InterviewHeader from "../../components/Interview/InterviewHeader";
 import InterviewSidebar from "../../components/Interview/InterviewSidebar";
 
 function Interview({ companyName, template, tasksLength }: IInterviewProps) {
-  // console.log(template, "template");
   const [emailCount, setEmailCount] = useState(0);
   const [showTasks, setShowTasks] = useState(false);
   const [showEmails, setShowEmails] = useState(false);

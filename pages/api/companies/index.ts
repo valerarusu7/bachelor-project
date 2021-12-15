@@ -41,6 +41,10 @@ export default nextConnect()
     await connectDB();
     const body = req.body;
 
+    if (body.user.password !== body.user.rePassword) {
+      return res.status(400).json({ error: "Passwords do not match." });
+    }
+
     let company = new Company(body.company);
     let user = new User(body.user);
 

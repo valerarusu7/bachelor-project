@@ -28,7 +28,7 @@ export default nextConnect()
     try {
       const user = await User.findById(id);
 
-      if (!user || !(await user.comparePassword(body.password))) {
+      if (!user || !(await user.comparePassword(body.oldPassword))) {
         return res.status(401).json({ error: "Password is incorrect." });
       }
 

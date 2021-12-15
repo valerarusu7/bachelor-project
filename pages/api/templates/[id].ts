@@ -6,6 +6,7 @@ import withProtection from "../../../middleware/protection";
 import CustomError from "../../../helpers/CustomError";
 import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
+import Candidate from "../../../models/Candidate";
 
 /**
  * @swagger
@@ -62,11 +63,17 @@ export default nextConnect()
   .delete(async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
     try {
-      await Template.findByIdAndDelete(id).then((raw) => {
-        if (!raw) {
-          throw CustomError("400", "Template id does not exist.");
-        }
-      });
+      const template = await Template.findById(id).orFail();
+      await template.deleteOne();
+
+      const candidates = await Candidate.find({
+        interviews: { $elemMatch: { jobId: template.jobId } },
+      }).lean();
+
+      
+
+
+
 
       return res
         .status(200)

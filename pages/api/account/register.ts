@@ -17,7 +17,7 @@ export default nextConnect()
     const email = req.email;
 
     if (body.password !== body.rePassword) {
-      return res.status(401).json({ error: "Passwords do not match." });
+      return res.status(400).json({ error: "Passwords do not match." });
     }
 
     let user = new User(body);
