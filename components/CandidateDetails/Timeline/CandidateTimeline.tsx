@@ -91,7 +91,7 @@ function CandidateTimeline({ candidate, videoInterview, comments, interviews }: 
         ))}
 
         {/* <TimelineItem Icon={EyeIcon} date="27 sep" helpText="Assessed by" position="Karsten Dehler" color="gray" /> */}
-        {comments.map((comment: any, i: any) => (
+        {localComments.map((comment: any, i: any) => (
           <TimelineItem
             Icon={ChatAltIcon}
             comment={true}
