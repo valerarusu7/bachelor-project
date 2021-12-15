@@ -1,7 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import jwt from "jsonwebtoken";
 import { IRegisterProps, IRegistrationTokenPayload } from "../../../types";
-import { registrationSchema } from "../../../models/token/Token";
 
 function Register({ email, companyName }: IRegisterProps) {
   return <div>Register</div>;
@@ -22,8 +21,6 @@ export const getServerSideProps = async (
       token,
       ACCOUNT_PRIVATE_KEY as string
     ) as IRegistrationTokenPayload;
-
-    await registrationSchema.validate(decoded);
 
     return {
       props: {
