@@ -80,12 +80,16 @@ function CandidateInfo({ candidate }: ICandidateProps) {
               className="h-8 w-8 cursor-pointer hover:text-red-500 text-gray-500"
               onClick={() => setDeleteOpen(true)}
             />
+            {/* <PencilIcon className="h-8 w-8 cursor-pointer hover:text-green-500 text-gray-500 mb-2" /> */}
           </div>
         </div>
       </div>
       <Separator />
+      {/* info */}
       <div className="grid grid-cols-3 justify-center items-center h-full ">
         <InfoItem label="Email" value={candidate.email} />
+        {/* <InfoItem label="Interview result" value={`${candidate.interviews[0].score}%`} />
+        <InfoItem label="Completion time" value={candidate.interviews[0].time} /> */}
       </div>
     </div>
   );
