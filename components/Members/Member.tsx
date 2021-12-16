@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { stringAvatar } from "../../helpers/stringAvatar";
 import { IUserProps, Roles } from "../../types";
-import { useRouter } from "next/router";
 
 function Member({ user, idx }: IUserProps) {
   const [listOfRoles, setRoles] = useState<string[]>(["a"]);
@@ -22,7 +21,6 @@ function Member({ user, idx }: IUserProps) {
   }
 
   function updateRole(event: any) {
-    console.log("called");
     fetch(`/api/account/${user._id}?role=${event.target.value}`, {
       method: "PATCH",
       body: JSON.stringify({
