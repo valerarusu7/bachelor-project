@@ -2,17 +2,14 @@ import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { motion } from "framer-motion";
 
-export interface IDeleteTemplateProps {
+export interface IDeleteItemProps {
   isOpen: boolean;
   onClose: any;
-  deleteTemplate: any;
+  deleteItem: any;
+  question: string;
 }
 
-function Confirmation({
-  isOpen,
-  onClose,
-  deleteTemplate,
-}: IDeleteTemplateProps) {
+function DeleteConfirmation({ isOpen, onClose, deleteItem, question }: IDeleteItemProps) {
   const cancelButtonRef = useRef(null);
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -52,9 +49,7 @@ function Confirmation({
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="border border-gray-300 inline-block align-bottom bg-gray-100 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full ">
-              <div className="ml-5 mt-5">
-                Do you really want to delete the template?
-              </div>
+              <div className="ml-5 mt-5">{question}</div>
               <div className="bg-gray-50 pr-4 py-3  flex justify-end">
                 <div className="flex">
                   <motion.button
@@ -70,7 +65,7 @@ function Confirmation({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-tr from-red-700 to-red-400 text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={deleteTemplate}
+                    onClick={deleteItem}
                   >
                     Yes
                   </motion.button>
@@ -84,4 +79,4 @@ function Confirmation({
   );
 }
 
-export default Confirmation;
+export default DeleteConfirmation;

@@ -6,13 +6,6 @@ import { Roles } from "../../../types";
 import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
 
-/**
- * @swagger
- * /api/templates:
- *   post:
- *     description: Create a new template
- */
-
 export default nextConnect()
   .use(withProtection([Roles.Manager, Roles.Admin]))
   .use(withBodyConversion())

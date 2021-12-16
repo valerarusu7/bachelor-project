@@ -7,29 +7,6 @@ import CustomError from "../../../helpers/CustomError";
 import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
 
-/**
- * @swagger
- * /api/templates/{id}:
- *   put:
- *     description: Update template
- *     parameters:
- *      - in: path
- *        name: id
- *        schema:
- *          type: string
- *        required: true
- *        description: UUID string of the template to update
- *   delete:
- *     description: Delete template
- *     parameters:
- *      - in: path
- *        name: id
- *        schema:
- *          type: string
- *        required: true
- *        description: UUID string of the template to delete
- */
-
 export default nextConnect()
   .use(withProtection([Roles.Manager, Roles.Admin]))
   .use(withBodyConversion())

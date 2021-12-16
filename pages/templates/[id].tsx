@@ -33,7 +33,7 @@ import InviteCandidate from "../../components/Templates/InviteCandidate";
 import Candidate from "../../models/Candidate";
 import { useRouter } from "next/router";
 import protect from "../../helpers/protect";
-import Confirmation from "../../components/Templates/Confirmation";
+import DeleteConfirmation from "../../components/common/DeleteConfirmation";
 
 function TemplatePage({
   template,
@@ -115,14 +115,13 @@ function TemplatePage({
         if (response.ok) {
           router.push("/templates");
         } else {
-          return response.text().then((text) => {
-            throw new Error(text);
+          return response.json().then((text) => {
+            throw new Error(text.error);
           });
         }
       })
       .catch((error) => {
-        //Handle error
-        console.log(error);
+        alert(error);
       });
   }
 
@@ -174,10 +173,11 @@ function TemplatePage({
         candidates={candidates}
         inviteCandidates={() => invite()}
       />
-      <Confirmation
+      <DeleteConfirmation
         isOpen={showDeleteModal}
         onClose={() => closeDeleteModal()}
-        deleteTemplate={() => deleteTemplate()}
+        deleteItem={() => deleteTemplate()}
+        question="Do you really want to delete this template?"
       />
       <TaskModal isOpen={showModal} closeModal={() => closeModal()} />
       <div className="mt-4 space-x-2 flex justify-end items-center">

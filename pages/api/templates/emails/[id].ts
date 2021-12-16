@@ -13,13 +13,6 @@ import nextConnect from "next-connect";
 
 const { INTERVIEW_PRIVATE_KEY } = process.env;
 
-/**
- * @swagger
- * /api/templates:
- *   post:
- *     description: Create a new template
- */
-
 export default nextConnect()
   .use(withValidation(emailsSchema))
   .use(withProtection([Roles.Manager, Roles.Admin]))

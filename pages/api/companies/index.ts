@@ -10,21 +10,6 @@ import nextConnect from "next-connect";
 import withProtection from "../../../middleware/protection";
 import CustomError from "../../../helpers/CustomError";
 
-/**
- * @swagger
- * /api/company/{id}:
- *   put:
- *     description: Returns the company information
- *     parameters:
- *      - in: path
- *        name: id
- *        schema:
- *          type: string
- *        required: true
- *        description: UUID string of the company to get information
- *      - in: body
- */
-
 const validation = nextConnect()
   .post("/api/companies", withValidation(registrationSchema))
   .patch("/api/companies", withValidation(websiteSchema));

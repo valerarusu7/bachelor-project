@@ -6,13 +6,6 @@ import { changePasswordSchema } from "../../../models/api/User";
 import nextConnect from "next-connect";
 import { NextApiRequest, NextApiResponse } from "next";
 
-/**
- * @swagger
- * /api/templates:
- *   post:
- *     description: Create a new template
- */
-
 export default nextConnect()
   .use(withValidation(changePasswordSchema))
   .use(withProtection())
