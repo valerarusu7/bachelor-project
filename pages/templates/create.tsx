@@ -121,9 +121,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-
+  
   const jobPositions: IPosition[] = await JobPosition.find({
-    jobId: (protection.payload as IAccessTokenPayload).companyId,
+    companyId: (protection.payload as IAccessTokenPayload).companyId,
   })
     .select("_id name location type recruitingStartDate")
     .lean();
