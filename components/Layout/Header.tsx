@@ -21,7 +21,6 @@ function Header({ header }: HeaderProps) {
       .then((response) => {
         if (response.ok) {
           router.push("/");
-          console.log(response);
           dispatch(setUser(undefined));
         } else {
           return response.text().then((text) => {
@@ -47,7 +46,9 @@ function Header({ header }: HeaderProps) {
           </div>
           <div className="flex items-center mr-2">
             <div className="h-8 w-8 rounded-full bg-gray-300 relative  border-gray-100 flex justify-center items-center p-1">
-              <p className=" font-bold text-gray-500">{stringAvatar(user !== undefined ? user.name : "Logged User")}</p>
+              <p className=" font-bold text-gray-500">
+                {stringAvatar(user !== undefined ? user.name : "Logged User")}
+              </p>
             </div>
           </div>
           <div

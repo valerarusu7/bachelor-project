@@ -11,13 +11,6 @@ import withInterviewProtection from "../../../middleware/interviewProtection";
 import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
 
-/**
- * @swagger
- * /api/templates:
- *   post:
- *     description: Create a new template
- */
-
 function calculateScore(
   tasks: ITaskDocument[],
   answers: ICandidateAnswerDocument[]

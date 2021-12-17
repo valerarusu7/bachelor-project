@@ -3,12 +3,12 @@ import FormInput from "../../components/Landing Page/FormInput";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { registerSchema } from "../../helpers/formSchemas";
+import { registerCompanySchema } from "../../helpers/formSchemas";
 import PasswordCheckItem from "../../components/Landing Page/PasswordtCheckItem";
 import { BsCheckCircleFill } from "react-icons/bs";
 
 function BecomeACustomer() {
-  const formOptions = { resolver: yupResolver(registerSchema) };
+  const formOptions = { resolver: yupResolver(registerCompanySchema) };
 
   const {
     register,
@@ -22,38 +22,39 @@ function BecomeACustomer() {
   // const dispatch = useDispatch();
 
   const password = watch("password", "");
-  const re_password = watch("re_password", "");
+  const rePassword = watch("rePassword", "");
 
   const onSubmit = (data: any) => {
-    let toSend = {
+    console.log("HEYY");
+    let body = {
       user: {
         email: data.email,
-        firstName: data.first_name,
-        lastName: data.last_name,
+        firstName: data.firstName,
+        lastName: data.lastName,
         password: data.password,
-        rePassword: data.re_password,
+        rePassword: data.rePassword,
       },
       company: {
-        name: data.company_name,
-        website: data.company_website,
+        name: data.companyName,
+        website: data.companyWebsite,
       },
     };
+
     fetch("/api/companies", {
       method: "POST",
-      body: JSON.stringify(toSend),
+      body: JSON.stringify(body),
     })
       .then((response) => {
         if (response.ok) {
-          router.push("/dashboard");
+          router.push("/auth/login");
         } else {
-          return response.text().then((text) => {
-            throw new Error(text);
+          return response.json().then((text) => {
+            throw new Error(text.error);
           });
         }
       })
       .catch((error) => {
-        //Handle error
-        console.log(error);
+        alert(error);
       });
   };
 
@@ -73,19 +74,19 @@ function BecomeACustomer() {
           <div className="grid xl:grid-cols-2 sm:grid-cols-1 xl:gap-4">
             <FormInput
               type="text"
-              id="company_name"
+              id="companyName"
               placeholder="Company name"
               errors={errors}
               label="Company name"
-              {...register("company_name")}
+              {...register("companyName")}
             />
             <FormInput
               type="text"
-              id="company_website"
+              id="companyWebsite"
               placeholder="Website"
               errors={errors}
               label="Website"
-              {...register("company_website")}
+              {...register("companyWebsite")}
             />
           </div>
         </div>
@@ -97,19 +98,19 @@ function BecomeACustomer() {
             <div className="grid xl:grid-cols-2 sm:grid-cols-1 xl:gap-4">
               <FormInput
                 type="text"
-                id="first_name"
+                id="firstName"
                 placeholder="First name"
                 errors={errors}
                 label="First name"
-                {...register("first_name")}
+                {...register("firstName")}
               />
               <FormInput
                 type="text"
-                id="last_name"
+                id="lastName"
                 placeholder="Last name"
                 errors={errors}
                 label="Last name"
-                {...register("last_name")}
+                {...register("lastName")}
               />
             </div>
             <div>
@@ -132,16 +133,16 @@ function BecomeACustomer() {
                 />
                 <FormInput
                   type="password"
-                  id="re_password"
+                  id="rePassword"
                   placeholder="Confirm password"
                   label="Confirm password"
-                  {...register("re_password")}
+                  {...register("rePassword")}
                 />
               </div>
               <div>
                 {/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-+_!@#$%^&*., ?])(?=.{8,})/.test(
                   password
-                ) && password === re_password ? (
+                ) && password === rePassword ? (
                   <div className="flex items-center text-green-500 font-semibold">
                     <BsCheckCircleFill className="h-4 w-4 mr-1" />
                     <p>Password requirements met</p>
@@ -175,7 +176,7 @@ function BecomeACustomer() {
                     />
                     <PasswordCheckItem
                       requirement="The passwords should be equal"
-                      check={password === re_password}
+                      check={password === rePassword}
                       password={password}
                     />
                   </div>

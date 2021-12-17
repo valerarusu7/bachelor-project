@@ -1,6 +1,5 @@
 import * as Yup from "yup";
 import Canvas from "../../components/Landing Page/canvas/canvas";
-import FormInput from "../../components/Landing Page/FormInput";
 import NavBar from "../../components/Landing Page/navbar";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -36,24 +35,18 @@ const Login: React.FC = () => {
     fetch("/api/account/login", {
       method: "POST",
       body: JSON.stringify(data),
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            dispatch(setUser(data.user));
-          });
-          router.push("/dashboard");
-        } else {
-          return response.text().then((text) => {
-            setError("Email or password is incorrect.");
-            throw new Error(text);
-          });
-        }
-      })
-      .catch((error) => {
-        //Handle error
-        console.log(error);
-      });
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          dispatch(setUser(data.user));
+        });
+        router.push("/dashboard");
+      } else {
+        return response.json().then((text) => {
+          setError(text.error);
+        });
+      }
+    });
   };
 
   return (

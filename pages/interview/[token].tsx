@@ -6,9 +6,18 @@ import connectDB from "../../utils/mongodb";
 import jwt from "jsonwebtoken";
 import Candidate from "../../models/Candidate";
 import Template from "../../models/Template";
-import { ITemplate, IInterviewProps, ITask, TaskTypes } from "../../types";
+import {
+  ITemplate,
+  IInterviewProps,
+  ITask,
+  TaskTypes,
+  IInterviewTokenPayload,
+} from "../../types";
 import { GetServerSidePropsContext } from "next";
-import { selectInterview, setCurrentTask } from "../../store/reducers/interviewSlice";
+import {
+  selectInterview,
+  setCurrentTask,
+} from "../../store/reducers/interviewSlice";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../store/hooks";
 import { useRouter } from "next/router";
@@ -33,7 +42,10 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
     if (template.tasks[0].taskType === "Email") {
       setEmailCount(1);
     }
-    if (template.tasks[0].taskType === "Single" || template.tasks[0].taskType === "Multiple") {
+    if (
+      template.tasks[0].taskType === "Single" ||
+      template.tasks[0].taskType === "Multiple"
+    ) {
       setTaskCount(1);
     }
   }, []);
@@ -78,13 +90,16 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
     console.log(body);
     console.log(`${currentTask?.order}`);
     try {
-      const response = await fetch(`/api/interview/task?order=${currentTask?.order}`, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: new Headers({
-          Authorization: `Bearer ${router.query.token}`,
-        }),
-      });
+      const response = await fetch(
+        `/api/interview/task?order=${currentTask?.order}`,
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+          headers: new Headers({
+            Authorization: `Bearer ${router.query.token}`,
+          }),
+        }
+      );
       const data = await response.json();
       console.log(data, "next task");
       dispatch(setCurrentTask(data));
@@ -94,7 +109,10 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
         setEmailCount(1);
         setTaskCount(0);
       }
-      if (data.taskType === TaskTypes.Single || data.taskType === TaskTypes.Multiple) {
+      if (
+        data.taskType === TaskTypes.Single ||
+        data.taskType === TaskTypes.Multiple
+      ) {
         setEmailCount(0);
         setTaskCount(1);
       }
@@ -188,7 +206,9 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
                     <div className="mr-10 ml-10 p-10 ">
                       <div className="border border-gray-300 bg-white rounded-md p-4 shadow-lg">
                         <div>
-                          <p className="text-xl font-semibold mb-2">{currentTask?.question}</p>
+                          <p className="text-xl font-semibold mb-2">
+                            {currentTask?.question}
+                          </p>
                           <textarea
                             className="mt-1 w-full resize-none rounded-lg"
                             rows={5}
@@ -196,7 +216,10 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
                             onChange={(e) => setAnswer(e.target.value)}
                           ></textarea>
                           <div className="flex justify-end mt-2">
-                            <CustomButton color="blue" onClick={() => getNextTask()}>
+                            <CustomButton
+                              color="blue"
+                              onClick={() => getNextTask()}
+                            >
                               <p>Next</p>
                             </CustomButton>
                           </div>
@@ -210,14 +233,21 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
                     <div className="mr-10 ml-10 p-10 ">
                       <div className="border border-gray-300 bg-white rounded-md p-4 shadow-lg">
                         <div>
-                          <p className="text-xl font-semibold mb-2">{currentTask?.question}</p>
-                          {currentTask !== undefined && currentTask?.choices?.length !== 0 ? (
+                          <p className="text-xl font-semibold mb-2">
+                            {currentTask?.question}
+                          </p>
+                          {currentTask !== undefined &&
+                          currentTask?.choices?.length !== 0 ? (
                             <div className="flex justify-evenly items-center">
                               {currentTask?.choices?.map((choice) => (
                                 <CustomButton
                                   color="blue"
                                   key={choice._id}
-                                  customStyles={`${choices.includes(choice?._id) ? "opacity-100" : "opacity-50"}`}
+                                  customStyles={`${
+                                    choices.includes(choice?._id)
+                                      ? "opacity-100"
+                                      : "opacity-50"
+                                  }`}
                                   onClick={() => addOrDeleteChoice(choice?._id)}
                                 >
                                   {choice.value}
@@ -233,7 +263,10 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
                             ></textarea>
                           )}
                           <div className="flex justify-end mt-2">
-                            <CustomButton color="blue" onClick={() => getNextTask()}>
+                            <CustomButton
+                              color="blue"
+                              onClick={() => getNextTask()}
+                            >
                               <p>Next</p>
                             </CustomButton>
                           </div>
@@ -257,7 +290,9 @@ function Interview({ companyName, template, tasksLength }: IInterviewProps) {
 
 export default Interview;
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   await connectDB();
   const { INTERVIEW_PRIVATE_KEY } = process.env;
 
@@ -265,14 +300,12 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   const { token } = context.params;
 
   try {
-    const decoded = jwt.verify(token, INTERVIEW_PRIVATE_KEY as string);
-    // @ts-ignore
-    if (!decoded.interviewId) {
-      return new Error("No interview id.");
-    }
+    const decoded = jwt.verify(
+      token,
+      INTERVIEW_PRIVATE_KEY as string
+    ) as IInterviewTokenPayload;
 
     let candidate = await Candidate.findOne({
-      // @ts-ignore
       "interviews._id": decoded.interviewId,
     })
       .select("interviews")
@@ -280,8 +313,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       .orFail();
 
     var interview = candidate.interviews.find(
-      // @ts-ignore
-      (interview) => interview._id == decoded.interviewId,
+      (interview) => interview._id == decoded.interviewId
     );
 
     // @ts-ignore

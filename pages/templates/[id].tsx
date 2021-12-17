@@ -15,6 +15,7 @@ import {
   setSearch,
   setShow,
   setShowInvite,
+  setShowDelete,
   setTasks,
 } from "../../store/reducers/template";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -32,6 +33,7 @@ import InviteCandidate from "../../components/Templates/InviteCandidate";
 import Candidate from "../../models/Candidate";
 import { useRouter } from "next/router";
 import protect from "../../helpers/protect";
+import DeleteConfirmation from "../../components/common/DeleteConfirmation";
 
 function TemplatePage({
   template,
@@ -40,8 +42,13 @@ function TemplatePage({
   candidates,
 }: ITemplateProps) {
   const dispatch = useAppDispatch();
-  const { templateTasks, showModal, invitedCandidates, showInviteModal } =
-    useAppSelector(selectTemplate);
+  const {
+    templateTasks,
+    showModal,
+    invitedCandidates,
+    showInviteModal,
+    showDeleteModal,
+  } = useAppSelector(selectTemplate);
   const [tasks, setStateTasks] = useState(templateTasks);
   const [position, setSelectedPosition] = useState(selectedPosition);
   const [templateName, setTemplateName] = useState(template.name);
@@ -69,6 +76,10 @@ function TemplatePage({
     dispatch(setShowInvite(false));
     dispatch(setSearch(""));
     dispatch(setInvitedCandidates([]));
+  }
+
+  function closeDeleteModal() {
+    dispatch(setShowDelete(false));
   }
 
   function updateTemplate() {
@@ -104,14 +115,13 @@ function TemplatePage({
         if (response.ok) {
           router.push("/templates");
         } else {
-          return response.text().then((text) => {
-            throw new Error(text);
+          return response.json().then((text) => {
+            throw new Error(text.error);
           });
         }
       })
       .catch((error) => {
-        //Handle error
-        console.log(error);
+        alert(error);
       });
   }
 
@@ -163,9 +173,15 @@ function TemplatePage({
         candidates={candidates}
         inviteCandidates={() => invite()}
       />
+      <DeleteConfirmation
+        isOpen={showDeleteModal}
+        onClose={() => closeDeleteModal()}
+        deleteItem={() => deleteTemplate()}
+        question="Do you really want to delete this template?"
+      />
       <TaskModal isOpen={showModal} closeModal={() => closeModal()} />
       <div className="mt-4 space-x-2 flex justify-end items-center">
-        <CustomButton color="red" onClick={() => deleteTemplate()}>
+        <CustomButton color="red" onClick={() => dispatch(setShowDelete(true))}>
           <p>Delete</p>
         </CustomButton>
         <CustomButton

@@ -7,6 +7,8 @@ import withProtection from "../../../middleware/protection";
 import CustomError from "../../../helpers/CustomError";
 import nextConnect from "next-connect";
 import { NextApiRequest, NextApiResponse } from "next";
+import CandidateComment from "../../../models/CandidateComment";
+import CandidateVideoInterview from "../../../models/CandidateVideoInterview";
 
 const validation = nextConnect().patch(
   "/api/candidates/:id",
@@ -44,11 +46,12 @@ export default nextConnect()
   .delete(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { id } = req.query;
-      await Candidate.findByIdAndDelete(id).then((raw) => {
-        if (!raw) {
-          throw CustomError("400", "Candidate id does not exist.");
-        }
-      });
+
+      await Promise.all([
+        Candidate.findByIdAndDelete(id),
+        CandidateComment.deleteMany({ candidateId: id }),
+        CandidateVideoInterview.findOneAndDelete({ candidateId: id }),
+      ]);
 
       return res
         .status(200)

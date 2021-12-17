@@ -22,7 +22,10 @@ export interface IParams extends ParsedUrlQuery {
   id: string;
 }
 
-export type AsyncRequestHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<any>;
+export type AsyncRequestHandler = (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => Promise<any>;
 
 // Pages
 export interface IDashboardProps {
@@ -214,6 +217,11 @@ export interface IInterviewProps {
   companyName: string;
   template: ITemplate;
   tasksLength: number;
+}
+
+export interface IRegisterProps {
+  email: string;
+  companyName: string;
 }
 
 export interface ITemplateProps {
@@ -426,8 +434,11 @@ export interface ICandidateVideoInterviewDocument extends Document {
   answers: ICandidateVideoInterviewAnswerDocument[];
 }
 
-export interface ICandidateVideoInterviewModel extends Model<ICandidateVideoInterviewDocument> {
-  toClientObject(candidateVideoInterview: ICandidateVideoInterview): ICandidateVideoInterview;
+export interface ICandidateVideoInterviewModel
+  extends Model<ICandidateVideoInterviewDocument> {
+  toClientObject(
+    candidateVideoInterview: ICandidateVideoInterview
+  ): ICandidateVideoInterview;
 }
 
 export interface IUserModel extends Model<IUserDocument> {
@@ -441,7 +452,8 @@ export interface ICandidateCommentDocument extends Document {
   userId: Types.ObjectId;
 }
 
-export interface ICandidateCommentModel extends Model<ICandidateCommentDocument> {
+export interface ICandidateCommentModel
+  extends Model<ICandidateCommentDocument> {
   toClientArray(comments: ICandidateComment[]): ICandidateComment[];
 }
 

@@ -8,13 +8,6 @@ import { taskSchema } from "../../../models/api/Interview";
 import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
 
-/**
- * @swagger
- * /api/templates:
- *   post:
- *     description: Create a new template
- */
-
 export default nextConnect()
   .use(withValidation(taskSchema))
   .use(withInterviewProtection())

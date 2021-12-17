@@ -22,7 +22,7 @@ const UserSchema = new Schema<IUserDocument>({
   password: {
     type: String,
     required: [true, "Password cannot be empty."],
-    minlength: [12, "Password needs to be at least 12 characters."],
+    minlength: [8, "Password needs to be at least 8 characters."],
     maxlength: [128, "Password cannot be more than 128 characters."],
   },
   role: {
