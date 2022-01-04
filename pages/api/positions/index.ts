@@ -3,9 +3,16 @@ import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
 import JobPosition from "../../../models/JobPosition";
 import connectDB from "../../../utils/mongodb";
+import cors from "cors";
 
-export default nextConnect().get(
-  async (req: NextApiRequest, res: NextApiResponse) => {
+const corsOptions = {
+  origin: "https://www.stibomeetup.com",
+  optionsSuccessStatus: 200,
+};
+
+export default nextConnect()
+  .use(cors(corsOptions))
+  .get(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       await connectDB();
       let positions = await JobPosition.find({
@@ -19,5 +26,4 @@ export default nextConnect().get(
       const result = handleError(error as Error);
       return res.status(result.code).json({ error: result.error });
     }
-  }
-);
+  });

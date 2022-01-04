@@ -12,8 +12,15 @@ import withValidation from "../../../middleware/validation";
 import { answersSchema } from "../../../models/api/Candidate";
 import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
+import cors from "cors";
+
+const corsOptions = {
+  origin: "https://www.stibomeetup.com",
+  optionsSuccessStatus: 200,
+};
 
 export default nextConnect()
+  .use(cors(corsOptions))
   .use(withValidation(answersSchema))
   .post(async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();
