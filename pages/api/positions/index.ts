@@ -6,7 +6,11 @@ import connectDB from "../../../utils/mongodb";
 import cors from "cors";
 
 const corsOptions = {
-  origin: "https://www.stibomeetup.com",
+  origin: [
+    "https://www.stibomeetup.com",
+    "http://localhost:3000",
+    "http://localhost:8080",
+  ],
   optionsSuccessStatus: 200,
 };
 
