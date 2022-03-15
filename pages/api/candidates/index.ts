@@ -21,6 +21,22 @@ const corsOptions = {
 
 export default nextConnect()
   .use(cors(corsOptions))
+  .get(async (req: NextApiRequest, res: NextApiResponse) => {
+    await connectDB();
+
+    try {
+      const candidates = await Candidate.find({
+        companyId: "6182887f8a051eb01be80084",
+      })
+        .select("firstName lastName email interviews.region")
+        .lean();
+
+      return res.status(200).json(candidates);
+    } catch (error) {
+      const result = handleError(error as Error);
+      return res.status(result.code).json({ error: result.error });
+    }
+  })
   .use(withValidation(answersSchema))
   .post(async (req: NextApiRequest, res: NextApiResponse) => {
     await connectDB();

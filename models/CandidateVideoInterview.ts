@@ -6,6 +6,7 @@ import {
   ICandidateVideoInterviewDocument,
   ICandidateVideoInterviewModel,
 } from "../types";
+import "./Candidate";
 
 const CandidateVideoInterviewAnswerSchema =
   new Schema<ICandidateVideoInterviewAnswerDocument>(
@@ -30,6 +31,7 @@ const CandidateVideoInterviewSchema =
         type: Schema.Types.ObjectId,
         required: [true, "Candidate id cannot be empty."],
         unique: true,
+        ref: "Candidate",
       },
       answers: {
         type: [CandidateVideoInterviewAnswerSchema],
